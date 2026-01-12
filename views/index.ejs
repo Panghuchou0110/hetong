@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>微米科技</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #1b1b1f;
+      --muted: #666b75;
+      --border: #dcdfe6;
+      --accent: #2f6bff;
+      --accent-focus: #6b8afd;
+      --input-bg: #ffffff;
+      --shadow: rgba(0, 0, 0, 0.12);
+    }
+
+    body.dark {
+      --bg: #0d0f12;
+      --card: #161a1f;
+      --text: #e6e9ef;
+      --muted: #9aa3b2;
+      --border: #2a313b;
+      --accent: #4d7bff;
+      --accent-focus: #7aa2ff;
+      --input-bg: #12161b;
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+
+    body {
+      font-family: "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .card {
+      background-color: var(--card);
+      box-shadow: 0 6px 18px var(--shadow);
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 860px;
+      box-sizing: border-box;
+      margin-top: 24px;
+    }
+
+    h1 {
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent-focus);
+    }
+
+    ::placeholder {
+      color: var(--muted);
+    }
+
+    button {
+      padding: 10px 16px;
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+    }
+
+    .field {
+      display: block;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 999;
+    }
+
+    .preview {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 10px 30px var(--shadow);
+      box-sizing: border-box;
+    }
+
+    .preview h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: var(--text);
+      text-align: center;
+    }
+
+    .preview-box {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.8;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .preview-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .theme-toggle {
+      display: flex;
+      justify-content: center;
+      margin: -6px 0 12px;
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      user-select: none;
+    }
+
+    .toggle input {
+      display: none;
+    }
+
+    .slider {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: var(--border);
+      border-radius: 999px;
+      transition: background 0.2s ease;
+    }
+
+    .slider::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      top: 3px;
+      left: 3px;
+      background: var(--card);
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+      box-shadow: 0 2px 6px var(--shadow);
+    }
+
+    .toggle input:checked + .slider {
+      background: var(--accent);
+    }
+
+    .toggle input:checked + .slider::after {
+      transform: translateX(20px);
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: -8px;
+      margin-bottom: 16px;
+    }
+
+    .footer {
+      margin: 24px 0 8px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .card {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      input, select, textarea {
+        font-size: 12px;
+      }
+
+      button {
+        font-size: 12px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .card {
+        max-width: 900px;
+      }
+    }
+  </style>
+</head>
+<body class="dark">
+  <div class="card">
+    <h1>微米科技 Beta1.0</h1>
+    <div class="theme-toggle">
+      <label class="toggle">
+        <input id="themeToggle" type="checkbox" checked />
+        <span class="slider"></span>
+        <span class="toggle-label">暗色模式</span>
+      </label>
+    </div>
+
+    <div class="form-grid">
+      <div class="field full">
+        <label for="raw">粘贴客户信息（整段）</label>
+        <textarea id="raw" placeholder="请在此粘贴客户信息..."></textarea>
+        <div class="hint">粘贴完后，点击识别按钮，系统会自动填充相关信息。</div>
+        <button id="btnParse">识别</button>
+      </div>
+
+      <div class="field full">
+        <hr style="border:none; border-top:1px solid var(--border); margin:16px 0;" />
+      </div>
+
+      <div class="field">
+        <label for="seller_name">出卖人姓名</label>
+        <input id="seller_name" placeholder="请在此粘贴客户信息..." />
+      </div>
+
+      <div class="field">
+        <label for="seller_id">证件号码</label>
+        <input id="seller_id" placeholder="请在此粘贴客户信息..." readonly />
+      </div>
+
+      <div class="field">
+        <label for="seller_phone">手机号码</label>
+        <input id="seller_phone" placeholder="请在此粘贴客户信息..." readonly />
+      </div>
+
+      <div class="field">
+        <label for="modelSelect">型号</label>
+        <select id="modelSelect">
+          <option value="">（手动选择）</option>
+          <option value="iPhone 17 Pro Max">iPhone 17 Pro Max</option>
+          <option value="iPhone 17 Pro">iPhone 17 Pro</option>
+          <option value="iPhone 17">iPhone 17</option>
+          <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
+          <option value="iPhone 16 Pro">iPhone 16 Pro</option>
+          <option value="iPhone 16">iPhone 16</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="memory">内存容量</label>
+        <select id="memory">
+          <option value="">（选择）</option>
+          <option value="128G">128G</option>
+          <option value="256G">256G</option>
+          <option value="1TB">1TB</option>
+          <option value="2TB">2TB</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="price">价格（单价=总价）</label>
+        <input id="price" type="number" placeholder="人民币 元" />
+      </div>
+
+      <div class="field full">
+        <button id="btnPreview" disabled>确定并核对</button>
+        <button id="btnGenerate" disabled>生成合同（Word）</button>
+      </div>
+    </div>
+    <div class="footer">
+       <br/>
+      版权微米科技所有 ©版本20260113 作者：PanghuChou
+    </div>
+  </div>
+
+  <div id="mask" class="mask">
+    <div class="preview">
+      <h2>信息核对</h2>
+      <div id="previewBox" class="preview-box"></div>
+      <div class="preview-actions">
+        <button id="btnConfirm">确认完成</button>
+        <button id="btnCancel" type="button">返回修改</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let confirmed = false;
+
+    const allowedModels = new Set([
+      "iPhone 17 Pro Max",
+      "iPhone 17 Pro",
+      "iPhone 17",
+      "iPhone 16 Pro Max",
+      "iPhone 16 Pro",
+      "iPhone 16",
+    ]);
+
+    function setConfirmed(value) {
+      confirmed = value;
+      $("btnGenerate").disabled = !value;
+    }
+
+    function resetConfirmed() {
+      setConfirmed(false);
+    }
+
+    function currentModelValue() {
+      return $("modelSelect").value.trim();
+    }
+
+    const themeToggle = $("themeToggle");
+    themeToggle.addEventListener("change", () => {
+      document.body.classList.toggle("dark", themeToggle.checked);
+    });
+
+    $("btnParse").addEventListener("click", async () => {
+      const rawText = $("raw").value.trim();
+      if (!rawText) { alert("\u5148\u7c98\u8d34\u5ba2\u6237\u4fe1\u606f"); return; }
+
+      const r = await fetch("/parse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rawText })
+      });
+
+      const j = await r.json();
+      if (!j.ok) { alert("\u8bc6\u522b\u5931\u8d25"); return; }
+
+      const d = j.data || {};
+      $("seller_name").value = d.seller_name || "";
+      $("seller_id").value = d.seller_id || "";
+      $("seller_phone").value = d.seller_phone || "";
+
+      if (d.model && allowedModels.has(d.model)) {
+        $("modelSelect").value = d.model;
+      } else {
+        $("modelSelect").value = "";
+      }
+
+      if (d.memory) {
+        const m = String(d.memory).toUpperCase().replace("GB", "G");
+        if (["128G", "256G", "1TB", "2TB"].includes(m)) {
+          $("memory").value = m;
+        } else {
+          $("memory").value = "";
+        }
+      }
+
+      if (d.total_price || d.unit_price) {
+        $("price").value = d.total_price || d.unit_price;
+      }
+
+      $("btnPreview").disabled = false;
+      resetConfirmed();
+    });
+
+    $("modelSelect").addEventListener("change", resetConfirmed);
+    $("memory").addEventListener("change", resetConfirmed);
+
+    [
+      "seller_name",
+      "seller_id",
+      "seller_phone",
+      "price",
+    ].forEach((id) => {
+      $(id).addEventListener("input", resetConfirmed);
+    });
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "'");
+    }
+
+    function openPreview() {
+      const data = collectData();
+      const html = `
+        \u51fa\u5356\u4eba\uff1a${escapeHtml(data.seller_name)}<br/>
+        \u8bc1\u4ef6\u53f7\u7801\uff1a${escapeHtml(data.seller_id)}<br/>
+        \u624b\u673a\u53f7\u7801\uff1a${escapeHtml(data.seller_phone)}<br/>
+        \u578b\u53f7\uff1a${escapeHtml(data.model)}<br/>
+        \u5185\u5b58\u5bb9\u91cf\uff1a${escapeHtml(data.memory)}<br/>
+        \u5355\u4ef7/\u603b\u4ef7\uff1a${escapeHtml(data.price)} \u5143
+      `;
+      $("previewBox").innerHTML = html;
+      $("mask").style.display = "flex";
+    }
+
+    $("btnPreview").addEventListener("click", openPreview);
+    $("btnCancel").addEventListener("click", () => {
+      $("mask").style.display = "none";
+    });
+
+    $("btnConfirm").addEventListener("click", () => {
+      setConfirmed(true);
+      $("mask").style.display = "none";
+    });
+
+    function collectData() {
+      const price = $("price").value.trim();
+      return {
+        seller_name: $("seller_name").value.trim(),
+        seller_id: $("seller_id").value.trim(),
+        seller_phone: $("seller_phone").value.trim(),
+        model: currentModelValue(),
+        memory: $("memory").value.trim(),
+        price: price,
+        unit_price: price,
+        total_price: price,
+      };
+    }
+
+    $("btnGenerate").addEventListener("click", async () => {
+      if (!confirmed) {
+        alert("\u8bf7\u5148\u70b9\u51fb\u201c\u786e\u5b9a\u5e76\u6838\u5bf9\u201d\u5b8c\u6210\u786e\u8ba4");
+        return;
+      }
+      const data = collectData();
+      if (!data.seller_name || !data.seller_id || !data.seller_phone) {
+        alert("\u51fa\u5356\u4eba/\u8eab\u4efd\u8bc1/\u624b\u673a\u53f7\u4e0d\u80fd\u4e3a\u7a7a");
+        return;
+      }
+      if (!data.model) { alert("\u578b\u53f7\u4e0d\u80fd\u4e3a\u7a7a"); return; }
+      if (!data.memory) { alert("\u5185\u5b58\u5bb9\u91cf\u4e0d\u80fd\u4e3a\u7a7a"); return; }
+      if (!data.price) { alert("\u4ef7\u683c\u4e0d\u80fd\u4e3a\u7a7a"); return; }
+
+      const r = await fetch("/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      if (!r.ok) {
+        const txt = await r.text();
+        alert("\u751f\u6210\u5931\u8d25\uff1a" + txt);
+        return;
+      }
+
+      const blob = await r.blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      const safeName = (data.seller_name || "\u672a\u547d\u540d").replace(/[\\/:*?\"<>|]+/g, "_");
+      a.download = `${safeName}_\u4e70\u5356\u5408\u540c.docx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
+  </script>
+</body>
+</html>

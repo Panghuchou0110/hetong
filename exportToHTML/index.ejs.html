@@ -1,0 +1,577 @@
+<html>
+<head>
+<title>index.ejs</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bcbec4;}
+.s1 { color: #d5b778;}
+.s2 { color: #b3ae60;}
+.s3 { color: #bababa;}
+.s4 { color: #bcbec4;}
+.s5 { color: #6aab73;}
+.s6 { color: #bcbec4; font-style: italic;}
+.s7 { color: #c77dbb; font-style: italic;}
+.s8 { color: #2aacb8; font-style: italic;}
+.s9 { color: #cf8e6d; font-style: italic;}
+.s10 { color: #f75464;}
+.s11 { color: #cf8e6d;}
+.s12 { color: #56a8f5;}
+.s13 { color: #42c3d4;}
+.ln { color: #4b5059; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+index.ejs</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">&lt;!</span><span class="s1">doctype </span><span class="s3">html</span><span class="s0">&gt;</span>
+<a name="l2"><span class="ln">2    </span></a><span class="s0">&lt;</span><span class="s1">html </span><span class="s3">lang</span><span class="s0">=&quot;</span><span class="s5">zh</span><span class="s0">&quot;&gt;</span>
+<a name="l3"><span class="ln">3    </span></a><span class="s0">&lt;</span><span class="s1">head</span><span class="s0">&gt;</span>
+<a name="l4"><span class="ln">4    </span></a>  <span class="s0">&lt;</span><span class="s1">meta </span><span class="s3">charset</span><span class="s0">=&quot;</span><span class="s5">utf-8</span><span class="s0">&quot; /&gt;</span>
+<a name="l5"><span class="ln">5    </span></a>  <span class="s0">&lt;</span><span class="s1">meta </span><span class="s3">name</span><span class="s0">=&quot;</span><span class="s5">viewport</span><span class="s0">&quot; </span><span class="s3">content</span><span class="s0">=&quot;</span><span class="s5">width=device-width,initial-scale=1</span><span class="s0">&quot; /&gt;</span>
+<a name="l6"><span class="ln">6    </span></a>  <span class="s0">&lt;</span><span class="s1">title</span><span class="s0">&gt;</span><span class="s4">微米科技</span><span class="s0">&lt;/</span><span class="s1">title</span><span class="s0">&gt;</span>
+<a name="l7"><span class="ln">7    </span></a>  <span class="s0">&lt;</span><span class="s1">style</span><span class="s0">&gt;</span>
+<a name="l8"><span class="ln">8    </span></a>    <span class="s0">:root {</span>
+<a name="l9"><span class="ln">9    </span></a>      <span class="s0">--bg: </span><span class="s6">#</span><span class="s7">f5f6f8</span><span class="s0">;</span>
+<a name="l10"><span class="ln">10   </span></a>      <span class="s0">--card: </span><span class="s6">#</span><span class="s7">ffffff</span><span class="s0">;</span>
+<a name="l11"><span class="ln">11   </span></a>      <span class="s0">--text: </span><span class="s6">#</span><span class="s7">1b1b1f</span><span class="s0">;</span>
+<a name="l12"><span class="ln">12   </span></a>      <span class="s0">--muted: </span><span class="s6">#</span><span class="s7">666b75</span><span class="s0">;</span>
+<a name="l13"><span class="ln">13   </span></a>      <span class="s0">--border: </span><span class="s6">#</span><span class="s7">dcdfe6</span><span class="s0">;</span>
+<a name="l14"><span class="ln">14   </span></a>      <span class="s0">--accent: </span><span class="s6">#</span><span class="s7">2f6bff</span><span class="s0">;</span>
+<a name="l15"><span class="ln">15   </span></a>      <span class="s0">--accent-focus: </span><span class="s6">#</span><span class="s7">6b8afd</span><span class="s0">;</span>
+<a name="l16"><span class="ln">16   </span></a>      <span class="s0">--input-bg: </span><span class="s6">#</span><span class="s7">ffffff</span><span class="s0">;</span>
+<a name="l17"><span class="ln">17   </span></a>      <span class="s0">--shadow: </span><span class="s1">rgba</span><span class="s0">(</span><span class="s8">0</span><span class="s0">, </span><span class="s8">0</span><span class="s0">, </span><span class="s8">0</span><span class="s0">, </span><span class="s8">0.12</span><span class="s0">);</span>
+<a name="l18"><span class="ln">18   </span></a>    <span class="s0">}</span>
+<a name="l19"><span class="ln">19   </span></a>
+<a name="l20"><span class="ln">20   </span></a>    <span class="s1">body</span><span class="s0">.</span><span class="s1">dark </span><span class="s0">{</span>
+<a name="l21"><span class="ln">21   </span></a>      <span class="s0">--bg: </span><span class="s6">#</span><span class="s7">0d0f12</span><span class="s0">;</span>
+<a name="l22"><span class="ln">22   </span></a>      <span class="s0">--card: </span><span class="s6">#</span><span class="s7">161a1f</span><span class="s0">;</span>
+<a name="l23"><span class="ln">23   </span></a>      <span class="s0">--text: </span><span class="s6">#</span><span class="s7">e6e9ef</span><span class="s0">;</span>
+<a name="l24"><span class="ln">24   </span></a>      <span class="s0">--muted: </span><span class="s6">#</span><span class="s7">9aa3b2</span><span class="s0">;</span>
+<a name="l25"><span class="ln">25   </span></a>      <span class="s0">--border: </span><span class="s6">#</span><span class="s7">2a313b</span><span class="s0">;</span>
+<a name="l26"><span class="ln">26   </span></a>      <span class="s0">--accent: </span><span class="s6">#</span><span class="s7">4d7bff</span><span class="s0">;</span>
+<a name="l27"><span class="ln">27   </span></a>      <span class="s0">--accent-focus: </span><span class="s6">#</span><span class="s7">7aa2ff</span><span class="s0">;</span>
+<a name="l28"><span class="ln">28   </span></a>      <span class="s0">--input-bg: </span><span class="s6">#</span><span class="s7">12161b</span><span class="s0">;</span>
+<a name="l29"><span class="ln">29   </span></a>      <span class="s0">--shadow: </span><span class="s1">rgba</span><span class="s0">(</span><span class="s8">0</span><span class="s0">, </span><span class="s8">0</span><span class="s0">, </span><span class="s8">0</span><span class="s0">, </span><span class="s8">0.45</span><span class="s0">);</span>
+<a name="l30"><span class="ln">30   </span></a>    <span class="s0">}</span>
+<a name="l31"><span class="ln">31   </span></a>
+<a name="l32"><span class="ln">32   </span></a>    <span class="s1">body </span><span class="s0">{</span>
+<a name="l33"><span class="ln">33   </span></a>      <span class="s3">font-family</span><span class="s0">: &quot;</span><span class="s5">SF Pro Text</span><span class="s0">&quot;, &quot;</span><span class="s5">PingFang SC</span><span class="s0">&quot;, &quot;</span><span class="s5">Helvetica Neue</span><span class="s0">&quot;, </span><span class="s5">Arial</span><span class="s0">, </span><span class="s5">sans-serif</span><span class="s0">;</span>
+<a name="l34"><span class="ln">34   </span></a>      <span class="s3">background</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--bg);</span>
+<a name="l35"><span class="ln">35   </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--text);</span>
+<a name="l36"><span class="ln">36   </span></a>      <span class="s3">margin</span><span class="s0">: </span><span class="s8">0</span><span class="s0">;</span>
+<a name="l37"><span class="ln">37   </span></a>      <span class="s3">display</span><span class="s0">: </span><span class="s5">flex</span><span class="s0">;</span>
+<a name="l38"><span class="ln">38   </span></a>      <span class="s3">justify-content</span><span class="s0">: </span><span class="s5">center</span><span class="s0">;</span>
+<a name="l39"><span class="ln">39   </span></a>      <span class="s3">align-items</span><span class="s0">: </span><span class="s5">flex-start</span><span class="s0">;</span>
+<a name="l40"><span class="ln">40   </span></a>      <span class="s3">min-height</span><span class="s0">: </span><span class="s8">100</span><span class="s9">vh</span><span class="s0">;</span>
+<a name="l41"><span class="ln">41   </span></a>      <span class="s3">padding</span><span class="s0">: </span><span class="s8">20</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l42"><span class="ln">42   </span></a>      <span class="s3">overflow-y</span><span class="s0">: </span><span class="s5">auto</span><span class="s0">;</span>
+<a name="l43"><span class="ln">43   </span></a>    <span class="s0">}</span>
+<a name="l44"><span class="ln">44   </span></a>
+<a name="l45"><span class="ln">45   </span></a>    <span class="s0">.</span><span class="s1">card </span><span class="s0">{</span>
+<a name="l46"><span class="ln">46   </span></a>      <span class="s3">background-color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--card);</span>
+<a name="l47"><span class="ln">47   </span></a>      <span class="s3">box-shadow</span><span class="s0">: </span><span class="s8">0 6</span><span class="s9">px </span><span class="s8">18</span><span class="s9">px </span><span class="s1">var</span><span class="s0">(--shadow);</span>
+<a name="l48"><span class="ln">48   </span></a>      <span class="s3">border-radius</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l49"><span class="ln">49   </span></a>      <span class="s3">padding</span><span class="s0">: </span><span class="s8">24</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l50"><span class="ln">50   </span></a>      <span class="s3">width</span><span class="s0">: </span><span class="s8">100</span><span class="s9">%</span><span class="s0">;</span>
+<a name="l51"><span class="ln">51   </span></a>      <span class="s3">max-width</span><span class="s0">: </span><span class="s8">860</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l52"><span class="ln">52   </span></a>      <span class="s3">box-sizing</span><span class="s0">: </span><span class="s5">border-box</span><span class="s0">;</span>
+<a name="l53"><span class="ln">53   </span></a>      <span class="s3">margin-top</span><span class="s0">: </span><span class="s8">24</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l54"><span class="ln">54   </span></a>    <span class="s0">}</span>
+<a name="l55"><span class="ln">55   </span></a>
+<a name="l56"><span class="ln">56   </span></a>    <span class="s1">h1 </span><span class="s0">{</span>
+<a name="l57"><span class="ln">57   </span></a>      <span class="s3">font-size</span><span class="s0">: </span><span class="s8">22</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l58"><span class="ln">58   </span></a>      <span class="s3">text-align</span><span class="s0">: </span><span class="s5">center</span><span class="s0">;</span>
+<a name="l59"><span class="ln">59   </span></a>      <span class="s3">margin-bottom</span><span class="s0">: </span><span class="s8">20</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l60"><span class="ln">60   </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--text);</span>
+<a name="l61"><span class="ln">61   </span></a>    <span class="s0">}</span>
+<a name="l62"><span class="ln">62   </span></a>
+<a name="l63"><span class="ln">63   </span></a>    <span class="s1">label </span><span class="s0">{</span>
+<a name="l64"><span class="ln">64   </span></a>      <span class="s3">display</span><span class="s0">: </span><span class="s5">block</span><span class="s0">;</span>
+<a name="l65"><span class="ln">65   </span></a>      <span class="s3">font-size</span><span class="s0">: </span><span class="s8">14</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l66"><span class="ln">66   </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--muted);</span>
+<a name="l67"><span class="ln">67   </span></a>      <span class="s3">margin-bottom</span><span class="s0">: </span><span class="s8">6</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l68"><span class="ln">68   </span></a>    <span class="s0">}</span>
+<a name="l69"><span class="ln">69   </span></a>
+<a name="l70"><span class="ln">70   </span></a>    <span class="s1">input</span><span class="s0">, </span><span class="s1">select</span><span class="s0">, </span><span class="s1">textarea </span><span class="s0">{</span>
+<a name="l71"><span class="ln">71   </span></a>      <span class="s3">width</span><span class="s0">: </span><span class="s8">100</span><span class="s9">%</span><span class="s0">;</span>
+<a name="l72"><span class="ln">72   </span></a>      <span class="s3">padding</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l73"><span class="ln">73   </span></a>      <span class="s3">margin-bottom</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l74"><span class="ln">74   </span></a>      <span class="s3">border</span><span class="s0">: </span><span class="s8">1</span><span class="s9">px </span><span class="s5">solid </span><span class="s1">var</span><span class="s0">(--border);</span>
+<a name="l75"><span class="ln">75   </span></a>      <span class="s3">background</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--input-bg);</span>
+<a name="l76"><span class="ln">76   </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--text);</span>
+<a name="l77"><span class="ln">77   </span></a>      <span class="s3">border-radius</span><span class="s0">: </span><span class="s8">8</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l78"><span class="ln">78   </span></a>      <span class="s3">font-size</span><span class="s0">: </span><span class="s8">14</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l79"><span class="ln">79   </span></a>      <span class="s3">box-sizing</span><span class="s0">: </span><span class="s5">border-box</span><span class="s0">;</span>
+<a name="l80"><span class="ln">80   </span></a>      <span class="s3">outline</span><span class="s0">: </span><span class="s5">none</span><span class="s0">;</span>
+<a name="l81"><span class="ln">81   </span></a>    <span class="s0">}</span>
+<a name="l82"><span class="ln">82   </span></a>
+<a name="l83"><span class="ln">83   </span></a>    <span class="s1">input</span><span class="s0">:focus, </span><span class="s1">select</span><span class="s0">:focus, </span><span class="s1">textarea</span><span class="s0">:focus {</span>
+<a name="l84"><span class="ln">84   </span></a>      <span class="s3">border-color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--accent-focus);</span>
+<a name="l85"><span class="ln">85   </span></a>    <span class="s0">}</span>
+<a name="l86"><span class="ln">86   </span></a>
+<a name="l87"><span class="ln">87   </span></a>    <span class="s0">::placeholder {</span>
+<a name="l88"><span class="ln">88   </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--muted);</span>
+<a name="l89"><span class="ln">89   </span></a>    <span class="s0">}</span>
+<a name="l90"><span class="ln">90   </span></a>
+<a name="l91"><span class="ln">91   </span></a>    <span class="s1">button </span><span class="s0">{</span>
+<a name="l92"><span class="ln">92   </span></a>      <span class="s3">padding</span><span class="s0">: </span><span class="s8">10</span><span class="s9">px </span><span class="s8">16</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l93"><span class="ln">93   </span></a>      <span class="s3">background-color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--accent);</span>
+<a name="l94"><span class="ln">94   </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s6">#</span><span class="s7">fff</span><span class="s0">;</span>
+<a name="l95"><span class="ln">95   </span></a>      <span class="s3">border</span><span class="s0">: </span><span class="s5">none</span><span class="s0">;</span>
+<a name="l96"><span class="ln">96   </span></a>      <span class="s3">border-radius</span><span class="s0">: </span><span class="s8">8</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l97"><span class="ln">97   </span></a>      <span class="s3">cursor</span><span class="s0">: </span><span class="s5">pointer</span><span class="s0">;</span>
+<a name="l98"><span class="ln">98   </span></a>      <span class="s3">font-size</span><span class="s0">: </span><span class="s8">14</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l99"><span class="ln">99   </span></a>      <span class="s3">width</span><span class="s0">: </span><span class="s8">100</span><span class="s9">%</span><span class="s0">;</span>
+<a name="l100"><span class="ln">100  </span></a>      <span class="s3">margin-top</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l101"><span class="ln">101  </span></a>    <span class="s0">}</span>
+<a name="l102"><span class="ln">102  </span></a>
+<a name="l103"><span class="ln">103  </span></a>    <span class="s1">button</span><span class="s0">:disabled {</span>
+<a name="l104"><span class="ln">104  </span></a>      <span class="s3">background-color</span><span class="s0">: </span><span class="s6">#</span><span class="s7">ccc</span><span class="s0">;</span>
+<a name="l105"><span class="ln">105  </span></a>      <span class="s3">cursor</span><span class="s0">: </span><span class="s5">not-allowed</span><span class="s0">;</span>
+<a name="l106"><span class="ln">106  </span></a>    <span class="s0">}</span>
+<a name="l107"><span class="ln">107  </span></a>
+<a name="l108"><span class="ln">108  </span></a>    <span class="s1">textarea </span><span class="s0">{</span>
+<a name="l109"><span class="ln">109  </span></a>      <span class="s3">min-height</span><span class="s0">: </span><span class="s8">120</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l110"><span class="ln">110  </span></a>      <span class="s3">resize</span><span class="s0">: </span><span class="s5">vertical</span><span class="s0">;</span>
+<a name="l111"><span class="ln">111  </span></a>    <span class="s0">}</span>
+<a name="l112"><span class="ln">112  </span></a>
+<a name="l113"><span class="ln">113  </span></a>    <span class="s0">.</span><span class="s1">form-grid </span><span class="s0">{</span>
+<a name="l114"><span class="ln">114  </span></a>      <span class="s3">display</span><span class="s0">: </span><span class="s5">grid</span><span class="s0">;</span>
+<a name="l115"><span class="ln">115  </span></a>      <span class="s3">grid-template-columns</span><span class="s0">: </span><span class="s8">1</span><span class="s9">fr </span><span class="s8">1</span><span class="s9">fr</span><span class="s0">;</span>
+<a name="l116"><span class="ln">116  </span></a>      <span class="s3">gap</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px </span><span class="s8">16</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l117"><span class="ln">117  </span></a>    <span class="s0">}</span>
+<a name="l118"><span class="ln">118  </span></a>
+<a name="l119"><span class="ln">119  </span></a>    <span class="s0">.</span><span class="s1">field </span><span class="s0">{</span>
+<a name="l120"><span class="ln">120  </span></a>      <span class="s3">display</span><span class="s0">: </span><span class="s5">block</span><span class="s0">;</span>
+<a name="l121"><span class="ln">121  </span></a>    <span class="s0">}</span>
+<a name="l122"><span class="ln">122  </span></a>
+<a name="l123"><span class="ln">123  </span></a>    <span class="s0">.</span><span class="s1">full </span><span class="s0">{</span>
+<a name="l124"><span class="ln">124  </span></a>      <span class="s3">grid-column</span><span class="s0">: </span><span class="s8">1 </span><span class="s5">/ </span><span class="s8">-1</span><span class="s0">;</span>
+<a name="l125"><span class="ln">125  </span></a>    <span class="s0">}</span>
+<a name="l126"><span class="ln">126  </span></a>
+<a name="l127"><span class="ln">127  </span></a>    <span class="s0">.</span><span class="s1">mask </span><span class="s0">{</span>
+<a name="l128"><span class="ln">128  </span></a>      <span class="s3">position</span><span class="s0">: </span><span class="s5">fixed</span><span class="s0">;</span>
+<a name="l129"><span class="ln">129  </span></a>      <span class="s3">inset</span><span class="s0">: </span><span class="s8">0</span><span class="s0">;</span>
+<a name="l130"><span class="ln">130  </span></a>      <span class="s3">background</span><span class="s0">: </span><span class="s1">rgba</span><span class="s0">(</span><span class="s8">0</span><span class="s0">, </span><span class="s8">0</span><span class="s0">, </span><span class="s8">0</span><span class="s0">, </span><span class="s8">0.45</span><span class="s0">);</span>
+<a name="l131"><span class="ln">131  </span></a>      <span class="s3">display</span><span class="s0">: </span><span class="s5">none</span><span class="s0">;</span>
+<a name="l132"><span class="ln">132  </span></a>      <span class="s3">align-items</span><span class="s0">: </span><span class="s5">center</span><span class="s0">;</span>
+<a name="l133"><span class="ln">133  </span></a>      <span class="s3">justify-content</span><span class="s0">: </span><span class="s5">center</span><span class="s0">;</span>
+<a name="l134"><span class="ln">134  </span></a>      <span class="s3">padding</span><span class="s0">: </span><span class="s8">20</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l135"><span class="ln">135  </span></a>      <span class="s3">z-index</span><span class="s0">: </span><span class="s8">999</span><span class="s0">;</span>
+<a name="l136"><span class="ln">136  </span></a>    <span class="s0">}</span>
+<a name="l137"><span class="ln">137  </span></a>
+<a name="l138"><span class="ln">138  </span></a>    <span class="s0">.</span><span class="s1">preview </span><span class="s0">{</span>
+<a name="l139"><span class="ln">139  </span></a>      <span class="s3">background</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--card);</span>
+<a name="l140"><span class="ln">140  </span></a>      <span class="s3">border-radius</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l141"><span class="ln">141  </span></a>      <span class="s3">padding</span><span class="s0">: </span><span class="s8">20</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l142"><span class="ln">142  </span></a>      <span class="s3">width</span><span class="s0">: </span><span class="s8">100</span><span class="s9">%</span><span class="s0">;</span>
+<a name="l143"><span class="ln">143  </span></a>      <span class="s3">max-width</span><span class="s0">: </span><span class="s8">520</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l144"><span class="ln">144  </span></a>      <span class="s3">box-shadow</span><span class="s0">: </span><span class="s8">0 10</span><span class="s9">px </span><span class="s8">30</span><span class="s9">px </span><span class="s1">var</span><span class="s0">(--shadow);</span>
+<a name="l145"><span class="ln">145  </span></a>      <span class="s3">box-sizing</span><span class="s0">: </span><span class="s5">border-box</span><span class="s0">;</span>
+<a name="l146"><span class="ln">146  </span></a>    <span class="s0">}</span>
+<a name="l147"><span class="ln">147  </span></a>
+<a name="l148"><span class="ln">148  </span></a>    <span class="s0">.</span><span class="s1">preview h2 </span><span class="s0">{</span>
+<a name="l149"><span class="ln">149  </span></a>      <span class="s3">margin</span><span class="s0">: </span><span class="s8">0 0 12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l150"><span class="ln">150  </span></a>      <span class="s3">font-size</span><span class="s0">: </span><span class="s8">18</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l151"><span class="ln">151  </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--text);</span>
+<a name="l152"><span class="ln">152  </span></a>      <span class="s3">text-align</span><span class="s0">: </span><span class="s5">center</span><span class="s0">;</span>
+<a name="l153"><span class="ln">153  </span></a>    <span class="s0">}</span>
+<a name="l154"><span class="ln">154  </span></a>
+<a name="l155"><span class="ln">155  </span></a>    <span class="s0">.</span><span class="s1">preview-box </span><span class="s0">{</span>
+<a name="l156"><span class="ln">156  </span></a>      <span class="s3">font-size</span><span class="s0">: </span><span class="s8">14</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l157"><span class="ln">157  </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--text);</span>
+<a name="l158"><span class="ln">158  </span></a>      <span class="s3">line-height</span><span class="s0">: </span><span class="s8">1.8</span><span class="s0">;</span>
+<a name="l159"><span class="ln">159  </span></a>      <span class="s3">background</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--input-bg);</span>
+<a name="l160"><span class="ln">160  </span></a>      <span class="s3">border</span><span class="s0">: </span><span class="s8">1</span><span class="s9">px </span><span class="s5">solid </span><span class="s1">var</span><span class="s0">(--border);</span>
+<a name="l161"><span class="ln">161  </span></a>      <span class="s3">border-radius</span><span class="s0">: </span><span class="s8">8</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l162"><span class="ln">162  </span></a>      <span class="s3">padding</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l163"><span class="ln">163  </span></a>      <span class="s3">margin-bottom</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l164"><span class="ln">164  </span></a>    <span class="s0">}</span>
+<a name="l165"><span class="ln">165  </span></a>
+<a name="l166"><span class="ln">166  </span></a>    <span class="s0">.</span><span class="s1">preview-actions </span><span class="s0">{</span>
+<a name="l167"><span class="ln">167  </span></a>      <span class="s3">display</span><span class="s0">: </span><span class="s5">grid</span><span class="s0">;</span>
+<a name="l168"><span class="ln">168  </span></a>      <span class="s3">gap</span><span class="s0">: </span><span class="s8">10</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l169"><span class="ln">169  </span></a>    <span class="s0">}</span>
+<a name="l170"><span class="ln">170  </span></a>
+<a name="l171"><span class="ln">171  </span></a>    <span class="s0">.</span><span class="s1">theme-toggle </span><span class="s0">{</span>
+<a name="l172"><span class="ln">172  </span></a>      <span class="s3">display</span><span class="s0">: </span><span class="s5">flex</span><span class="s0">;</span>
+<a name="l173"><span class="ln">173  </span></a>      <span class="s3">justify-content</span><span class="s0">: </span><span class="s5">center</span><span class="s0">;</span>
+<a name="l174"><span class="ln">174  </span></a>      <span class="s3">margin</span><span class="s0">: </span><span class="s8">-6</span><span class="s9">px </span><span class="s8">0 12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l175"><span class="ln">175  </span></a>    <span class="s0">}</span>
+<a name="l176"><span class="ln">176  </span></a>
+<a name="l177"><span class="ln">177  </span></a>    <span class="s0">.</span><span class="s1">toggle </span><span class="s0">{</span>
+<a name="l178"><span class="ln">178  </span></a>      <span class="s3">display</span><span class="s0">: </span><span class="s5">inline-flex</span><span class="s0">;</span>
+<a name="l179"><span class="ln">179  </span></a>      <span class="s3">align-items</span><span class="s0">: </span><span class="s5">center</span><span class="s0">;</span>
+<a name="l180"><span class="ln">180  </span></a>      <span class="s3">gap</span><span class="s0">: </span><span class="s8">10</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l181"><span class="ln">181  </span></a>      <span class="s3">font-size</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l182"><span class="ln">182  </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--muted);</span>
+<a name="l183"><span class="ln">183  </span></a>      <span class="s3">user-select</span><span class="s0">: </span><span class="s5">none</span><span class="s0">;</span>
+<a name="l184"><span class="ln">184  </span></a>    <span class="s0">}</span>
+<a name="l185"><span class="ln">185  </span></a>
+<a name="l186"><span class="ln">186  </span></a>    <span class="s0">.</span><span class="s1">toggle input </span><span class="s0">{</span>
+<a name="l187"><span class="ln">187  </span></a>      <span class="s3">display</span><span class="s0">: </span><span class="s5">none</span><span class="s0">;</span>
+<a name="l188"><span class="ln">188  </span></a>    <span class="s0">}</span>
+<a name="l189"><span class="ln">189  </span></a>
+<a name="l190"><span class="ln">190  </span></a>    <span class="s0">.</span><span class="s1">slider </span><span class="s0">{</span>
+<a name="l191"><span class="ln">191  </span></a>      <span class="s3">position</span><span class="s0">: </span><span class="s5">relative</span><span class="s0">;</span>
+<a name="l192"><span class="ln">192  </span></a>      <span class="s3">width</span><span class="s0">: </span><span class="s8">44</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l193"><span class="ln">193  </span></a>      <span class="s3">height</span><span class="s0">: </span><span class="s8">24</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l194"><span class="ln">194  </span></a>      <span class="s3">background</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--border);</span>
+<a name="l195"><span class="ln">195  </span></a>      <span class="s3">border-radius</span><span class="s0">: </span><span class="s8">999</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l196"><span class="ln">196  </span></a>      <span class="s3">transition</span><span class="s0">: </span><span class="s10">background </span><span class="s8">0.2</span><span class="s9">s </span><span class="s5">ease</span><span class="s0">;</span>
+<a name="l197"><span class="ln">197  </span></a>    <span class="s0">}</span>
+<a name="l198"><span class="ln">198  </span></a>
+<a name="l199"><span class="ln">199  </span></a>    <span class="s0">.</span><span class="s1">slider</span><span class="s0">::after {</span>
+<a name="l200"><span class="ln">200  </span></a>      <span class="s3">content</span><span class="s0">: &quot;&quot;;</span>
+<a name="l201"><span class="ln">201  </span></a>      <span class="s3">position</span><span class="s0">: </span><span class="s5">absolute</span><span class="s0">;</span>
+<a name="l202"><span class="ln">202  </span></a>      <span class="s3">width</span><span class="s0">: </span><span class="s8">18</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l203"><span class="ln">203  </span></a>      <span class="s3">height</span><span class="s0">: </span><span class="s8">18</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l204"><span class="ln">204  </span></a>      <span class="s3">top</span><span class="s0">: </span><span class="s8">3</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l205"><span class="ln">205  </span></a>      <span class="s3">left</span><span class="s0">: </span><span class="s8">3</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l206"><span class="ln">206  </span></a>      <span class="s3">background</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--card);</span>
+<a name="l207"><span class="ln">207  </span></a>      <span class="s3">border-radius</span><span class="s0">: </span><span class="s8">50</span><span class="s9">%</span><span class="s0">;</span>
+<a name="l208"><span class="ln">208  </span></a>      <span class="s3">transition</span><span class="s0">: </span><span class="s5">transform </span><span class="s8">0.2</span><span class="s9">s </span><span class="s5">ease</span><span class="s0">;</span>
+<a name="l209"><span class="ln">209  </span></a>      <span class="s3">box-shadow</span><span class="s0">: </span><span class="s8">0 2</span><span class="s9">px </span><span class="s8">6</span><span class="s9">px </span><span class="s1">var</span><span class="s0">(--shadow);</span>
+<a name="l210"><span class="ln">210  </span></a>    <span class="s0">}</span>
+<a name="l211"><span class="ln">211  </span></a>
+<a name="l212"><span class="ln">212  </span></a>    <span class="s0">.</span><span class="s1">toggle input</span><span class="s0">:checked + .</span><span class="s1">slider </span><span class="s0">{</span>
+<a name="l213"><span class="ln">213  </span></a>      <span class="s3">background</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--accent);</span>
+<a name="l214"><span class="ln">214  </span></a>    <span class="s0">}</span>
+<a name="l215"><span class="ln">215  </span></a>
+<a name="l216"><span class="ln">216  </span></a>    <span class="s0">.</span><span class="s1">toggle input</span><span class="s0">:checked + .</span><span class="s1">slider</span><span class="s0">::after {</span>
+<a name="l217"><span class="ln">217  </span></a>      <span class="s3">transform</span><span class="s0">: translateX(</span><span class="s8">20</span><span class="s9">px</span><span class="s0">);</span>
+<a name="l218"><span class="ln">218  </span></a>    <span class="s0">}</span>
+<a name="l219"><span class="ln">219  </span></a>
+<a name="l220"><span class="ln">220  </span></a>    <span class="s0">.</span><span class="s1">hint </span><span class="s0">{</span>
+<a name="l221"><span class="ln">221  </span></a>      <span class="s3">font-size</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l222"><span class="ln">222  </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--muted);</span>
+<a name="l223"><span class="ln">223  </span></a>      <span class="s3">margin-top</span><span class="s0">: </span><span class="s8">-8</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l224"><span class="ln">224  </span></a>      <span class="s3">margin-bottom</span><span class="s0">: </span><span class="s8">16</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l225"><span class="ln">225  </span></a>    <span class="s0">}</span>
+<a name="l226"><span class="ln">226  </span></a>
+<a name="l227"><span class="ln">227  </span></a>    <span class="s0">.</span><span class="s1">footer </span><span class="s0">{</span>
+<a name="l228"><span class="ln">228  </span></a>      <span class="s3">margin</span><span class="s0">: </span><span class="s8">24</span><span class="s9">px </span><span class="s8">0 8</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l229"><span class="ln">229  </span></a>      <span class="s3">font-size</span><span class="s0">: </span><span class="s8">11</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l230"><span class="ln">230  </span></a>      <span class="s3">color</span><span class="s0">: </span><span class="s1">var</span><span class="s0">(--muted);</span>
+<a name="l231"><span class="ln">231  </span></a>      <span class="s3">text-align</span><span class="s0">: </span><span class="s5">center</span><span class="s0">;</span>
+<a name="l232"><span class="ln">232  </span></a>      <span class="s3">line-height</span><span class="s0">: </span><span class="s8">1.6</span><span class="s0">;</span>
+<a name="l233"><span class="ln">233  </span></a>    <span class="s0">}</span>
+<a name="l234"><span class="ln">234  </span></a>
+<a name="l235"><span class="ln">235  </span></a>    <span class="s0">@</span><span class="s11">media </span><span class="s0">(</span><span class="s3">max-width</span><span class="s0">: </span><span class="s8">768</span><span class="s9">px</span><span class="s0">) {</span>
+<a name="l236"><span class="ln">236  </span></a>      <span class="s0">.</span><span class="s1">card </span><span class="s0">{</span>
+<a name="l237"><span class="ln">237  </span></a>        <span class="s3">padding</span><span class="s0">: </span><span class="s8">16</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l238"><span class="ln">238  </span></a>      <span class="s0">}</span>
+<a name="l239"><span class="ln">239  </span></a>
+<a name="l240"><span class="ln">240  </span></a>      <span class="s1">h1 </span><span class="s0">{</span>
+<a name="l241"><span class="ln">241  </span></a>        <span class="s3">font-size</span><span class="s0">: </span><span class="s8">20</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l242"><span class="ln">242  </span></a>      <span class="s0">}</span>
+<a name="l243"><span class="ln">243  </span></a>
+<a name="l244"><span class="ln">244  </span></a>      <span class="s1">input</span><span class="s0">, </span><span class="s1">select</span><span class="s0">, </span><span class="s1">textarea </span><span class="s0">{</span>
+<a name="l245"><span class="ln">245  </span></a>        <span class="s3">font-size</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l246"><span class="ln">246  </span></a>      <span class="s0">}</span>
+<a name="l247"><span class="ln">247  </span></a>
+<a name="l248"><span class="ln">248  </span></a>      <span class="s1">button </span><span class="s0">{</span>
+<a name="l249"><span class="ln">249  </span></a>        <span class="s3">font-size</span><span class="s0">: </span><span class="s8">12</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l250"><span class="ln">250  </span></a>      <span class="s0">}</span>
+<a name="l251"><span class="ln">251  </span></a>
+<a name="l252"><span class="ln">252  </span></a>      <span class="s0">.</span><span class="s1">form-grid </span><span class="s0">{</span>
+<a name="l253"><span class="ln">253  </span></a>        <span class="s3">grid-template-columns</span><span class="s0">: </span><span class="s8">1</span><span class="s9">fr</span><span class="s0">;</span>
+<a name="l254"><span class="ln">254  </span></a>      <span class="s0">}</span>
+<a name="l255"><span class="ln">255  </span></a>    <span class="s0">}</span>
+<a name="l256"><span class="ln">256  </span></a>
+<a name="l257"><span class="ln">257  </span></a>    <span class="s0">@</span><span class="s11">media </span><span class="s0">(</span><span class="s3">min-width</span><span class="s0">: </span><span class="s8">1200</span><span class="s9">px</span><span class="s0">) {</span>
+<a name="l258"><span class="ln">258  </span></a>      <span class="s0">.</span><span class="s1">card </span><span class="s0">{</span>
+<a name="l259"><span class="ln">259  </span></a>        <span class="s3">max-width</span><span class="s0">: </span><span class="s8">900</span><span class="s9">px</span><span class="s0">;</span>
+<a name="l260"><span class="ln">260  </span></a>      <span class="s0">}</span>
+<a name="l261"><span class="ln">261  </span></a>    <span class="s0">}</span>
+<a name="l262"><span class="ln">262  </span></a>  <span class="s0">&lt;/</span><span class="s1">style</span><span class="s0">&gt;</span>
+<a name="l263"><span class="ln">263  </span></a><span class="s0">&lt;/</span><span class="s1">head</span><span class="s0">&gt;</span>
+<a name="l264"><span class="ln">264  </span></a><span class="s0">&lt;</span><span class="s1">body </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">dark</span><span class="s0">&quot;&gt;</span>
+<a name="l265"><span class="ln">265  </span></a>  <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">card</span><span class="s0">&quot;&gt;</span>
+<a name="l266"><span class="ln">266  </span></a>    <span class="s0">&lt;</span><span class="s1">h1</span><span class="s0">&gt;</span><span class="s4">微米科技 Beta1.0</span><span class="s0">&lt;/</span><span class="s1">h1</span><span class="s0">&gt;</span>
+<a name="l267"><span class="ln">267  </span></a>    <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">theme-toggle</span><span class="s0">&quot;&gt;</span>
+<a name="l268"><span class="ln">268  </span></a>      <span class="s0">&lt;</span><span class="s1">label </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">toggle</span><span class="s0">&quot;&gt;</span>
+<a name="l269"><span class="ln">269  </span></a>        <span class="s0">&lt;</span><span class="s1">input </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">themeToggle</span><span class="s0">&quot; </span><span class="s3">type</span><span class="s0">=&quot;</span><span class="s5">checkbox</span><span class="s0">&quot; </span><span class="s3">checked </span><span class="s0">/&gt;</span>
+<a name="l270"><span class="ln">270  </span></a>        <span class="s0">&lt;</span><span class="s1">span </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">slider</span><span class="s0">&quot;&gt;&lt;/</span><span class="s1">span</span><span class="s0">&gt;</span>
+<a name="l271"><span class="ln">271  </span></a>        <span class="s0">&lt;</span><span class="s1">span </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">toggle-label</span><span class="s0">&quot;&gt;</span><span class="s4">深色模式</span><span class="s0">&lt;/</span><span class="s1">span</span><span class="s0">&gt;</span>
+<a name="l272"><span class="ln">272  </span></a>      <span class="s0">&lt;/</span><span class="s1">label</span><span class="s0">&gt;</span>
+<a name="l273"><span class="ln">273  </span></a>    <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l274"><span class="ln">274  </span></a>
+<a name="l275"><span class="ln">275  </span></a>    <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">form-grid</span><span class="s0">&quot;&gt;</span>
+<a name="l276"><span class="ln">276  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">field full</span><span class="s0">&quot;&gt;</span>
+<a name="l277"><span class="ln">277  </span></a>        <span class="s0">&lt;</span><span class="s1">label </span><span class="s3">for</span><span class="s0">=&quot;</span><span class="s5">raw</span><span class="s0">&quot;&gt;</span><span class="s4">粘贴客户信息</span><span class="s0">&lt;/</span><span class="s1">label</span><span class="s0">&gt;</span>
+<a name="l278"><span class="ln">278  </span></a>        <span class="s0">&lt;</span><span class="s1">textarea </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">raw</span><span class="s0">&quot; </span><span class="s3">placeholder</span><span class="s0">=&quot;</span><span class="s5">请在此粘贴客户信息...</span><span class="s0">&quot;&gt;&lt;/</span><span class="s1">textarea</span><span class="s0">&gt;</span>
+<a name="l279"><span class="ln">279  </span></a>        <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">hint</span><span class="s0">&quot;&gt;</span><span class="s4">粘贴完后，点击识别按钮，系统会自动填充相关信息。</span><span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l280"><span class="ln">280  </span></a>        <span class="s0">&lt;</span><span class="s1">button </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">btnParse</span><span class="s0">&quot;&gt;</span><span class="s4">识别</span><span class="s0">&lt;/</span><span class="s1">button</span><span class="s0">&gt;</span>
+<a name="l281"><span class="ln">281  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l282"><span class="ln">282  </span></a>
+<a name="l283"><span class="ln">283  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">field full</span><span class="s0">&quot;&gt;</span>
+<a name="l284"><span class="ln">284  </span></a>        <span class="s0">&lt;</span><span class="s1">hr </span><span class="s3">style</span><span class="s0">=&quot;</span><span class="s5">border:none; border-top:1px solid var(--border); margin:16px 0;</span><span class="s0">&quot; /&gt;</span>
+<a name="l285"><span class="ln">285  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l286"><span class="ln">286  </span></a>
+<a name="l287"><span class="ln">287  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">field</span><span class="s0">&quot;&gt;</span>
+<a name="l288"><span class="ln">288  </span></a>        <span class="s0">&lt;</span><span class="s1">label </span><span class="s3">for</span><span class="s0">=&quot;</span><span class="s5">seller_name</span><span class="s0">&quot;&gt;</span><span class="s4">客户姓名</span><span class="s0">&lt;/</span><span class="s1">label</span><span class="s0">&gt;</span>
+<a name="l289"><span class="ln">289  </span></a>        <span class="s0">&lt;</span><span class="s1">input </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">seller_name</span><span class="s0">&quot; </span><span class="s3">placeholder</span><span class="s0">=&quot;</span><span class="s5">请输入客户姓名...</span><span class="s0">&quot; /&gt;</span>
+<a name="l290"><span class="ln">290  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l291"><span class="ln">291  </span></a>
+<a name="l292"><span class="ln">292  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">field</span><span class="s0">&quot;&gt;</span>
+<a name="l293"><span class="ln">293  </span></a>        <span class="s0">&lt;</span><span class="s1">label </span><span class="s3">for</span><span class="s0">=&quot;</span><span class="s5">seller_id</span><span class="s0">&quot;&gt;</span><span class="s4">证件号码</span><span class="s0">&lt;/</span><span class="s1">label</span><span class="s0">&gt;</span>
+<a name="l294"><span class="ln">294  </span></a>        <span class="s0">&lt;</span><span class="s1">input </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">seller_id</span><span class="s0">&quot; </span><span class="s3">placeholder</span><span class="s0">=&quot;</span><span class="s5">请输入证件号码...</span><span class="s0">&quot; /&gt;</span>
+<a name="l295"><span class="ln">295  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l296"><span class="ln">296  </span></a>
+<a name="l297"><span class="ln">297  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">field</span><span class="s0">&quot;&gt;</span>
+<a name="l298"><span class="ln">298  </span></a>        <span class="s0">&lt;</span><span class="s1">label </span><span class="s3">for</span><span class="s0">=&quot;</span><span class="s5">seller_phone</span><span class="s0">&quot;&gt;</span><span class="s4">手机号码</span><span class="s0">&lt;/</span><span class="s1">label</span><span class="s0">&gt;</span>
+<a name="l299"><span class="ln">299  </span></a>        <span class="s0">&lt;</span><span class="s1">input </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">seller_phone</span><span class="s0">&quot; </span><span class="s3">placeholder</span><span class="s0">=&quot;</span><span class="s5">请输入手机号码...</span><span class="s0">&quot; /&gt;</span>
+<a name="l300"><span class="ln">300  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l301"><span class="ln">301  </span></a>
+<a name="l302"><span class="ln">302  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">field</span><span class="s0">&quot;&gt;</span>
+<a name="l303"><span class="ln">303  </span></a>        <span class="s0">&lt;</span><span class="s1">label </span><span class="s3">for</span><span class="s0">=&quot;</span><span class="s5">modelSelect</span><span class="s0">&quot;&gt;</span><span class="s4">型号</span><span class="s0">&lt;/</span><span class="s1">label</span><span class="s0">&gt;</span>
+<a name="l304"><span class="ln">304  </span></a>        <span class="s0">&lt;</span><span class="s1">select </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">modelSelect</span><span class="s0">&quot;&gt;</span>
+<a name="l305"><span class="ln">305  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;&quot;&gt;</span><span class="s4">（自动识别/手动选择）</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l306"><span class="ln">306  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">iPhone 17 Pro Max</span><span class="s0">&quot;&gt;</span><span class="s4">iPhone 17 Pro Max</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l307"><span class="ln">307  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">iPhone 17 Pro</span><span class="s0">&quot;&gt;</span><span class="s4">iPhone 17 Pro</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l308"><span class="ln">308  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">iPhone 17</span><span class="s0">&quot;&gt;</span><span class="s4">iPhone 17</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l309"><span class="ln">309  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">iPhone 16 Pro Max</span><span class="s0">&quot;&gt;</span><span class="s4">iPhone 16 Pro Max</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l310"><span class="ln">310  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">iPhone 16 Pro</span><span class="s0">&quot;&gt;</span><span class="s4">iPhone 16 Pro</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l311"><span class="ln">311  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">iPhone 16</span><span class="s0">&quot;&gt;</span><span class="s4">iPhone 16</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l312"><span class="ln">312  </span></a>        <span class="s0">&lt;/</span><span class="s1">select</span><span class="s0">&gt;</span>
+<a name="l313"><span class="ln">313  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l314"><span class="ln">314  </span></a>
+<a name="l315"><span class="ln">315  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">field</span><span class="s0">&quot;&gt;</span>
+<a name="l316"><span class="ln">316  </span></a>        <span class="s0">&lt;</span><span class="s1">label </span><span class="s3">for</span><span class="s0">=&quot;</span><span class="s5">memory</span><span class="s0">&quot;&gt;</span><span class="s4">内存容量</span><span class="s0">&lt;/</span><span class="s1">label</span><span class="s0">&gt;</span>
+<a name="l317"><span class="ln">317  </span></a>        <span class="s0">&lt;</span><span class="s1">select </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">memory</span><span class="s0">&quot;&gt;</span>
+<a name="l318"><span class="ln">318  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;&quot;&gt;</span><span class="s4">（选择）</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l319"><span class="ln">319  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">64G</span><span class="s0">&quot;&gt;</span><span class="s4">64G</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l320"><span class="ln">320  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">128G</span><span class="s0">&quot;&gt;</span><span class="s4">128G</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l321"><span class="ln">321  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">256G</span><span class="s0">&quot;&gt;</span><span class="s4">256G</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l322"><span class="ln">322  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">512G</span><span class="s0">&quot;&gt;</span><span class="s4">512G</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l323"><span class="ln">323  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">1TB</span><span class="s0">&quot;&gt;</span><span class="s4">1TB</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l324"><span class="ln">324  </span></a>          <span class="s0">&lt;</span><span class="s1">option </span><span class="s3">value</span><span class="s0">=&quot;</span><span class="s5">2TB</span><span class="s0">&quot;&gt;</span><span class="s4">2TB</span><span class="s0">&lt;/</span><span class="s1">option</span><span class="s0">&gt;</span>
+<a name="l325"><span class="ln">325  </span></a>        <span class="s0">&lt;/</span><span class="s1">select</span><span class="s0">&gt;</span>
+<a name="l326"><span class="ln">326  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l327"><span class="ln">327  </span></a>
+<a name="l328"><span class="ln">328  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">field</span><span class="s0">&quot;&gt;</span>
+<a name="l329"><span class="ln">329  </span></a>        <span class="s0">&lt;</span><span class="s1">label </span><span class="s3">for</span><span class="s0">=&quot;</span><span class="s5">price</span><span class="s0">&quot;&gt;</span><span class="s4">价格（单价=总价）</span><span class="s0">&lt;/</span><span class="s1">label</span><span class="s0">&gt;</span>
+<a name="l330"><span class="ln">330  </span></a>        <span class="s0">&lt;</span><span class="s1">input </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">price</span><span class="s0">&quot; </span><span class="s3">type</span><span class="s0">=&quot;</span><span class="s5">number</span><span class="s0">&quot; </span><span class="s3">placeholder</span><span class="s0">=&quot;</span><span class="s5">人民币 元</span><span class="s0">&quot; </span><span class="s3">min</span><span class="s0">=&quot;</span><span class="s5">2000</span><span class="s0">&quot; </span><span class="s3">max</span><span class="s0">=&quot;</span><span class="s5">20000</span><span class="s0">&quot; /&gt;</span>
+<a name="l331"><span class="ln">331  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l332"><span class="ln">332  </span></a>
+<a name="l333"><span class="ln">333  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">field full</span><span class="s0">&quot;&gt;</span>
+<a name="l334"><span class="ln">334  </span></a>        <span class="s0">&lt;</span><span class="s1">button </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">btnPreview</span><span class="s0">&quot; </span><span class="s3">disabled</span><span class="s0">&gt;</span><span class="s4">确定并核对</span><span class="s0">&lt;/</span><span class="s1">button</span><span class="s0">&gt;</span>
+<a name="l335"><span class="ln">335  </span></a>        <span class="s0">&lt;</span><span class="s1">button </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">btnGenerate</span><span class="s0">&quot; </span><span class="s3">disabled</span><span class="s0">&gt;</span><span class="s4">生成合同（Word）</span><span class="s0">&lt;/</span><span class="s1">button</span><span class="s0">&gt;</span>
+<a name="l336"><span class="ln">336  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l337"><span class="ln">337  </span></a>    <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l338"><span class="ln">338  </span></a>    <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">footer</span><span class="s0">&quot;&gt;</span>
+<a name="l339"><span class="ln">339  </span></a>       <span class="s0">&lt;</span><span class="s1">br</span><span class="s0">/&gt;</span>
+<a name="l340"><span class="ln">340  </span></a>      <span class="s4">版权微米科技所有 内部使用 ©版本20260113 作者：PanghuChou 
+<a name="l341"><span class="ln">341  </span></a>    </span><span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l342"><span class="ln">342  </span></a>  <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l343"><span class="ln">343  </span></a>
+<a name="l344"><span class="ln">344  </span></a>  <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">mask</span><span class="s0">&quot; </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">mask</span><span class="s0">&quot;&gt;</span>
+<a name="l345"><span class="ln">345  </span></a>    <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">preview</span><span class="s0">&quot;&gt;</span>
+<a name="l346"><span class="ln">346  </span></a>      <span class="s0">&lt;</span><span class="s1">h2</span><span class="s0">&gt;</span><span class="s4">信息核对</span><span class="s0">&lt;/</span><span class="s1">h2</span><span class="s0">&gt;</span>
+<a name="l347"><span class="ln">347  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">previewBox</span><span class="s0">&quot; </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">preview-box</span><span class="s0">&quot;&gt;&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l348"><span class="ln">348  </span></a>      <span class="s0">&lt;</span><span class="s1">div </span><span class="s3">class</span><span class="s0">=&quot;</span><span class="s5">preview-actions</span><span class="s0">&quot;&gt;</span>
+<a name="l349"><span class="ln">349  </span></a>        <span class="s0">&lt;</span><span class="s1">button </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">btnConfirm</span><span class="s0">&quot;&gt;</span><span class="s4">确认完成</span><span class="s0">&lt;/</span><span class="s1">button</span><span class="s0">&gt;</span>
+<a name="l350"><span class="ln">350  </span></a>        <span class="s0">&lt;</span><span class="s1">button </span><span class="s3">id</span><span class="s0">=&quot;</span><span class="s5">btnCancel</span><span class="s0">&quot; </span><span class="s3">type</span><span class="s0">=&quot;</span><span class="s5">button</span><span class="s0">&quot;&gt;</span><span class="s4">返回修改</span><span class="s0">&lt;/</span><span class="s1">button</span><span class="s0">&gt;</span>
+<a name="l351"><span class="ln">351  </span></a>      <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l352"><span class="ln">352  </span></a>    <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l353"><span class="ln">353  </span></a>  <span class="s0">&lt;/</span><span class="s1">div</span><span class="s0">&gt;</span>
+<a name="l354"><span class="ln">354  </span></a>
+<a name="l355"><span class="ln">355  </span></a>  <span class="s0">&lt;</span><span class="s1">script</span><span class="s0">&gt;</span>
+<a name="l356"><span class="ln">356  </span></a>    <span class="s11">const </span><span class="s12">$ </span><span class="s0">= (id) </span><span class="s11">=&gt; </span><span class="s0">document.</span><span class="s12">getElementById</span><span class="s4">(</span><span class="s0">id</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l357"><span class="ln">357  </span></a>    <span class="s11">let </span><span class="s0">confirmed = </span><span class="s7">false</span><span class="s0">;</span>
+<a name="l358"><span class="ln">358  </span></a>
+<a name="l359"><span class="ln">359  </span></a>    <span class="s11">const </span><span class="s0">allowedModels = new </span><span class="s12">Set</span><span class="s4">([</span>
+<a name="l360"><span class="ln">360  </span></a>      <span class="s0">&quot;</span><span class="s5">iPhone 17 Pro Max</span><span class="s0">&quot;,</span>
+<a name="l361"><span class="ln">361  </span></a>      <span class="s0">&quot;</span><span class="s5">iPhone 17 Pro</span><span class="s0">&quot;,</span>
+<a name="l362"><span class="ln">362  </span></a>      <span class="s0">&quot;</span><span class="s5">iPhone 17</span><span class="s0">&quot;,</span>
+<a name="l363"><span class="ln">363  </span></a>      <span class="s0">&quot;</span><span class="s5">iPhone 16 Pro Max</span><span class="s0">&quot;,</span>
+<a name="l364"><span class="ln">364  </span></a>      <span class="s0">&quot;</span><span class="s5">iPhone 16 Pro</span><span class="s0">&quot;,</span>
+<a name="l365"><span class="ln">365  </span></a>      <span class="s0">&quot;</span><span class="s5">iPhone 16</span><span class="s0">&quot;,</span>
+<a name="l366"><span class="ln">366  </span></a>    <span class="s4">])</span><span class="s0">;</span>
+<a name="l367"><span class="ln">367  </span></a>
+<a name="l368"><span class="ln">368  </span></a>    <span class="s11">function </span><span class="s12">setConfirmed</span><span class="s0">(value) {</span>
+<a name="l369"><span class="ln">369  </span></a>      <span class="s0">confirmed = value;</span>
+<a name="l370"><span class="ln">370  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">btnGenerate</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.disabled = !value;</span>
+<a name="l371"><span class="ln">371  </span></a>    <span class="s0">}</span>
+<a name="l372"><span class="ln">372  </span></a>
+<a name="l373"><span class="ln">373  </span></a>    <span class="s11">function </span><span class="s12">resetConfirmed</span><span class="s0">() {</span>
+<a name="l374"><span class="ln">374  </span></a>      <span class="s12">setConfirmed</span><span class="s4">(</span><span class="s7">false</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l375"><span class="ln">375  </span></a>    <span class="s0">}</span>
+<a name="l376"><span class="ln">376  </span></a>
+<a name="l377"><span class="ln">377  </span></a>    <span class="s11">function </span><span class="s12">currentModelValue</span><span class="s0">() {</span>
+<a name="l378"><span class="ln">378  </span></a>      <span class="s11">return </span><span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">modelSelect</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value.</span><span class="s12">trim</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l379"><span class="ln">379  </span></a>    <span class="s0">}</span>
+<a name="l380"><span class="ln">380  </span></a>
+<a name="l381"><span class="ln">381  </span></a>    <span class="s11">const </span><span class="s0">themeToggle = </span><span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">themeToggle</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l382"><span class="ln">382  </span></a>    <span class="s0">themeToggle.</span><span class="s12">addEventListener</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">change</span><span class="s0">&quot;, () </span><span class="s11">=&gt; </span><span class="s0">{</span>
+<a name="l383"><span class="ln">383  </span></a>      <span class="s0">document.body.classList.</span><span class="s12">toggle</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">dark</span><span class="s0">&quot;, themeToggle.checked</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l384"><span class="ln">384  </span></a>    <span class="s0">}</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l385"><span class="ln">385  </span></a>
+<a name="l386"><span class="ln">386  </span></a>    <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">btnParse</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.</span><span class="s12">addEventListener</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">click</span><span class="s0">&quot;, </span><span class="s11">async </span><span class="s0">() </span><span class="s11">=&gt; </span><span class="s0">{</span>
+<a name="l387"><span class="ln">387  </span></a>      <span class="s11">const </span><span class="s0">rawText = </span><span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">raw</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value.</span><span class="s12">trim</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l388"><span class="ln">388  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!rawText</span><span class="s4">) </span><span class="s0">{ </span><span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u5148\u7c98\u8d34\u5ba2\u6237\u4fe1\u606f</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">; </span><span class="s11">return</span><span class="s0">; }</span>
+<a name="l389"><span class="ln">389  </span></a>
+<a name="l390"><span class="ln">390  </span></a>      <span class="s11">const </span><span class="s0">r = </span><span class="s11">await </span><span class="s12">fetch</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">/parse</span><span class="s0">&quot;, {</span>
+<a name="l391"><span class="ln">391  </span></a>        <span class="s4">method</span><span class="s0">: &quot;</span><span class="s5">POST</span><span class="s0">&quot;,</span>
+<a name="l392"><span class="ln">392  </span></a>        <span class="s4">headers</span><span class="s0">: { &quot;</span><span class="s5">Content-Type</span><span class="s0">&quot;: &quot;</span><span class="s5">application/json</span><span class="s0">&quot; },</span>
+<a name="l393"><span class="ln">393  </span></a>        <span class="s4">body</span><span class="s0">: JSON.</span><span class="s12">stringify</span><span class="s4">(</span><span class="s0">{ rawText }</span><span class="s4">)</span>
+<a name="l394"><span class="ln">394  </span></a>      <span class="s0">}</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l395"><span class="ln">395  </span></a>
+<a name="l396"><span class="ln">396  </span></a>      <span class="s11">const </span><span class="s0">j = </span><span class="s11">await </span><span class="s0">r.</span><span class="s12">json</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l397"><span class="ln">397  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!j.ok</span><span class="s4">) </span><span class="s0">{ </span><span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u8bc6\u522b\u5931\u8d25</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">; </span><span class="s11">return</span><span class="s0">; }</span>
+<a name="l398"><span class="ln">398  </span></a>
+<a name="l399"><span class="ln">399  </span></a>      <span class="s11">const </span><span class="s0">d = j.data || {};</span>
+<a name="l400"><span class="ln">400  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">seller_name</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value = d.seller_name || &quot;&quot;;</span>
+<a name="l401"><span class="ln">401  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">seller_id</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value = d.seller_id || &quot;&quot;;</span>
+<a name="l402"><span class="ln">402  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">seller_phone</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value = d.seller_phone || &quot;&quot;;</span>
+<a name="l403"><span class="ln">403  </span></a>
+<a name="l404"><span class="ln">404  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">d.model &amp;&amp; allowedModels.</span><span class="s12">has</span><span class="s4">(</span><span class="s0">d.model</span><span class="s4">)) </span><span class="s0">{</span>
+<a name="l405"><span class="ln">405  </span></a>        <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">modelSelect</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value = d.model;</span>
+<a name="l406"><span class="ln">406  </span></a>      <span class="s0">} </span><span class="s11">else </span><span class="s0">{</span>
+<a name="l407"><span class="ln">407  </span></a>        <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">modelSelect</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value = &quot;&quot;;</span>
+<a name="l408"><span class="ln">408  </span></a>      <span class="s0">}</span>
+<a name="l409"><span class="ln">409  </span></a>
+<a name="l410"><span class="ln">410  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">d.memory</span><span class="s4">) </span><span class="s0">{</span>
+<a name="l411"><span class="ln">411  </span></a>        <span class="s11">const </span><span class="s0">m = </span><span class="s12">String</span><span class="s4">(</span><span class="s0">d.memory</span><span class="s4">)</span><span class="s0">.</span><span class="s12">toUpperCase</span><span class="s4">()</span><span class="s0">.</span><span class="s12">replace</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">GB</span><span class="s0">&quot;, &quot;</span><span class="s5">G</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l412"><span class="ln">412  </span></a>        <span class="s11">if </span><span class="s4">([</span><span class="s0">&quot;</span><span class="s5">64G</span><span class="s0">&quot;, &quot;</span><span class="s5">128G</span><span class="s0">&quot;, &quot;</span><span class="s5">256G</span><span class="s0">&quot;, &quot;</span><span class="s5">512G</span><span class="s0">&quot;, &quot;</span><span class="s5">1TB</span><span class="s0">&quot;, &quot;</span><span class="s5">2TB</span><span class="s0">&quot;</span><span class="s4">]</span><span class="s0">.</span><span class="s12">includes</span><span class="s4">(</span><span class="s0">m</span><span class="s4">)) </span><span class="s0">{</span>
+<a name="l413"><span class="ln">413  </span></a>          <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">memory</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value = m;</span>
+<a name="l414"><span class="ln">414  </span></a>        <span class="s0">} </span><span class="s11">else </span><span class="s0">{</span>
+<a name="l415"><span class="ln">415  </span></a>          <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">memory</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value = &quot;&quot;;</span>
+<a name="l416"><span class="ln">416  </span></a>        <span class="s0">}</span>
+<a name="l417"><span class="ln">417  </span></a>      <span class="s0">}</span>
+<a name="l418"><span class="ln">418  </span></a>
+<a name="l419"><span class="ln">419  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">d.total_price || d.unit_price</span><span class="s4">) </span><span class="s0">{</span>
+<a name="l420"><span class="ln">420  </span></a>        <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">price</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value = d.total_price || d.unit_price;</span>
+<a name="l421"><span class="ln">421  </span></a>      <span class="s0">}</span>
+<a name="l422"><span class="ln">422  </span></a>
+<a name="l423"><span class="ln">423  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">btnPreview</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.disabled = </span><span class="s7">false</span><span class="s0">;</span>
+<a name="l424"><span class="ln">424  </span></a>      <span class="s12">resetConfirmed</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l425"><span class="ln">425  </span></a>    <span class="s0">}</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l426"><span class="ln">426  </span></a>
+<a name="l427"><span class="ln">427  </span></a>    <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">modelSelect</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.</span><span class="s12">addEventListener</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">change</span><span class="s0">&quot;, resetConfirmed</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l428"><span class="ln">428  </span></a>    <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">memory</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.</span><span class="s12">addEventListener</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">change</span><span class="s0">&quot;, resetConfirmed</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l429"><span class="ln">429  </span></a>
+<a name="l430"><span class="ln">430  </span></a>    <span class="s4">[</span>
+<a name="l431"><span class="ln">431  </span></a>      <span class="s0">&quot;</span><span class="s5">seller_name</span><span class="s0">&quot;,</span>
+<a name="l432"><span class="ln">432  </span></a>      <span class="s0">&quot;</span><span class="s5">seller_id</span><span class="s0">&quot;,</span>
+<a name="l433"><span class="ln">433  </span></a>      <span class="s0">&quot;</span><span class="s5">seller_phone</span><span class="s0">&quot;,</span>
+<a name="l434"><span class="ln">434  </span></a>      <span class="s0">&quot;</span><span class="s5">price</span><span class="s0">&quot;,</span>
+<a name="l435"><span class="ln">435  </span></a>    <span class="s4">]</span><span class="s0">.</span><span class="s12">forEach</span><span class="s4">(</span><span class="s0">(id) </span><span class="s11">=&gt; </span><span class="s0">{</span>
+<a name="l436"><span class="ln">436  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">id</span><span class="s4">)</span><span class="s0">.</span><span class="s12">addEventListener</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">input</span><span class="s0">&quot;, resetConfirmed</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l437"><span class="ln">437  </span></a>    <span class="s0">}</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l438"><span class="ln">438  </span></a>
+<a name="l439"><span class="ln">439  </span></a>    <span class="s11">function </span><span class="s12">isValidPhone</span><span class="s0">(value) {</span>
+<a name="l440"><span class="ln">440  </span></a>      <span class="s11">return </span><span class="s0">/</span><span class="s11">^</span><span class="s13">1</span><span class="s6">[</span><span class="s7">3-9</span><span class="s6">]</span><span class="s7">\d</span><span class="s0">{9}</span><span class="s11">$</span><span class="s0">/.</span><span class="s12">test</span><span class="s4">(</span><span class="s0">value || &quot;&quot;</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l441"><span class="ln">441  </span></a>    <span class="s0">}</span>
+<a name="l442"><span class="ln">442  </span></a>
+<a name="l443"><span class="ln">443  </span></a>    <span class="s11">function </span><span class="s12">isValidChineseId</span><span class="s0">(value) {</span>
+<a name="l444"><span class="ln">444  </span></a>      <span class="s11">const </span><span class="s0">id = </span><span class="s12">String</span><span class="s4">(</span><span class="s0">value || &quot;&quot;</span><span class="s4">)</span><span class="s0">.</span><span class="s12">toUpperCase</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l445"><span class="ln">445  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!/</span><span class="s11">^</span><span class="s7">\d</span><span class="s0">{17}</span><span class="s6">[</span><span class="s7">\dX</span><span class="s6">]</span><span class="s11">$</span><span class="s0">/.</span><span class="s12">test</span><span class="s4">(</span><span class="s0">id</span><span class="s4">)) </span><span class="s11">return </span><span class="s7">false</span><span class="s0">;</span>
+<a name="l446"><span class="ln">446  </span></a>      <span class="s11">const </span><span class="s0">weights = </span><span class="s4">[</span><span class="s8">7</span><span class="s0">, </span><span class="s8">9</span><span class="s0">, </span><span class="s8">10</span><span class="s0">, </span><span class="s8">5</span><span class="s0">, </span><span class="s8">8</span><span class="s0">, </span><span class="s8">4</span><span class="s0">, </span><span class="s8">2</span><span class="s0">, </span><span class="s8">1</span><span class="s0">, </span><span class="s8">6</span><span class="s0">, </span><span class="s8">3</span><span class="s0">, </span><span class="s8">7</span><span class="s0">, </span><span class="s8">9</span><span class="s0">, </span><span class="s8">10</span><span class="s0">, </span><span class="s8">5</span><span class="s0">, </span><span class="s8">8</span><span class="s0">, </span><span class="s8">4</span><span class="s0">, </span><span class="s8">2</span><span class="s4">]</span><span class="s0">;</span>
+<a name="l447"><span class="ln">447  </span></a>      <span class="s11">const </span><span class="s0">checkMap = </span><span class="s4">[</span><span class="s0">&quot;</span><span class="s5">1</span><span class="s0">&quot;, &quot;</span><span class="s5">0</span><span class="s0">&quot;, &quot;</span><span class="s5">X</span><span class="s0">&quot;, &quot;</span><span class="s5">9</span><span class="s0">&quot;, &quot;</span><span class="s5">8</span><span class="s0">&quot;, &quot;</span><span class="s5">7</span><span class="s0">&quot;, &quot;</span><span class="s5">6</span><span class="s0">&quot;, &quot;</span><span class="s5">5</span><span class="s0">&quot;, &quot;</span><span class="s5">4</span><span class="s0">&quot;, &quot;</span><span class="s5">3</span><span class="s0">&quot;, &quot;</span><span class="s5">2</span><span class="s0">&quot;</span><span class="s4">]</span><span class="s0">;</span>
+<a name="l448"><span class="ln">448  </span></a>      <span class="s11">let </span><span class="s0">sum = </span><span class="s8">0</span><span class="s0">;</span>
+<a name="l449"><span class="ln">449  </span></a>      <span class="s11">for </span><span class="s4">(</span><span class="s11">let </span><span class="s0">i = </span><span class="s8">0</span><span class="s0">; i &lt; </span><span class="s8">17</span><span class="s0">; i += </span><span class="s8">1</span><span class="s4">) </span><span class="s0">{</span>
+<a name="l450"><span class="ln">450  </span></a>        <span class="s0">sum += </span><span class="s12">Number</span><span class="s4">(</span><span class="s0">id</span><span class="s4">[</span><span class="s0">i</span><span class="s4">]) </span><span class="s0">* weights</span><span class="s4">[</span><span class="s0">i</span><span class="s4">]</span><span class="s0">;</span>
+<a name="l451"><span class="ln">451  </span></a>      <span class="s0">}</span>
+<a name="l452"><span class="ln">452  </span></a>      <span class="s11">return </span><span class="s0">checkMap</span><span class="s4">[</span><span class="s0">sum % </span><span class="s8">11</span><span class="s4">] </span><span class="s0">=== id</span><span class="s4">[</span><span class="s8">17</span><span class="s4">]</span><span class="s0">;</span>
+<a name="l453"><span class="ln">453  </span></a>    <span class="s0">}</span>
+<a name="l454"><span class="ln">454  </span></a>
+<a name="l455"><span class="ln">455  </span></a>    <span class="s11">function </span><span class="s12">escapeHtml</span><span class="s0">(value) {</span>
+<a name="l456"><span class="ln">456  </span></a>      <span class="s11">return </span><span class="s12">String</span><span class="s4">(</span><span class="s0">value</span><span class="s4">)</span>
+<a name="l457"><span class="ln">457  </span></a>        <span class="s0">.</span><span class="s12">replace</span><span class="s4">(</span><span class="s0">/</span><span class="s13">&amp;</span><span class="s0">/</span><span class="s11">g</span><span class="s0">, &quot;</span><span class="s5">&amp;amp;</span><span class="s0">&quot;</span><span class="s4">)</span>
+<a name="l458"><span class="ln">458  </span></a>        <span class="s0">.</span><span class="s12">replace</span><span class="s4">(</span><span class="s0">/</span><span class="s13">&lt;</span><span class="s0">/</span><span class="s11">g</span><span class="s0">, &quot;</span><span class="s5">&amp;lt;</span><span class="s0">&quot;</span><span class="s4">)</span>
+<a name="l459"><span class="ln">459  </span></a>        <span class="s0">.</span><span class="s12">replace</span><span class="s4">(</span><span class="s0">/</span><span class="s13">&gt;</span><span class="s0">/</span><span class="s11">g</span><span class="s0">, &quot;</span><span class="s5">&amp;gt;</span><span class="s0">&quot;</span><span class="s4">)</span>
+<a name="l460"><span class="ln">460  </span></a>        <span class="s0">.</span><span class="s12">replace</span><span class="s4">(</span><span class="s0">/</span><span class="s9">\&quot;</span><span class="s0">/</span><span class="s11">g</span><span class="s0">, &quot;</span><span class="s5">&amp;quot;</span><span class="s0">&quot;</span><span class="s4">)</span>
+<a name="l461"><span class="ln">461  </span></a>        <span class="s0">.</span><span class="s12">replace</span><span class="s4">(</span><span class="s0">/</span><span class="s13">'</span><span class="s0">/</span><span class="s11">g</span><span class="s0">, &quot;</span><span class="s5">'</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l462"><span class="ln">462  </span></a>    <span class="s0">}</span>
+<a name="l463"><span class="ln">463  </span></a>
+<a name="l464"><span class="ln">464  </span></a>    <span class="s11">function </span><span class="s12">openPreview</span><span class="s0">() {</span>
+<a name="l465"><span class="ln">465  </span></a>      <span class="s11">const </span><span class="s0">data = </span><span class="s12">collectData</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l466"><span class="ln">466  </span></a>      <span class="s11">const </span><span class="s0">html = `</span>
+<a name="l467"><span class="ln">467  </span></a>        <span class="s9">\u51fa\u5356\u4eba\uff1a</span><span class="s0">${</span><span class="s12">escapeHtml</span><span class="s4">(</span><span class="s0">data.seller_name</span><span class="s4">)</span><span class="s0">}</span><span class="s5">&lt;br/&gt; 
+<a name="l468"><span class="ln">468  </span></a>        </span><span class="s9">\u8bc1\u4ef6\u53f7\u7801\uff1a</span><span class="s0">${</span><span class="s12">escapeHtml</span><span class="s4">(</span><span class="s0">data.seller_id</span><span class="s4">)</span><span class="s0">}</span><span class="s5">&lt;br/&gt; 
+<a name="l469"><span class="ln">469  </span></a>        </span><span class="s9">\u624b\u673a\u53f7\u7801\uff1a</span><span class="s0">${</span><span class="s12">escapeHtml</span><span class="s4">(</span><span class="s0">data.seller_phone</span><span class="s4">)</span><span class="s0">}</span><span class="s5">&lt;br/&gt; 
+<a name="l470"><span class="ln">470  </span></a>        </span><span class="s9">\u578b\u53f7\uff1a</span><span class="s0">${</span><span class="s12">escapeHtml</span><span class="s4">(</span><span class="s0">data.model</span><span class="s4">)</span><span class="s0">}</span><span class="s5">&lt;br/&gt; 
+<a name="l471"><span class="ln">471  </span></a>        </span><span class="s9">\u5185\u5b58\u5bb9\u91cf\uff1a</span><span class="s0">${</span><span class="s12">escapeHtml</span><span class="s4">(</span><span class="s0">data.memory</span><span class="s4">)</span><span class="s0">}</span><span class="s5">&lt;br/&gt; 
+<a name="l472"><span class="ln">472  </span></a>        </span><span class="s9">\u5355\u4ef7</span><span class="s5">/</span><span class="s9">\u603b\u4ef7\uff1a</span><span class="s0">${</span><span class="s12">escapeHtml</span><span class="s4">(</span><span class="s0">data.price</span><span class="s4">)</span><span class="s0">} </span><span class="s9">\u5143</span>
+<a name="l473"><span class="ln">473  </span></a>      <span class="s0">`;</span>
+<a name="l474"><span class="ln">474  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">previewBox</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.innerHTML = html;</span>
+<a name="l475"><span class="ln">475  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">mask</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.style.display = &quot;</span><span class="s5">flex</span><span class="s0">&quot;;</span>
+<a name="l476"><span class="ln">476  </span></a>    <span class="s0">}</span>
+<a name="l477"><span class="ln">477  </span></a>
+<a name="l478"><span class="ln">478  </span></a>    <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">btnPreview</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.</span><span class="s12">addEventListener</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">click</span><span class="s0">&quot;, openPreview</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l479"><span class="ln">479  </span></a>    <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">btnCancel</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.</span><span class="s12">addEventListener</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">click</span><span class="s0">&quot;, () </span><span class="s11">=&gt; </span><span class="s0">{</span>
+<a name="l480"><span class="ln">480  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">mask</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.style.display = &quot;</span><span class="s5">none</span><span class="s0">&quot;;</span>
+<a name="l481"><span class="ln">481  </span></a>    <span class="s0">}</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l482"><span class="ln">482  </span></a>
+<a name="l483"><span class="ln">483  </span></a>    <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">btnConfirm</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.</span><span class="s12">addEventListener</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">click</span><span class="s0">&quot;, () </span><span class="s11">=&gt; </span><span class="s0">{</span>
+<a name="l484"><span class="ln">484  </span></a>      <span class="s12">setConfirmed</span><span class="s4">(</span><span class="s7">true</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l485"><span class="ln">485  </span></a>      <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">mask</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.style.display = &quot;</span><span class="s5">none</span><span class="s0">&quot;;</span>
+<a name="l486"><span class="ln">486  </span></a>    <span class="s0">}</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l487"><span class="ln">487  </span></a>
+<a name="l488"><span class="ln">488  </span></a>    <span class="s11">function </span><span class="s12">collectData</span><span class="s0">() {</span>
+<a name="l489"><span class="ln">489  </span></a>      <span class="s11">const </span><span class="s0">price = </span><span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">price</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value.</span><span class="s12">trim</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l490"><span class="ln">490  </span></a>      <span class="s11">return </span><span class="s0">{</span>
+<a name="l491"><span class="ln">491  </span></a>        <span class="s4">seller_name</span><span class="s0">: </span><span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">seller_name</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value.</span><span class="s12">trim</span><span class="s4">()</span><span class="s0">,</span>
+<a name="l492"><span class="ln">492  </span></a>        <span class="s4">seller_id</span><span class="s0">: </span><span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">seller_id</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value.</span><span class="s12">trim</span><span class="s4">()</span><span class="s0">,</span>
+<a name="l493"><span class="ln">493  </span></a>        <span class="s4">seller_phone</span><span class="s0">: </span><span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">seller_phone</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value.</span><span class="s12">trim</span><span class="s4">()</span><span class="s0">,</span>
+<a name="l494"><span class="ln">494  </span></a>        <span class="s4">model</span><span class="s0">: </span><span class="s12">currentModelValue</span><span class="s4">()</span><span class="s0">,</span>
+<a name="l495"><span class="ln">495  </span></a>        <span class="s4">memory</span><span class="s0">: </span><span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">memory</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.value.</span><span class="s12">trim</span><span class="s4">()</span><span class="s0">,</span>
+<a name="l496"><span class="ln">496  </span></a>        <span class="s4">price</span><span class="s0">: price,</span>
+<a name="l497"><span class="ln">497  </span></a>        <span class="s4">unit_price</span><span class="s0">: price,</span>
+<a name="l498"><span class="ln">498  </span></a>        <span class="s4">total_price</span><span class="s0">: price,</span>
+<a name="l499"><span class="ln">499  </span></a>      <span class="s0">};</span>
+<a name="l500"><span class="ln">500  </span></a>    <span class="s0">}</span>
+<a name="l501"><span class="ln">501  </span></a>
+<a name="l502"><span class="ln">502  </span></a>    <span class="s12">$</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">btnGenerate</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.</span><span class="s12">addEventListener</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">click</span><span class="s0">&quot;, </span><span class="s11">async </span><span class="s0">() </span><span class="s11">=&gt; </span><span class="s0">{</span>
+<a name="l503"><span class="ln">503  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!confirmed</span><span class="s4">) </span><span class="s0">{</span>
+<a name="l504"><span class="ln">504  </span></a>        <span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u8bf7\u5148\u70b9\u51fb\u201c\u786e\u5b9a\u5e76\u6838\u5bf9\u201d\u5b8c\u6210\u786e\u8ba4</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l505"><span class="ln">505  </span></a>        <span class="s11">return</span><span class="s0">;</span>
+<a name="l506"><span class="ln">506  </span></a>      <span class="s0">}</span>
+<a name="l507"><span class="ln">507  </span></a>      <span class="s11">const </span><span class="s0">data = </span><span class="s12">collectData</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l508"><span class="ln">508  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!data.seller_name || !data.seller_id || !data.seller_phone</span><span class="s4">) </span><span class="s0">{</span>
+<a name="l509"><span class="ln">509  </span></a>        <span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u51fa\u5356\u4eba</span><span class="s5">/</span><span class="s9">\u8eab\u4efd\u8bc1</span><span class="s5">/</span><span class="s9">\u624b\u673a\u53f7\u4e0d\u80fd\u4e3a\u7a7a</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l510"><span class="ln">510  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!</span><span class="s12">isValidPhone</span><span class="s4">(</span><span class="s0">data.seller_phone</span><span class="s4">)) </span><span class="s0">{ </span><span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u624b\u673a\u53f7\u683c\u5f0f\u4e0d\u6b63\u786e</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">; </span><span class="s11">return</span><span class="s0">; }</span>
+<a name="l511"><span class="ln">511  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!</span><span class="s12">isValidChineseId</span><span class="s4">(</span><span class="s0">data.seller_id</span><span class="s4">)) </span><span class="s0">{ </span><span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u8eab\u4efd\u8bc1\u53f7\u7801\u4e0d\u6b63\u786e</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">; </span><span class="s11">return</span><span class="s0">; }</span>
+<a name="l512"><span class="ln">512  </span></a>        <span class="s11">return</span><span class="s0">;</span>
+<a name="l513"><span class="ln">513  </span></a>      <span class="s0">}</span>
+<a name="l514"><span class="ln">514  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!data.model</span><span class="s4">) </span><span class="s0">{ </span><span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u578b\u53f7\u4e0d\u80fd\u4e3a\u7a7a</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">; </span><span class="s11">return</span><span class="s0">; }</span>
+<a name="l515"><span class="ln">515  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!data.memory</span><span class="s4">) </span><span class="s0">{ </span><span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u5185\u5b58\u5bb9\u91cf\u4e0d\u80fd\u4e3a\u7a7a</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">; </span><span class="s11">return</span><span class="s0">; }</span>
+<a name="l516"><span class="ln">516  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!data.price</span><span class="s4">) </span><span class="s0">{ </span><span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u4ef7\u683c\u4e0d\u80fd\u4e3a\u7a7a</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">; </span><span class="s11">return</span><span class="s0">; }</span>
+<a name="l517"><span class="ln">517  </span></a>      <span class="s11">const </span><span class="s0">priceValue = </span><span class="s12">Number</span><span class="s4">(</span><span class="s0">data.price</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l518"><span class="ln">518  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!Number.</span><span class="s12">isFinite</span><span class="s4">(</span><span class="s0">priceValue</span><span class="s4">) </span><span class="s0">|| priceValue &lt; </span><span class="s8">2000 </span><span class="s0">|| priceValue &gt; </span><span class="s8">20000</span><span class="s4">) </span><span class="s0">{</span>
+<a name="l519"><span class="ln">519  </span></a>        <span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u4ef7\u683c\u5fc5\u987b\u5728</span><span class="s5">2000-20000</span><span class="s9">\u4e4b\u95f4</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l520"><span class="ln">520  </span></a>        <span class="s11">return</span><span class="s0">;</span>
+<a name="l521"><span class="ln">521  </span></a>      <span class="s0">}</span>
+<a name="l522"><span class="ln">522  </span></a>
+<a name="l523"><span class="ln">523  </span></a>      <span class="s11">const </span><span class="s0">r = </span><span class="s11">await </span><span class="s12">fetch</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">/generate</span><span class="s0">&quot;, {</span>
+<a name="l524"><span class="ln">524  </span></a>        <span class="s4">method</span><span class="s0">: &quot;</span><span class="s5">POST</span><span class="s0">&quot;,</span>
+<a name="l525"><span class="ln">525  </span></a>        <span class="s4">headers</span><span class="s0">: { &quot;</span><span class="s5">Content-Type</span><span class="s0">&quot;: &quot;</span><span class="s5">application/json</span><span class="s0">&quot; },</span>
+<a name="l526"><span class="ln">526  </span></a>        <span class="s4">body</span><span class="s0">: JSON.</span><span class="s12">stringify</span><span class="s4">(</span><span class="s0">data</span><span class="s4">)</span>
+<a name="l527"><span class="ln">527  </span></a>      <span class="s0">}</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l528"><span class="ln">528  </span></a>
+<a name="l529"><span class="ln">529  </span></a>      <span class="s11">if </span><span class="s4">(</span><span class="s0">!r.ok</span><span class="s4">) </span><span class="s0">{</span>
+<a name="l530"><span class="ln">530  </span></a>        <span class="s11">const </span><span class="s0">txt = </span><span class="s11">await </span><span class="s0">r.</span><span class="s12">text</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l531"><span class="ln">531  </span></a>        <span class="s12">alert</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s9">\u751f\u6210\u5931\u8d25\uff1a</span><span class="s0">&quot; + txt</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l532"><span class="ln">532  </span></a>        <span class="s11">return</span><span class="s0">;</span>
+<a name="l533"><span class="ln">533  </span></a>      <span class="s0">}</span>
+<a name="l534"><span class="ln">534  </span></a>
+<a name="l535"><span class="ln">535  </span></a>      <span class="s11">const </span><span class="s0">blob = </span><span class="s11">await </span><span class="s0">r.</span><span class="s12">blob</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l536"><span class="ln">536  </span></a>      <span class="s11">const </span><span class="s0">a = document.</span><span class="s12">createElement</span><span class="s4">(</span><span class="s0">&quot;</span><span class="s5">a</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l537"><span class="ln">537  </span></a>      <span class="s0">a.href = URL.</span><span class="s12">createObjectURL</span><span class="s4">(</span><span class="s0">blob</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l538"><span class="ln">538  </span></a>      <span class="s11">const </span><span class="s0">safeName = </span><span class="s4">(</span><span class="s0">data.seller_name || &quot;</span><span class="s9">\u672a\u547d\u540d</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">.</span><span class="s12">replace</span><span class="s4">(</span><span class="s0">/</span><span class="s6">[</span><span class="s9">\\</span><span class="s7">/:*?</span><span class="s9">\&quot;</span><span class="s7">&lt;&gt;|</span><span class="s6">]</span><span class="s0">+/</span><span class="s11">g</span><span class="s0">, &quot;</span><span class="s5">_</span><span class="s0">&quot;</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l539"><span class="ln">539  </span></a>      <span class="s0">a.download = `${safeName}</span><span class="s5">_</span><span class="s9">\u4e70\u5356\u5408\u540c</span><span class="s5">.docx</span><span class="s0">`;</span>
+<a name="l540"><span class="ln">540  </span></a>      <span class="s0">document.body.</span><span class="s12">appendChild</span><span class="s4">(</span><span class="s0">a</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l541"><span class="ln">541  </span></a>      <span class="s0">a.</span><span class="s12">click</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l542"><span class="ln">542  </span></a>      <span class="s0">a.</span><span class="s12">remove</span><span class="s4">()</span><span class="s0">;</span>
+<a name="l543"><span class="ln">543  </span></a>    <span class="s0">}</span><span class="s4">)</span><span class="s0">;</span>
+<a name="l544"><span class="ln">544  </span></a>  <span class="s0">&lt;/</span><span class="s1">script</span><span class="s0">&gt;</span>
+<a name="l545"><span class="ln">545  </span></a><span class="s0">&lt;/</span><span class="s1">body</span><span class="s0">&gt;</span>
+<a name="l546"><span class="ln">546  </span></a><span class="s0">&lt;/</span><span class="s1">html</span><span class="s0">&gt;</span>
+<a name="l547"><span class="ln">547  </span></a></pre>
+</body>
+</html>

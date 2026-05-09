@@ -771,7 +771,7 @@
 
     .contract-parse-actions {
       display: grid;
-      grid-template-columns: 1.7fr 1fr;
+      grid-template-columns: 1fr 1.7fr;
       gap: 10px;
       width: 100%;
     }
@@ -798,6 +798,95 @@
 
     .runaway-controls .field.full {
       grid-column: 1 / -1;
+    }
+
+    .runaway-range-actions {
+      margin-top: 4px;
+    }
+
+    .runaway-table td[data-field] {
+      cursor: pointer;
+    }
+
+    .runaway-table .name-cell {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .runaway-amount-cell {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 2px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .runaway-amount-cell.is-red {
+      color: #e11d48;
+    }
+
+    .runaway-amount-cell.is-green {
+      color: #16a34a;
+    }
+
+    .runaway-amount-cell.is-yellow {
+      color: #ca8a04;
+    }
+
+    .runaway-amount-cell.is-blue {
+      color: #2563eb;
+    }
+
+    .runaway-amount-cell .formula-result {
+      font-weight: 800;
+    }
+
+    .runaway-status-cell {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 2px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .runaway-status-cell.is-red {
+      color: #e11d48;
+    }
+
+    .runaway-status-cell.is-green {
+      color: #16a34a;
+    }
+
+    .runaway-status-cell.is-yellow {
+      color: #ca8a04;
+    }
+
+    body.dark .runaway-amount-cell.is-red {
+      color: #fb7185;
+    }
+
+    body.dark .runaway-amount-cell.is-green {
+      color: #4ade80;
+    }
+
+    body.dark .runaway-amount-cell.is-yellow {
+      color: #facc15;
+    }
+
+    body.dark .runaway-amount-cell.is-blue {
+      color: #7dd3fc;
+    }
+
+    body.dark .runaway-status-cell.is-red {
+      color: #fb7185;
+    }
+
+    body.dark .runaway-status-cell.is-green {
+      color: #4ade80;
+    }
+
+    body.dark .runaway-status-cell.is-yellow {
+      color: #facc15;
     }
 
     button.secondary {
@@ -2396,15 +2485,36 @@
           <span class="nav-label">机型配置</span>
         </button>
 
-        <button data-target="section-runaway" data-label="跑路哥">
-          <span class="nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-              <path d="M6 20c2.5-4 6-6 12-6M7 7.5a3 3 0 1 0 6 0 3 3 0 0 0-6 0z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="M13 11l3 2 3-2M4 20h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span class="nav-label">跑路哥</span>
-        </button>
+        <div class="nav-group">
+          <button class="group-toggle" id="runawayGroupToggle" type="button">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path d="M6 20c2.5-4 6-6 12-6M7 7.5a3 3 0 1 0 6 0 3 3 0 0 0-6 0z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M13 11l3 2 3-2M4 20h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="nav-label">跑路哥</span>
+            <span class="nav-arrow" id="runawayGroupArrow">▸</span>
+          </button>
+          <div class="nav-sub collapsed" id="runawaySubNav">
+            <button data-target="section-runaway" data-label="跑路哥-皖顺" data-runaway-view="wanshun">
+              <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img" focusable="false">
+                  <path d="M4 7h16M4 12h10M4 17h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="nav-label">皖顺</span>
+            </button>
+            <button data-target="section-runaway" data-label="跑路哥-成都" data-runaway-view="chengdu">
+              <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img" focusable="false">
+                  <path d="M4 7h16M4 12h10M4 17h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="nav-label">成都</span>
+            </button>
+          </div>
+        </div>
 
 
         <button data-target="section-contract" data-label="合同生成">
@@ -2490,8 +2600,8 @@
         <div class="card">
           <div class="order-toolbar">
             <div>
-              <div class="card-title">跑路哥</div>
-              <div class="card-subtitle">集中查看所有已跑路订单，后续可继续细化展示。</div>
+              <div class="card-title" id="runawayTitle">跑路哥</div>
+              <div class="card-subtitle" id="runawaySubtitle">数据来自总订单。红/绿/黄金额列可直接点击手动填写或修改。</div>
             </div>
             <div class="order-count" id="runawayCount">共 0 单</div>
           </div>
@@ -2503,9 +2613,14 @@
                 <input id="runaway_filter_start" type="date" />
                 <input id="runaway_filter_end" type="date" />
               </div>
+              <div class="button-row runaway-range-actions">
+                <button class="secondary" id="runaway_range_all" type="button">全部</button>
+                <button class="secondary" id="runaway_range_month" type="button">当月</button>
+                <button class="secondary" id="runaway_range_prev_month" type="button">上月</button>
+              </div>
             </div>
             <div class="field">
-              <label for="runaway_sort">跑路金额排序</label>
+              <label for="runaway_sort">客户还欠排序</label>
               <select id="runaway_sort">
                 <option value="amount_desc">金额从高到低</option>
                 <option value="amount_asc">金额从低到高</option>
@@ -2524,7 +2639,14 @@
               </div>
             </div>
           </div>
-          <div id="runawayList" class="order-list"></div>
+          <div class="table-wrap">
+            <table class="order-table runaway-table">
+              <thead>
+                <tr id="runawayTableHead"></tr>
+              </thead>
+              <tbody id="runawayTableBody"></tbody>
+            </table>
+          </div>
           <div id="runawayEmpty" class="empty-state">暂无已跑路订单。</div>
         </div>
       </section>
@@ -2539,8 +2661,8 @@
               <textarea id="raw" placeholder="例如：姓名、手机号、身份证、机型、容量、价格等"></textarea>
               <div class="hint">点击“识别”后自动填充字段，确认无误再生成。</div>
               <div class="contract-parse-actions">
-                <button class="primary" id="btnParse" type="button">识别</button>
                 <button class="danger" id="btnClearRaw" type="button">清除</button>
+                <button class="primary" id="btnParse" type="button">识别</button>
               </div>
             </div>
 
@@ -2731,6 +2853,7 @@
                     </button>
                   </th>
                   <th>结算价格</th>
+                  <th id="table_runaway_amount_header" style="display:none;">已转客户金额</th>
                   <th>
                     <button class="th-sort" id="table_sort_status" type="button">
                       货物状态
@@ -3612,6 +3735,9 @@
     let tableSortField = "";
     let tableSortDir = "asc";
     let currentTableView = "all";
+    let currentRunawayView = "wanshun";
+    let currentRunawaySortField = "remain";
+    let currentRunawaySortDir = "desc";
     let trashUnlocked = false;
     let currentPage = 1;
     const pageSize = 25;
@@ -4841,6 +4967,53 @@
       return { label: "总表格", source: "" };
     }
 
+    function shouldShowTableRunawayAmountColumn(view = currentTableView, filters = getTableFilterValues()) {
+      return getTableViewMeta(view).source === "成都" || filters.source === "成都";
+    }
+
+    function getRunawayViewMeta(view = currentRunawayView) {
+      if (view === "wanshun") {
+        return {
+          label: "跑路哥-皖顺",
+          source: "皖顺",
+          title: "跑路哥 - 皖顺",
+          subtitle: "只显示皖顺来源的跑路订单。金额按“客户欠款/皖顺退我”两条线显示，金额列支持算式。",
+          settleLabel: "已给皖顺结算金额",
+          takenLabel: "客户已拿金额（跑路金额）",
+          pendingCustomerLabel: "客户还欠金额",
+          wanshunNeedLabel: "皖顺还差我金额",
+          showWanshunNeed: true,
+        };
+      }
+      if (view === "chengdu") {
+        return {
+          label: "跑路哥-成都",
+          source: "成都",
+          title: "跑路哥 - 成都",
+          subtitle: "只显示成都来源的跑路订单。资金线只有“我 ↔ 客户”，金额按“客户已拿 / 客户已退 / 客户还欠 / 状态”显示。",
+          settleLabel: "结算金额",
+          takenLabel: "客户已拿金额（跑路金额）",
+          returnedLabel: "客户已退金额",
+          pendingCustomerLabel: "客户还欠金额",
+          statusLabel: "状态",
+          wanshunNeedLabel: "",
+          showWanshunNeed: false,
+          showChengduFlow: true,
+        };
+      }
+      return {
+        label: "跑路哥",
+        source: "",
+        title: "跑路哥",
+        subtitle: "数据来自总订单。金额按“客户已拿金额（跑路金额）/客户欠款/皖顺退我”两条线显示，金额列支持算式。",
+        settleLabel: "结算金额",
+        takenLabel: "客户已拿金额（跑路金额）",
+        pendingCustomerLabel: "客户还欠金额",
+        wanshunNeedLabel: "",
+        showWanshunNeed: false,
+      };
+    }
+
     function applyTableViewPreset(view = currentTableView) {
       currentTableView = view;
       const meta = getTableViewMeta(view);
@@ -4853,6 +5026,91 @@
       if (subtitle) {
         subtitle.textContent = meta.source ? `当前固定来源：${meta.source}` : "当前显示全部来源订单";
       }
+    }
+
+    function applyRunawayViewPreset(view = currentRunawayView) {
+      currentRunawayView = view;
+      const meta = getRunawayViewMeta(view);
+      if ($("runawayTitle")) $("runawayTitle").textContent = meta.title;
+      if ($("runawaySubtitle")) $("runawaySubtitle").textContent = meta.subtitle;
+      setRunawaySort("remain", "desc", { syncSelect: true, render: false });
+      if (view === "wanshun" || view === "chengdu") {
+        setRunawayNavExpanded(true);
+      }
+    }
+
+    function setRunawayNavExpanded(expanded) {
+      const subNav = $("runawaySubNav");
+      const arrow = $("runawayGroupArrow");
+      if (subNav) subNav.classList.toggle("collapsed", !expanded);
+      if (arrow) arrow.textContent = expanded ? "▾" : "▸";
+    }
+
+    function getRunawaySortSelectValue(field, dir) {
+      if (field === "time") return dir === "asc" ? "time_asc" : "time_desc";
+      return dir === "asc" ? "amount_asc" : "amount_desc";
+    }
+
+    function getRunawayViewSortValue(order, field) {
+      const meta = getRunawayViewMeta();
+      if (field === "time") return Number(order.createdAt) || 0;
+      if (field === "settle") return parsePrice(order.settle_price);
+      if (meta.showChengduFlow) {
+        if (field === "taken") return getRunawayChengduTakenAmount(order);
+        if (field === "returned") return getRunawayChengduReturnedAmount(order);
+        if (field === "remain") return getRunawayChengduRemainAmount(order);
+      } else {
+        if (field === "taken") return getRunawayCustomerTakenAmount(order);
+        if (field === "returned_customer") return getRunawayCustomerReturnedToWanShunAmount(order);
+        if (field === "returned_me") return getRunawayCustomerReturnedToMeAmount(order);
+        if (field === "total_returned") return getRunawayCustomerTotalReturnedAmount(order);
+        if (field === "remain") return getRunawayCustomerRemainAmount(order);
+        if (field === "wanshun_returned") return getRunawayWanshunReturnedToMeAmount(order);
+        if (field === "wanshun_remain") return getRunawayWanshunRemainAmount(order);
+      }
+      return Number(order.createdAt) || 0;
+    }
+
+    function setRunawaySort(field, dir, options = {}) {
+      currentRunawaySortField = field || "remain";
+      currentRunawaySortDir = dir === "asc" ? "asc" : "desc";
+      if (options.syncSelect !== false) {
+        const select = $("runaway_sort");
+        if (select) select.value = getRunawaySortSelectValue(currentRunawaySortField, currentRunawaySortDir);
+      }
+      if (options.render !== false) renderRunaway();
+    }
+
+    function runawaySortHeader(label, field) {
+      const active = currentRunawaySortField === field;
+      const icon = active ? (currentRunawaySortDir === "asc" ? "↑" : "↓") : "↕";
+      return `<th><button type="button" class="th-sort${active ? " active" : ""}" data-runaway-sort-field="${escapeHtml(
+        field
+      )}"><span>${escapeHtml(label)}</span><span class="th-sort-icon">${icon}</span></button></th>`;
+    }
+
+    function isRunawayChengduView(view = currentRunawayView) {
+      return view === "chengdu";
+    }
+
+    function getRunawayChengduTakenAmount(order) {
+      const parsed = parseRunawayAmountFormula(order?.runaway_amount);
+      if (!parsed.hasValue) return 0;
+      return parsed.value;
+    }
+
+    function getRunawayChengduReturnedAmount(order) {
+      const parsed = parseRunawayAmountFormula(order?.runaway_returned_amount);
+      if (!parsed.hasValue) return 0;
+      return parsed.value;
+    }
+
+    function getRunawayChengduRemainAmount(order) {
+      return getRunawayChengduTakenAmount(order) - getRunawayChengduReturnedAmount(order);
+    }
+
+    function getRunawayChengduStatus(order) {
+      return getRunawayChengduRemainAmount(order) > 0 ? "追回中" : "已结清";
     }
 
     function applyOrderFilter(list, options = {}) {
@@ -5251,6 +5509,7 @@
         return (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0);
       });
       const viewMeta = getTableViewMeta();
+      const showRunawayAmount = viewMeta.source === "成都" || filters.source === "成都";
       let tableTitle = `${viewMeta.label}（全部订单）`;
       if (filters.start || filters.end) {
         const startLabel = filters.start ? formatOrderDate(filters.start) : "最早";
@@ -5260,12 +5519,17 @@
       $("orderTableTitle").textContent = tableTitle;
       $("tableOrderCount").textContent = `共${visibleOrders.length}单`;
       $("orderTableEmpty").style.display = visibleOrders.length ? "none" : "block";
+      const runawayAmountHeader = $("table_runaway_amount_header");
+      if (runawayAmountHeader) {
+        runawayAmountHeader.style.display = showRunawayAmount ? "" : "none";
+      }
       body.innerHTML = visibleOrders
         .map((order) => {
           const modelText = [order.model, order.memory, order.color].filter(Boolean).join(" ").trim() || "--";
           const actualText = String(order.actual_model_color || "").trim() || "--";
           const settlePrice = formatPrice(order.settle_price);
           const settlePriceText = settlePrice ? `${settlePrice} 元` : "--";
+          const runawayAmountText = formatRunawayAmountHtml(order.runaway_amount, "is-green", "未填写");
           const activation = resolveActivation(order);
           const settlementLabel =
             order.status === "refunded" ? "已退款" : orderSettlementMap[order.settlement] || order.settlement || "--";
@@ -5282,6 +5546,7 @@
               <td data-field="actual_model_color">${escapeHtml(actualText)}</td>
               <td data-field="activation"><span class="table-chip activation-${activation.className}">${escapeHtml(activation.label)}</span></td>
               <td data-field="settle_price">${escapeHtml(settlePriceText)}</td>
+              <td data-field="runaway_amount" style="display:${showRunawayAmount ? "table-cell" : "none"};">${runawayAmountText}</td>
               <td data-field="status"><span class="table-chip status-${statusClass}">${getStatusLabelHtml(order)}</span></td>
               <td data-field="sf_no">${escapeHtml(sfText)}</td>
               <td data-field="remark">${formatRemarkText(order.remark || "")}</td>
@@ -5375,11 +5640,18 @@
         actual_model_color: "实际入库型号",
         source: "订单来源",
         settle_price: "结算价格",
+        runaway_amount: "客户已拿金额（跑路金额）",
+        runaway_returned_amount: "客户退皖顺金额",
+        runaway_returned_to_me_amount: "客户退我金额",
+        runaway_wanshun_returned_amount: "皖顺已退我金额",
         activation: "激活状态",
         settlement: "结算状态",
         status: "货物状态",
         sf_no: "顺丰单号",
       };
+      if (isRunawayChengduView()) {
+        titleMap.runaway_returned_amount = "客户已退金额";
+      }
       const titleLabel = titleMap[field] || field;
       const orderNo = String(order?.id || "").trim();
       const prefix = orderNo ? `订单${orderNo} · ` : "";
@@ -5387,6 +5659,7 @@
       const modelText = [order?.model, order?.memory, order?.color].filter(Boolean).join(" ").trim() || "未填写机型";
       const statusText = orderStatusMap[order?.status] || order?.status || "未设置状态";
       $("fieldEditTitle").textContent = `编辑：${prefix}${titleLabel}（${nameText} · ${modelText} · ${statusText}）`;
+      $("fieldEditHint").textContent = "只修改当前字段。";
       const formatFieldValue = (value) => {
         const text = String(value ?? "").trim();
         return text ? text : "空";
@@ -5589,6 +5862,12 @@
         return;
       }
 
+      const formulaFields = new Set([
+        "runaway_amount",
+        "runaway_returned_amount",
+        "runaway_returned_to_me_amount",
+        "runaway_wanshun_returned_amount",
+      ]);
       const input = document.createElement("input");
       let control = input;
       if (field === "remark") {
@@ -5609,6 +5888,18 @@
         input.value = order[field] || "";
       }
       content.appendChild(control);
+      if (formulaFields.has(field)) {
+        $("fieldEditClear").style.display = "inline-flex";
+        $("fieldEditClear").onclick = () => {
+          if (!confirmChange(order[field] || "", "")) return;
+          updateOrderById(order.id, { [field]: "" });
+          closeModal("fieldEditModal");
+        };
+        $("fieldEditHint").textContent =
+          "支持直接填数字，也支持填写算式，例如 3000+6000=9000。系统按最终结果参与统计与合计。";
+      } else {
+        $("fieldEditHint").textContent = "只修改当前字段。";
+      }
       $("fieldEditSave").onclick = () => {
         const value = control.value.trim();
         if (field === "settle_price") {
@@ -5619,6 +5910,14 @@
           }
           if (!confirmChange(order.settle_price || "", value)) return;
           updateOrderById(order.id, { settle_price: value });
+        } else if (formulaFields.has(field)) {
+          const parsed = parseRunawayAmountFormula(value);
+          if (value && !parsed.valid) {
+            alert("金额格式不正确，请填写数字，或使用 3000+6000=9000 这种写法");
+            return;
+          }
+          if (!confirmChange(order[field] || "", value)) return;
+          updateOrderById(order.id, { [field]: value });
         } else {
           const changes = {};
           changes[field] = value;
@@ -5779,8 +6078,9 @@
     }
 
     function getRunawayOrders() {
+      const source = getRunawayViewMeta().source;
       return orders
-        .filter((order) => order.status === "runaway")
+        .filter((order) => order.status === "runaway" && (!source || order.source === source))
         .sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0));
     }
 
@@ -5788,6 +6088,18 @@
       const start = parseDateInput(readValue("runaway_filter_start"));
       const end = parseDateInput(readValue("runaway_filter_end"));
       const sort = readValue("runaway_sort") || "amount_desc";
+      const sortMap =
+        sort === "time_asc"
+          ? { field: "time", dir: "asc" }
+          : sort === "time_desc"
+          ? { field: "time", dir: "desc" }
+          : sort === "amount_asc"
+          ? { field: "remain", dir: "asc" }
+          : { field: "remain", dir: "desc" };
+      if (currentRunawaySortField === "remain" || currentRunawaySortField === "time") {
+        currentRunawaySortField = sortMap.field;
+        currentRunawaySortDir = sortMap.dir;
+      }
       const list = getRunawayOrders().filter((order) => {
         const time = Number(order.createdAt) || 0;
         if (start && time < start) return false;
@@ -5798,83 +6110,394 @@
         return true;
       });
       list.sort((a, b) => {
-        const amountDiff = parsePrice(a.buy_price) - parsePrice(b.buy_price);
+        const valueA = getRunawayViewSortValue(a, currentRunawaySortField);
+        const valueB = getRunawayViewSortValue(b, currentRunawaySortField);
+        const valueDiff = valueA - valueB;
         const timeDiff = (Number(a.createdAt) || 0) - (Number(b.createdAt) || 0);
-        if (sort === "amount_asc") return amountDiff || timeDiff;
-        if (sort === "amount_desc") return -amountDiff || -timeDiff;
-        if (sort === "time_asc") return timeDiff || amountDiff;
-        return -timeDiff || -amountDiff;
+        const dir = currentRunawaySortDir === "asc" ? 1 : -1;
+        if (valueDiff) return dir * valueDiff;
+        return currentRunawaySortDir === "asc" ? timeDiff : -timeDiff;
       });
       return list;
     }
 
-    function runawayCardHtml(order) {
-      const runawayAmount = formatPrice(order.buy_price) || "0";
-      const paidAmount = formatPrice(order.settle_price) || "0";
+    function parseRunawayAmountFormula(value) {
+      const raw = String(value ?? "").trim();
+      if (!raw) return { raw: "", value: 0, valid: true, hasValue: false, mode: "empty" };
+      const compact = raw.replace(/,/g, "").replace(/\s+/g, "");
+      const plainNumberPattern = /^-?\d+(?:\.\d+)?$/;
+      if (compact.includes("=")) {
+        const resultRaw = compact.split("=").pop();
+        const result = Number(resultRaw);
+        if (!Number.isFinite(result)) {
+          return { raw, value: 0, valid: false, hasValue: true, mode: "equation" };
+        }
+        return { raw, value: result, valid: true, hasValue: true, mode: "equation" };
+      }
+      if (plainNumberPattern.test(compact)) {
+        return { raw, value: Number(compact), valid: true, hasValue: true, mode: "number" };
+      }
+      if (/^[\d.+-]+$/.test(compact)) {
+        const tokens = compact.match(/[+-]?\d+(?:\.\d+)?/g) || [];
+        if (tokens.length && tokens.join("") === compact) {
+          const total = tokens.reduce((sum, token) => sum + Number(token), 0);
+          return { raw, value: total, valid: true, hasValue: true, mode: "expression" };
+        }
+      }
+      return { raw, value: 0, valid: false, hasValue: true, mode: "invalid" };
+    }
+
+    function getRunawayAmountValue(order, field) {
+      return parseRunawayAmountFormula(order?.[field]).value;
+    }
+
+    function getRunawayCustomerTakenAmount(order) {
+      const parsed = parseRunawayAmountFormula(order?.runaway_amount);
+      if (!parsed.hasValue) return null;
+      return parsed.value;
+    }
+
+    // 兼容旧数据：历史的 runaway_returned_amount 视为“客户退皖顺”
+    function getRunawayCustomerReturnedToWanShunAmount(order) {
+      const parsed = parseRunawayAmountFormula(order?.runaway_returned_amount);
+      // 需求：客户退皖顺默认为 0
+      if (!parsed.hasValue) return 0;
+      return parsed.value;
+    }
+
+    // 新增字段（仅写入订单 JSON，不改 SQLite 表结构）：客户直接退给我的金额
+    function getRunawayCustomerReturnedToMeAmount(order) {
+      const parsed = parseRunawayAmountFormula(order?.runaway_returned_to_me_amount);
+      // 需求：客户退我默认为 0
+      if (!parsed.hasValue) return 0;
+      return parsed.value;
+    }
+
+    function getRunawayWanshunReturnedToMeAmount(order) {
+      const parsed = parseRunawayAmountFormula(order?.runaway_wanshun_returned_amount);
+      if (!parsed.hasValue) return 0;
+      return parsed.value;
+    }
+
+    function formatRunawayAmountHtml(value, toneClass, emptyText = "--") {
+      const parsed = parseRunawayAmountFormula(value);
+      if (!parsed.hasValue) {
+        return `<span class="runaway-amount-cell ${toneClass}">${escapeHtml(emptyText)}</span>`;
+      }
+      if (!parsed.valid) {
+        return `<span class="runaway-amount-cell ${toneClass}">${escapeHtml(parsed.raw || emptyText)}</span>`;
+      }
+      if (parsed.mode === "equation") {
+        const eqIndex = parsed.raw.lastIndexOf("=");
+        const left = parsed.raw.slice(0, eqIndex + 1);
+        const right = parsed.raw.slice(eqIndex + 1).trim() || formatPrice(parsed.value);
+        return `<span class="runaway-amount-cell ${toneClass}">${escapeHtml(left)}<span class="formula-result">${escapeHtml(right)}</span> 元</span>`;
+      }
+      if (parsed.mode === "expression") {
+        return `<span class="runaway-amount-cell ${toneClass}">${escapeHtml(parsed.raw)}=<span class="formula-result">${escapeHtml(formatPrice(parsed.value))}</span> 元</span>`;
+      }
+      return `<span class="runaway-amount-cell ${toneClass}">${escapeHtml(parsed.raw)} 元</span>`;
+    }
+
+    function formatRunawayFormulaAmount(leftText, resultValue, toneClass, emptyText = "--") {
+      if (!Number.isFinite(resultValue)) {
+        return `<span class="runaway-amount-cell ${toneClass}">${escapeHtml(emptyText)}</span>`;
+      }
+      return `<span class="runaway-amount-cell ${toneClass}">${escapeHtml(leftText)}<span class="formula-result">${escapeHtml(formatPrice(resultValue))}</span> 元</span>`;
+    }
+
+    // 客户总已退 = 客户退皖顺 + 客户退我
+    function getRunawayCustomerTotalReturnedAmount(order) {
+      const toWanShun = getRunawayCustomerReturnedToWanShunAmount(order);
+      const toMe = getRunawayCustomerReturnedToMeAmount(order);
+      if (!Number.isFinite(toWanShun) && !Number.isFinite(toMe)) return null;
+      return (Number.isFinite(toWanShun) ? toWanShun : 0) + (Number.isFinite(toMe) ? toMe : 0);
+    }
+
+    // 客户还欠 = 客户已拿 - 客户总已退
+    function getRunawayCustomerRemainAmount(order) {
+      const taken = getRunawayCustomerTakenAmount(order);
+      const totalReturned = getRunawayCustomerTotalReturnedAmount(order);
+      if (!Number.isFinite(taken) || !Number.isFinite(totalReturned)) return null;
+      return taken - totalReturned;
+    }
+
+    // 皖顺还差我 = 客户退皖顺 - 皖顺已退我
+    function getRunawayWanshunRemainAmount(order) {
+      const returnedToWanShun = getRunawayCustomerReturnedToWanShunAmount(order);
+      const returned = getRunawayWanshunReturnedToMeAmount(order);
+      if (!Number.isFinite(returnedToWanShun) || !Number.isFinite(returned)) return null;
+      return returnedToWanShun - returned;
+    }
+
+    function renderRunawayTableHead(meta) {
+      if (!$("runawayTableHead")) return;
+      if (meta.showChengduFlow) {
+        $("runawayTableHead").innerHTML = [
+          runawaySortHeader("订单时间", "time"),
+          "<th>订单来源</th>",
+          "<th>客户姓名</th>",
+          "<th>手机型号</th>",
+          runawaySortHeader(meta.takenLabel, "taken"),
+          runawaySortHeader(meta.returnedLabel, "returned"),
+          runawaySortHeader(meta.pendingCustomerLabel, "remain"),
+          "<th>状态</th>",
+          "<th>备注</th>",
+        ].join("");
+        return;
+      }
+      const columns = meta.showWanshunNeed
+        ? [
+            runawaySortHeader("订单时间", "time"),
+            "<th>订单来源</th>",
+            "<th>客户姓名</th>",
+            "<th>手机型号</th>",
+            runawaySortHeader(meta.settleLabel, "settle"),
+            runawaySortHeader(meta.takenLabel, "taken"),
+            runawaySortHeader("客户退皖顺", "returned_customer"),
+            runawaySortHeader("客户退我", "returned_me"),
+            runawaySortHeader("客户总已退（自动计算）", "total_returned"),
+            runawaySortHeader("客户还欠（自动计算）", "remain"),
+            runawaySortHeader("皖顺已退我", "wanshun_returned"),
+            runawaySortHeader("皖顺还差我（自动计算）", "wanshun_remain"),
+            "<th>备注</th>",
+          ]
+        : [
+            runawaySortHeader("订单时间", "time"),
+            "<th>订单来源</th>",
+            "<th>客户姓名</th>",
+            "<th>手机型号</th>",
+            runawaySortHeader(meta.settleLabel, "settle"),
+            runawaySortHeader(meta.takenLabel, "taken"),
+            runawaySortHeader("客户退皖顺", "returned_customer"),
+            runawaySortHeader("客户退我", "returned_me"),
+            runawaySortHeader("客户总已退（自动计算）", "total_returned"),
+            runawaySortHeader("客户还欠（自动计算）", "remain"),
+            "<th>备注</th>",
+          ];
+      $("runawayTableHead").innerHTML = columns.join("");
+    }
+
+    function runawayRowHtml(order) {
+      const meta = getRunawayViewMeta();
       const device = [order.model, order.memory, order.color].filter(Boolean).join(" ") || "未填写手机";
+      const sourceText = String(order.source || "未填写");
+      const settleAmount = formatPrice(order.settle_price) || "--";
+      if (meta.showChengduFlow) {
+        const remainAmount = getRunawayChengduRemainAmount(order);
+        const statusLabel = getRunawayChengduStatus(order);
+        const remarkText = formatRemarkPlain(order.remark || "") || "--";
+        const remainHtml =
+          remainAmount > 0
+            ? `<span class="runaway-amount-cell is-yellow"><span class="formula-result">${escapeHtml(formatPrice(remainAmount))}</span> 元</span>`
+            : `<span class="runaway-amount-cell is-green">已结清</span>`;
+        const statusHtml =
+          statusLabel === "追回中"
+            ? `<span class="runaway-status-cell is-yellow">追回中</span>`
+            : `<span class="runaway-status-cell is-green">已结清</span>`;
+        return `
+        <tr data-id="${escapeHtml(order.id || "")}">
+          <td>${escapeHtml(formatDateValue(order.createdAt))}</td>
+          <td>${escapeHtml(sourceText)}</td>
+          <td class="name-cell">${escapeHtml(order.seller_name || "未填写姓名")}</td>
+          <td>${escapeHtml(device)}</td>
+          <td data-field="runaway_amount">${formatRunawayAmountHtml(order.runaway_amount, "is-red", "0")}</td>
+          <td data-field="runaway_returned_amount">${formatRunawayAmountHtml(order.runaway_returned_amount, "is-green", "0")}</td>
+          <td>${remainHtml}</td>
+          <td>${statusHtml}</td>
+          <td data-field="remark">${escapeHtml(remarkText)}</td>
+        </tr>
+      `;
+      }
+      const customerTotalReturned = getRunawayCustomerTotalReturnedAmount(order);
+      const customerRemain = getRunawayCustomerRemainAmount(order);
+      const wanshunReturned = getRunawayWanshunReturnedToMeAmount(order);
+      const wanshunRemain = getRunawayWanshunRemainAmount(order);
+
+      const formatClearing = (value, toneClass) => {
+        if (value === null || value === undefined) return `<span class="runaway-amount-cell ${toneClass}">未填写</span>`;
+        if (!Number.isFinite(value)) return `<span class="runaway-amount-cell ${toneClass}">未填写</span>`;
+        if (value <= 0) return `<span class="runaway-amount-cell ${toneClass}">已结清</span>`;
+        return `<span class="runaway-amount-cell ${toneClass}"><span class="formula-result">${escapeHtml(
+          formatPrice(value)
+        )}</span> 元</span>`;
+      };
+
+      const formatZeroAsNumber = (value, toneClass) => {
+        if (value === null || value === undefined) return `<span class="runaway-amount-cell ${toneClass}">未填写</span>`;
+        if (!Number.isFinite(value)) return `<span class="runaway-amount-cell ${toneClass}">未填写</span>`;
+        if (value === 0) return `<span class="runaway-amount-cell ${toneClass}">0</span>`;
+        return `<span class="runaway-amount-cell ${toneClass}"><span class="formula-result">${escapeHtml(
+          formatPrice(value)
+        )}</span> 元</span>`;
+      };
+
+      const customerTotalReturnedHtml =
+        customerTotalReturned === null
+          ? `<span class="runaway-amount-cell is-green">未填写</span>`
+          : formatZeroAsNumber(customerTotalReturned, "is-green");
+
+      const customerRemainHtml =
+        customerRemain === null ? `<span class="runaway-amount-cell is-yellow">未填写</span>` : formatClearing(customerRemain, "is-yellow");
+      const remarkText = formatRemarkPlain(order.remark || "") || "--";
+
+      const wanshunReturnedHtml =
+        meta.showWanshunNeed
+          ? formatRunawayAmountHtml(order.runaway_wanshun_returned_amount, "is-green", "0").replace(">--<", ">0<")
+          : "";
+
+      const wanshunRemainHtml =
+        meta.showWanshunNeed
+          ? (wanshunRemain === null ? `<span class="runaway-amount-cell is-blue">未填写</span>` : formatClearing(wanshunRemain, "is-blue"))
+          : "";
       return `
-        <div class="order-card status-runaway">
-          <div class="order-main">
-            <div class="order-header">
-              <div>
-                <div class="order-name">${escapeHtml(order.seller_name || "未填写姓名")}</div>
-                <div class="order-meta">${escapeHtml(device)}</div>
-                <div class="order-submeta">订单时间：${escapeHtml(formatDateValue(order.createdAt))}</div>
-              </div>
-              <div class="order-summary">
-                <div class="order-amount"><span>跑路金额</span><span class="order-amount-value">${escapeHtml(runawayAmount)} 元</span></div>
-                <div class="order-badges"><span class="order-badge status-runaway">已跑路</span></div>
-              </div>
-            </div>
-            <div class="order-grid">
-              <div><span>已打款：</span>${escapeHtml(paidAmount)} 元</div>
-              <div><span>身份证：</span>${escapeHtml(order.seller_id || "未填写")}</div>
-              <div><span>手机号：</span>${escapeHtml(order.seller_phone || "未填写")}</div>
-              <div><span>地区/来源：</span>${escapeHtml(order.source || "未填写")}</div>
-              ${order.remark ? `<div class="order-remark">备注：${formatRemarkText(order.remark)}</div>` : ""}
-            </div>
-          </div>
-        </div>
+        <tr data-id="${escapeHtml(order.id || "")}">
+          <td>${escapeHtml(formatDateValue(order.createdAt))}</td>
+          <td>${escapeHtml(sourceText)}</td>
+          <td class="name-cell">${escapeHtml(order.seller_name || "未填写姓名")}</td>
+          <td>${escapeHtml(device)}</td>
+          <td data-field="settle_price">${escapeHtml(settleAmount)} 元</td>
+          <td data-field="runaway_amount">${formatRunawayAmountHtml(order.runaway_amount, "is-red", "未填写")}</td>
+          <td data-field="runaway_returned_amount">${formatRunawayAmountHtml(order.runaway_returned_amount, "is-green", "0")}</td>
+          <td data-field="runaway_returned_to_me_amount">${formatRunawayAmountHtml(order.runaway_returned_to_me_amount, "is-green", "0")}</td>
+          <td>${customerTotalReturnedHtml}</td>
+          <td>${customerRemainHtml}</td>
+          ${meta.showWanshunNeed ? `<td data-field="runaway_wanshun_returned_amount">${wanshunReturnedHtml}</td>` : ""}
+          ${meta.showWanshunNeed ? `<td>${wanshunRemainHtml}</td>` : ""}
+          <td data-field="remark">${escapeHtml(remarkText)}</td>
+        </tr>
       `;
     }
 
     function renderRunaway() {
+      const meta = getRunawayViewMeta();
       const list = getRunawayFilteredOrders();
-      const total = list.reduce((sum, order) => sum + parsePrice(order.buy_price), 0);
-      const paid = list.reduce((sum, order) => sum + parsePrice(order.settle_price), 0);
+      const settled = list.reduce((sum, order) => sum + parsePrice(order.settle_price), 0);
+      const customerTaken = meta.showChengduFlow
+        ? list.reduce((sum, order) => sum + getRunawayChengduTakenAmount(order), 0)
+        : list.reduce((sum, order) => {
+            const v = getRunawayCustomerTakenAmount(order);
+            return Number.isFinite(v) ? sum + v : sum;
+          }, 0);
+      const customerTotalReturned = meta.showChengduFlow
+        ? list.reduce((sum, order) => sum + getRunawayChengduReturnedAmount(order), 0)
+        : list.reduce((sum, order) => {
+            const v = getRunawayCustomerTotalReturnedAmount(order);
+            return Number.isFinite(v) ? sum + v : sum;
+          }, 0);
+      const customerRemainTotal = meta.showChengduFlow
+        ? list.reduce((sum, order) => sum + getRunawayChengduRemainAmount(order), 0)
+        : list.reduce((sum, order) => {
+            const v = getRunawayCustomerRemainAmount(order);
+            return Number.isFinite(v) ? sum + v : sum;
+          }, 0);
+      const wanshunReturnedTotal = meta.showChengduFlow
+        ? 0
+        : list.reduce((sum, order) => {
+            const v = getRunawayWanshunReturnedToMeAmount(order);
+            return Number.isFinite(v) ? sum + v : sum;
+          }, 0);
+      const wanshunRemainTotal = meta.showChengduFlow
+        ? 0
+        : list.reduce((sum, order) => {
+            const v = getRunawayWanshunRemainAmount(order);
+            return Number.isFinite(v) ? sum + v : sum;
+          }, 0);
       if ($("runawayCount")) $("runawayCount").textContent = `共 ${list.length} 单`;
+      renderRunawayTableHead(meta);
       if ($("runawaySummary")) {
-        $("runawaySummary").innerHTML = `跑路金额 <span class="stat-number">${formatPrice(total)}</span> 元，已打款 <span class="stat-number stored">${formatPrice(paid)}</span> 元`;
+        const summaryBits = meta.showChengduFlow
+          ? [
+              `跑路订单数 <span class="stat-number">${list.length}</span> 单`,
+              `${meta.takenLabel}总额 <span class="stat-number">${formatPrice(customerTaken)}</span> 元`,
+              `客户已退总额 <span class="stat-number stored">${formatPrice(customerTotalReturned)}</span> 元`,
+              `客户还欠总额 <span class="stat-number">${formatPrice(customerRemainTotal)}</span> 元`,
+              `追回中 <span class="stat-number">${list.filter((order) => getRunawayChengduRemainAmount(order) > 0).length}</span> 单`,
+              `已结清 <span class="stat-number stored">${list.filter((order) => getRunawayChengduRemainAmount(order) <= 0).length}</span> 单`,
+            ]
+          : [
+              `跑路订单数 <span class="stat-number">${list.length}</span> 单`,
+              `结算总额 <span class="stat-number stored">${formatPrice(settled)}</span> 元`,
+              `${meta.takenLabel}总额 <span class="stat-number">${formatPrice(customerTaken)}</span> 元`,
+              `客户总已退总额 <span class="stat-number stored">${formatPrice(customerTotalReturned)}</span> 元`,
+              `客户还欠总额 <span class="stat-number">${formatPrice(customerRemainTotal)}</span> 元`,
+            ];
+        if (!meta.showChengduFlow) {
+          if (meta.showWanshunNeed) {
+            summaryBits.push(`皖顺已退我总额 <span class="stat-number stored">${formatPrice(wanshunReturnedTotal)}</span> 元`);
+            summaryBits.push(`皖顺还差我总额 <span class="stat-number stored">${formatPrice(wanshunRemainTotal)}</span> 元`);
+          } else {
+            summaryBits.push(`皖顺已退我总额 <span class="stat-number stored">--</span>`);
+            summaryBits.push(`皖顺还差我总额 <span class="stat-number stored">--</span>`);
+          }
+        }
+        $("runawaySummary").innerHTML = summaryBits.join("，");
       }
-      if ($("runawayList")) {
-        $("runawayList").innerHTML = list.map(runawayCardHtml).join("");
+      if ($("runawayTableBody")) {
+        $("runawayTableBody").innerHTML = list.map(runawayRowHtml).join("");
       }
       if ($("runawayEmpty")) $("runawayEmpty").style.display = list.length ? "none" : "block";
-      if ($("runawayHomeSummary")) {
-        const all = getRunawayOrders();
-        const homeTotal = all.reduce((sum, order) => sum + parsePrice(order.buy_price), 0);
-        const homePaid = all.reduce((sum, order) => sum + parsePrice(order.settle_price), 0);
-        $("runawayHomeSummary").textContent = `共 ${all.length} 单，跑路金额 ${formatPrice(homeTotal)} 元，已打款 ${formatPrice(homePaid)} 元`;
-      }
-      if ($("runawayHomeList")) {
-        $("runawayHomeList").innerHTML = getRunawayOrders().slice(0, 3).map(runawayCardHtml).join("");
-      }
-      if ($("runawayHomeEmpty")) $("runawayHomeEmpty").style.display = getRunawayOrders().length ? "none" : "block";
     }
 
     function exportRunawayFiltered() {
+      const meta = getRunawayViewMeta();
       const list = getRunawayFilteredOrders();
       if (!list.length) {
         alert("当前筛选没有可导出的跑路订单");
         return;
       }
-      const rows = list.map((order) => mapOrderForExportTable(order));
+      const rows = list.map((order) => mapRunawayOrderForExport(order));
+      const columns = meta.showChengduFlow
+        ? [
+            { key: "order_time", label: "订单时间" },
+            { key: "source", label: "订单来源" },
+            { key: "seller_name", label: "客户姓名" },
+            { key: "model_bundle", label: "手机型号" },
+            { key: "runaway_amount", label: "客户已拿金额（跑路金额）" },
+            { key: "runaway_returned_amount", label: "客户已退金额" },
+            { key: "runaway_remain_amount", label: "客户还欠金额" },
+            { key: "status", label: "状态" },
+            { key: "remark", label: "备注" },
+          ]
+        : meta.showWanshunNeed
+        ? [
+            { key: "order_time", label: "订单时间" },
+            { key: "seller_name", label: "客户姓名" },
+            { key: "model_bundle", label: "手机型号" },
+            { key: "settle_price", label: meta.settleLabel },
+            { key: "runaway_amount", label: meta.takenLabel },
+            { key: "runaway_returned_amount", label: "客户退皖顺" },
+            { key: "runaway_returned_to_me_amount", label: "客户退我" },
+            { key: "runaway_total_returned_amount", label: "客户总已退" },
+            { key: "runaway_remain_amount", label: "客户还欠" },
+            { key: "runaway_wanshun_returned_amount", label: "皖顺已退我" },
+            { key: "runaway_wanshun_remain_amount", label: "皖顺还差我" },
+            { key: "seller_id", label: "身份证" },
+            { key: "seller_phone", label: "手机号" },
+            { key: "source", label: "订单来源" },
+            { key: "remark", label: "备注" },
+          ]
+        : [
+            { key: "order_time", label: "订单时间" },
+            { key: "seller_name", label: "客户姓名" },
+            { key: "model_bundle", label: "手机型号" },
+            { key: "settle_price", label: meta.settleLabel },
+            { key: "runaway_amount", label: meta.takenLabel },
+            { key: "runaway_returned_amount", label: "客户退皖顺" },
+            { key: "runaway_returned_to_me_amount", label: "客户退我" },
+            { key: "runaway_total_returned_amount", label: "客户总已退" },
+            { key: "runaway_remain_amount", label: "客户还欠" },
+            { key: "seller_id", label: "身份证" },
+            { key: "seller_phone", label: "手机号" },
+            { key: "source", label: "订单来源" },
+            { key: "remark", label: "备注" },
+          ];
       const format = readValue("runaway_export_format") || "xlsx";
       if (format === "csv") {
-        downloadCsv(`跑路哥_${batchExportFilename("filtered", ".csv")}`, toCsvWithLabels(rows, exportColumns));
+        downloadCsv(`跑路哥_${batchExportFilename("filtered", ".csv")}`, toCsvWithLabels(rows, columns));
         return;
       }
-      const workbook = buildExportWorkbook(rows, exportColumns, "跑路哥");
+      const workbook = buildExportWorkbook(rows, columns, "跑路哥");
       if (!workbook) return;
       downloadXlsx(`跑路哥_${batchExportFilename("filtered", ".xlsx")}`, workbook);
     }
@@ -6040,6 +6663,14 @@
       { key: "remark", label: "补差/备注" },
       { key: "settlement", label: "结算状态" },
     ];
+    function getTableExportColumns(includeRunawayAmount) {
+      if (!includeRunawayAmount) return exportColumns;
+      return [
+        ...exportColumns.slice(0, 8),
+        { key: "runaway_amount", label: "已转客户金额" },
+        ...exportColumns.slice(8),
+      ];
+    }
     const csvRequiredKeys = csvColumns.filter((col) => col.key !== "remark").map((col) => col.key);
     const csvLabelToKey = csvColumns.reduce((acc, col) => {
       acc[col.label] = col.key;
@@ -6106,6 +6737,74 @@
         sf_no: String(order.sf_no || "").trim() || "--",
         remark: formatRemarkPlain(order.remark || ""),
         settlement: settlementLabel,
+      };
+    }
+
+    function mapOrderForTableExport(order, includeRunawayAmount) {
+      const mapped = mapOrderForExportTable(order);
+      if (!includeRunawayAmount) return mapped;
+      return {
+        ...mapped,
+        runaway_amount: String(order.runaway_amount || "").trim() || "未填写",
+      };
+    }
+
+    function mapRunawayOrderForExport(order) {
+      const meta = getRunawayViewMeta();
+      const modelText = [order.model, order.memory, order.color].filter(Boolean).join(" ").trim() || "--";
+        if (meta.showChengduFlow) {
+        const taken = getRunawayChengduTakenAmount(order);
+        const returned = getRunawayChengduReturnedAmount(order);
+        const remain = getRunawayChengduRemainAmount(order);
+        return {
+          order_time: formatDateValue(order.createdAt),
+          source: String(order.source || "未填写"),
+          seller_name: order.seller_name || "--",
+          model_bundle: modelText,
+          runaway_amount: `${formatPrice(taken)} 元`,
+          runaway_returned_amount: `${formatPrice(returned)} 元`,
+          runaway_remain_amount: remain > 0 ? `${formatPrice(remain)} 元` : "已结清",
+          status: remain > 0 ? "追回中" : "已结清",
+          remark: formatRemarkPlain(order.remark || ""),
+        };
+      }
+      const settlePrice = formatPrice(order.settle_price);
+      const customerTaken = getRunawayCustomerTakenAmount(order);
+      const customerReturnedToWanShun = getRunawayCustomerReturnedToWanShunAmount(order);
+      const customerReturnedToMe = getRunawayCustomerReturnedToMeAmount(order);
+      const customerTotalReturned = getRunawayCustomerTotalReturnedAmount(order);
+      const customerRemain = getRunawayCustomerRemainAmount(order);
+      const wanshunReturnedToMe = getRunawayWanshunReturnedToMeAmount(order);
+      const wanshunRemainToMe = getRunawayWanshunRemainAmount(order);
+      const asValue = (value) => (Number.isFinite(value) ? value : null);
+      const renderValue = (value) => {
+        if (value === null || value === undefined) return "未填写";
+        if (!Number.isFinite(value)) return "未填写";
+        if (value <= 0) return "已结清";
+        return `${formatPrice(value)} 元`;
+      };
+      return {
+        order_time: formatDateValue(order.createdAt),
+        seller_name: order.seller_name || "--",
+        model_bundle: modelText,
+        settle_price: settlePrice ? `${settlePrice} 元` : "--",
+        runaway_amount: String(order.runaway_amount || "").trim() || "未填写",
+        runaway_returned_amount: String(order.runaway_returned_amount || "").trim() || "0",
+        runaway_returned_to_me_amount: String(order.runaway_returned_to_me_amount || "").trim() || "0",
+        runaway_total_returned_amount: (() => {
+          const value = asValue(customerTotalReturned);
+          if (value === null || value === undefined) return "未填写";
+          if (!Number.isFinite(value)) return "未填写";
+          if (value === 0) return "0";
+          return `${formatPrice(value)} 元`;
+        })(),
+        runaway_remain_amount: renderValue(asValue(customerRemain)),
+        runaway_wanshun_returned_amount: String(order.runaway_wanshun_returned_amount || "").trim() || "未填写",
+        runaway_wanshun_remain_amount: meta.showWanshunNeed ? renderValue(asValue(wanshunRemainToMe)) : "--",
+        seller_id: String(order.seller_id || "").trim() || "--",
+        seller_phone: String(order.seller_phone || "").trim() || "--",
+        source: String(order.source || "").trim() || "--",
+        remark: formatRemarkPlain(order.remark || ""),
       };
     }
 
@@ -6227,6 +6926,7 @@
       };
       const resolveStatusColor = (value) => {
         const text = String(value || "");
+        if (text.includes("已补差")) return "16A34A";
         if (text.includes("型号不对")) return "F97316";
         if (text.includes("已入库")) return "16A34A";
         if (text.includes("已拉群")) return "2563EB";
@@ -6307,13 +7007,15 @@
         alert("当前筛选没有可导出的订单");
         return;
       }
-      const rows = list.map((order) => mapOrderForExportTable(order));
+      const includeRunawayAmount = shouldShowTableRunawayAmountColumn();
+      const columns = getTableExportColumns(includeRunawayAmount);
+      const rows = list.map((order) => mapOrderForTableExport(order, includeRunawayAmount));
       const format = $("tableExportFormat") ? $("tableExportFormat").value : "xlsx";
       if (format === "csv") {
-        downloadCsv(batchExportFilename("filtered", ".csv"), toCsvWithLabels(rows, exportColumns));
+        downloadCsv(batchExportFilename("filtered", ".csv"), toCsvWithLabels(rows, columns));
         return;
       }
-      const workbook = buildExportWorkbook(rows, exportColumns, "对账表格");
+      const workbook = buildExportWorkbook(rows, columns, "对账表格");
       if (!workbook) return;
       downloadXlsx(batchExportFilename("filtered", ".xlsx"), workbook);
     }
@@ -7115,8 +7817,13 @@ function confirmDeleteAfterConfirm() {
       document.querySelectorAll(".nav button[data-target]").forEach((btn) => {
         const sameTarget = btn.dataset.target === targetId;
         const targetView = btn.dataset.tableView || "";
+        const runawayView = btn.dataset.runawayView || "";
         const isActiveTableView = targetId === "section-orders-table" && targetView === currentTableView;
-        btn.classList.toggle("active", isActiveTableView || (sameTarget && targetId !== "section-orders-table"));
+        const isActiveRunawayView = targetId === "section-runaway" && runawayView === currentRunawayView;
+        btn.classList.toggle(
+          "active",
+          isActiveTableView || isActiveRunawayView || (sameTarget && targetId !== "section-orders-table" && targetId !== "section-runaway")
+        );
       });
       const title = targetId === "section-home" ? "今日订单" : label;
       $("pageTitle").textContent = title;
@@ -7131,16 +7838,33 @@ function confirmDeleteAfterConfirm() {
         $("orderGroupWrap").classList.remove("collapsed");
         $("orderGroupArrow").textContent = "▾";
       }
+      if (targetId !== "section-runaway") {
+        setRunawayNavExpanded(false);
+      } else {
+        applyRunawayViewPreset(currentRunawayView);
+      }
       updateTopbarGreeting();
       syncBackdrop();
     }
 
     function setupNavigation() {
+      const runawayToggle = $("runawayGroupToggle");
+      if (runawayToggle) {
+        runawayToggle.addEventListener("click", () => {
+          const subNav = $("runawaySubNav");
+          const isExpanded = !(subNav && subNav.classList.contains("collapsed"));
+          setRunawayNavExpanded(!isExpanded);
+        });
+      }
       document.querySelectorAll(".nav button[data-target]").forEach((btn) => {
         btn.addEventListener("click", () => {
           if (btn.dataset.target === "section-orders-table") {
             applyTableViewPreset(btn.dataset.tableView || "all");
             renderOrderTable();
+          }
+          if (btn.dataset.target === "section-runaway") {
+            applyRunawayViewPreset(btn.dataset.runawayView || "wanshun");
+            renderRunaway();
           }
           updateSection(btn.dataset.target, btn.dataset.label || btn.innerText.trim());
           if (window.innerWidth <= 900) {
@@ -7379,6 +8103,30 @@ function confirmDeleteAfterConfirm() {
       }
     });
 
+    $("runawayTableBody").addEventListener("click", (event) => {
+      const row = event.target.closest("tr[data-id]");
+      if (!row) return;
+      const order = orders.find((item) => item.id === row.dataset.id);
+      if (!order) return;
+      const fieldCell = event.target.closest("[data-field]");
+      if (fieldCell) {
+        const field = fieldCell.dataset.field;
+        if (
+          field === "remark" ||
+          ((isRunawayChengduView() || shouldShowTableRunawayAmountColumn()) &&
+            (field === "runaway_amount" || field === "runaway_returned_amount")) ||
+          (!isRunawayChengduView() &&
+            (field === "runaway_amount" ||
+              field === "runaway_returned_amount" ||
+              field === "runaway_returned_to_me_amount" ||
+              field === "runaway_wanshun_returned_amount"))
+        ) {
+          openFieldEditModal(order, field);
+        }
+        return;
+      }
+    });
+
     $("orderTableBody").addEventListener("click", (event) => {
       const cell = event.target.closest("td[data-field]");
       if (!cell) return;
@@ -7388,6 +8136,10 @@ function confirmDeleteAfterConfirm() {
       if (!order) return;
       const field = cell.dataset.field;
       if (field === "seller_name") {
+        return;
+      }
+      if (field === "runaway_amount" && shouldShowTableRunawayAmountColumn()) {
+        openFieldEditModal(order, field);
         return;
       }
       openFieldEditModal(order, field);
@@ -7953,11 +8705,53 @@ function confirmDeleteAfterConfirm() {
 
     if ($("goRunaway")) {
       $("goRunaway").addEventListener("click", () => {
-        updateSection("section-runaway", "跑路哥");
+        applyRunawayViewPreset("wanshun");
+        renderRunaway();
+        updateSection("section-runaway", "跑路哥-皖顺");
       });
     }
-    ["runaway_filter_start", "runaway_filter_end", "runaway_sort"].forEach((id) => {
+    ["runaway_filter_start", "runaway_filter_end"].forEach((id) => {
       $(id).addEventListener("change", renderRunaway);
+    });
+    $("runaway_sort").addEventListener("change", () => {
+      const sort = readValue("runaway_sort") || "amount_desc";
+      if (sort === "time_asc") {
+        setRunawaySort("time", "asc");
+      } else if (sort === "time_desc") {
+        setRunawaySort("time", "desc");
+      } else if (sort === "amount_asc") {
+        setRunawaySort("remain", "asc");
+      } else {
+        setRunawaySort("remain", "desc");
+      }
+    });
+    $("runawayTableHead").addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-runaway-sort-field]");
+      if (!btn) return;
+      const field = btn.dataset.runawaySortField || "remain";
+      const nextDir = currentRunawaySortField === field && currentRunawaySortDir === "desc" ? "asc" : "desc";
+      setRunawaySort(field, nextDir);
+    });
+    $("runaway_range_all").addEventListener("click", () => {
+      $("runaway_filter_start").value = "";
+      $("runaway_filter_end").value = "";
+      renderRunaway();
+    });
+    $("runaway_range_month").addEventListener("click", () => {
+      const now = getBeijingNow();
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      $("runaway_filter_start").value = formatDateValue(start.getTime());
+      $("runaway_filter_end").value = formatDateValue(end.getTime());
+      renderRunaway();
+    });
+    $("runaway_range_prev_month").addEventListener("click", () => {
+      const now = getBeijingNow();
+      const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const end = new Date(now.getFullYear(), now.getMonth(), 0);
+      $("runaway_filter_start").value = formatDateValue(start.getTime());
+      $("runaway_filter_end").value = formatDateValue(end.getTime());
+      renderRunaway();
     });
     $("runaway_export").addEventListener("click", exportRunawayFiltered);
 
@@ -8020,7 +8814,7 @@ function confirmDeleteAfterConfirm() {
         $("filter_end").value = formatDateValue(today);
         $("filter_start").value = formatDateValue(today - 7 * 24 * 60 * 60 * 1000);
         $("runaway_filter_end").value = formatDateValue(today);
-        $("runaway_filter_start").value = formatDateValue(today - 30 * 24 * 60 * 60 * 1000);
+        $("runaway_filter_start").value = formatDateValue(today - 365 * 24 * 60 * 60 * 1000);
         const now = getBeijingNow();
         const tableStart = new Date(now);
         tableStart.setDate(tableStart.getDate() - 29);

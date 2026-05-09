@@ -6,35 +6,41 @@
   <title>回收订单管理系统</title>
   <style>
     :root {
-      --bg: #f6f8fa;
-      --surface: #ffffff;
-      --text: #24292f;
-      --muted: #57606a;
-      --border: #d0d7de;
-      --accent: #0969da;
-      --accent-hover: #0550ae;
-      --accent-soft: #ddf4ff;
-      --success: #1a7f37;
-      --danger: #cf222e;
-      --shadow: rgba(140, 149, 159, 0.2);
-      --bg-spot-1: rgba(5, 150, 105, 0.12);
-      --bg-spot-2: rgba(14, 116, 144, 0.12);
-      --bg-spot-3: rgba(245, 158, 11, 0.12);
-      --bg-grid: rgba(15, 23, 42, 0.05);
+      --bg: #07111f;
+      --surface: rgba(12, 22, 38, 0.78);
+      --surface-strong: rgba(15, 25, 44, 0.92);
+      --surface-soft: rgba(148, 163, 184, 0.08);
+      --text: #dbe7f3;
+      --muted: #8ea3b8;
+      --border: rgba(148, 163, 184, 0.18);
+      --accent: #38bdf8;
+      --accent-hover: #818cf8;
+      --accent-soft: rgba(56, 189, 248, 0.16);
+      --success: #34d399;
+      --danger: #fb7185;
+      --shadow: rgba(0, 0, 0, 0.38);
+      --glow-blue: rgba(56, 189, 248, 0.2);
+      --glow-purple: rgba(129, 140, 248, 0.18);
+      --bg-spot-1: rgba(45, 212, 191, 0.18);
+      --bg-spot-2: rgba(59, 130, 246, 0.2);
+      --bg-spot-3: rgba(168, 85, 247, 0.16);
+      --bg-grid: rgba(148, 163, 184, 0.04);
     }
 
     body.dark {
-      --bg: #0d1117;
-      --surface: #161b22;
-      --text: #e6edf3;
-      --muted: #7d8590;
-      --border: #30363d;
-      --accent: #2f81f7;
-      --accent-hover: #1f6feb;
-      --accent-soft: rgba(47, 129, 247, 0.15);
-      --success: #3fb950;
-      --danger: #f85149;
-      --shadow: rgba(0, 0, 0, 0.4);
+      --bg: #050b16;
+      --surface: rgba(9, 18, 32, 0.78);
+      --surface-strong: rgba(10, 20, 36, 0.94);
+      --surface-soft: rgba(148, 163, 184, 0.08);
+      --text: #dbe7f3;
+      --muted: #8ea3b8;
+      --border: rgba(148, 163, 184, 0.18);
+      --accent: #38bdf8;
+      --accent-hover: #a78bfa;
+      --accent-soft: rgba(56, 189, 248, 0.16);
+      --success: #34d399;
+      --danger: #fb7185;
+      --shadow: rgba(0, 0, 0, 0.42);
     }
 
     * {
@@ -47,19 +53,19 @@
       font-family: "IBM Plex Sans", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(900px 520px at -10% -20%, var(--bg-spot-1), transparent 60%),
-        radial-gradient(800px 520px at 110% 10%, var(--bg-spot-2), transparent 60%),
-        radial-gradient(760px 480px at 20% 120%, var(--bg-spot-3), transparent 60%),
-        linear-gradient(160deg, #f6f8fa 0%, #eef2f6 45%, #f2f5f8 100%);
+        radial-gradient(920px 520px at 5% -10%, var(--bg-spot-2), transparent 62%),
+        radial-gradient(780px 520px at 95% 8%, var(--bg-spot-3), transparent 62%),
+        radial-gradient(760px 480px at 24% 115%, var(--bg-spot-1), transparent 60%),
+        linear-gradient(145deg, #040915 0%, #071426 42%, #0b1020 100%);
       background-attachment: fixed;
     }
 
     body.dark {
       background:
-        radial-gradient(900px 520px at -10% -20%, rgba(34, 197, 94, 0.18), transparent 60%),
-        radial-gradient(800px 520px at 110% 10%, rgba(56, 189, 248, 0.18), transparent 60%),
-        radial-gradient(760px 480px at 20% 120%, rgba(251, 191, 36, 0.16), transparent 60%),
-        linear-gradient(160deg, #0b1220 0%, #0b1326 45%, #0b1428 100%);
+        radial-gradient(920px 520px at 5% -10%, rgba(56, 189, 248, 0.22), transparent 62%),
+        radial-gradient(780px 520px at 95% 8%, rgba(139, 92, 246, 0.2), transparent 62%),
+        radial-gradient(760px 480px at 24% 115%, rgba(45, 212, 191, 0.18), transparent 60%),
+        linear-gradient(145deg, #030712 0%, #071426 45%, #090d1a 100%);
       background-attachment: fixed;
     }
 
@@ -107,18 +113,17 @@
         linear-gradient(transparent 0 23px, var(--bg-grid) 24px),
         linear-gradient(90deg, transparent 0 23px, var(--bg-grid) 24px);
       background-size: 24px 24px;
-      opacity: 0.55;
+      opacity: 0.6;
       mask: radial-gradient(circle at 50% 20%, rgba(0, 0, 0, 0.7), transparent 70%);
     }
 
     body::after {
       background:
-        radial-gradient(260px 260px at 20% 30%, rgba(56, 189, 248, 0.2), transparent 60%),
-        radial-gradient(320px 320px at 80% 40%, rgba(34, 197, 94, 0.2), transparent 60%),
-        radial-gradient(280px 280px at 30% 80%, rgba(245, 158, 11, 0.2), transparent 60%);
+        linear-gradient(120deg, rgba(56, 189, 248, 0.07), transparent 30%, rgba(139, 92, 246, 0.08) 70%, transparent),
+        radial-gradient(360px 240px at 80% 40%, rgba(45, 212, 191, 0.12), transparent 70%);
       filter: blur(2px);
       animation: none;
-      opacity: 0.55;
+      opacity: 0.5;
     }
 
     @keyframes driftGlow {
@@ -171,11 +176,12 @@
 
     .login-card {
       width: min(360px, 92vw);
-      background: var(--surface);
-      border-radius: 8px;
-      padding: 16px;
+      background: var(--surface-strong);
+      border-radius: 14px;
+      padding: 18px;
       border: 1px solid var(--border);
-      box-shadow: 0 16px 40px rgba(27, 31, 36, 0.2);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.38), 0 0 36px rgba(56, 189, 248, 0.12);
+      backdrop-filter: blur(18px);
     }
 
     .login-brand {
@@ -208,14 +214,17 @@
     }
 
     .sidebar {
-      width: 176px;
-      background: var(--surface);
+      width: 196px;
+      background: linear-gradient(180deg, rgba(6, 14, 28, 0.96), rgba(8, 16, 30, 0.88));
       border-right: 1px solid var(--border);
-      padding: 20px 16px;
+      padding: 20px 14px;
       display: flex;
       flex-direction: column;
       gap: 16px;
       transition: width 0.2s ease, transform 0.2s ease;
+      box-shadow: 16px 0 40px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(18px);
+      z-index: 2;
     }
 
     .sidebar.collapsed {
@@ -230,24 +239,27 @@
       align-items: center;
       gap: 12px;
       font-weight: 600;
+      padding: 4px 2px 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
     }
 
     .brand-mark {
       width: 32px;
       height: 32px;
-      border-radius: 999px;
-      background: #ffffff;
-      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: linear-gradient(135deg, #22d3ee, #6366f1 58%, #a855f7);
+      border: 1px solid rgba(255, 255, 255, 0.22);
       display: grid;
       place-items: center;
       font-size: 14px;
       font-weight: 700;
-      color: var(--text);
+      color: #ffffff;
       flex-shrink: 0;
+      box-shadow: 0 10px 26px rgba(56, 189, 248, 0.28);
     }
 
     body.dark .brand-mark {
-      background: #0d1117;
+      background: linear-gradient(135deg, #22d3ee, #6366f1 58%, #a855f7);
     }
 
     .brand-text {
@@ -255,6 +267,8 @@
       line-height: 1.2;
       white-space: normal;
       transition: opacity 0.2s ease;
+      color: #e5eef8;
+      letter-spacing: 0.2px;
     }
 
     .sidebar.collapsed .brand-text {
@@ -272,28 +286,35 @@
     .nav button {
       border: 1px solid transparent;
       background: transparent;
-      color: inherit;
-      padding: 6px 8px;
-      border-radius: 6px;
+      color: #9fb1c5;
+      padding: 7px 8px;
+      border-radius: 9px;
       display: flex;
       align-items: center;
       gap: 10px;
       cursor: pointer;
       font-size: 13px;
       text-align: left;
-      transition: background 0.15s ease, border 0.15s ease;
+      transition: background 0.16s ease, border 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+    }
+
+    .nav button:hover {
+      background: rgba(148, 163, 184, 0.08);
+      border-color: rgba(148, 163, 184, 0.14);
+      color: #e2ecf6;
     }
 
     .nav button.active {
-      background: #3b82f6;
-      border-color: #3b82f6;
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.24), rgba(99, 102, 241, 0.28));
+      border-color: rgba(125, 211, 252, 0.35);
       color: #ffffff;
       font-weight: 600;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(37, 99, 235, 0.18);
     }
 
     body.dark .nav button.active {
-      background: #1f6feb;
-      border-color: #1f6feb;
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.24), rgba(99, 102, 241, 0.28));
+      border-color: rgba(125, 211, 252, 0.35);
       color: #ffffff;
     }
 
@@ -313,6 +334,8 @@
       flex-direction: column;
       gap: 6px;
       padding-left: 12px;
+      border-left: 1px solid rgba(148, 163, 184, 0.12);
+      margin-left: 14px;
     }
 
     .nav-sub.collapsed {
@@ -328,13 +351,13 @@
     .nav-icon {
       width: 28px;
       height: 28px;
-      border-radius: 6px;
-      background: #f6f8fa;
-      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(148, 163, 184, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.12);
       display: grid;
       place-items: center;
       flex-shrink: 0;
-      color: #57606a;
+      color: #8ea3b8;
     }
 
     .nav-icon svg {
@@ -354,8 +377,8 @@
     }
 
     body.dark .nav-icon {
-      background: #0d1117;
-      color: #8b949e;
+      background: rgba(148, 163, 184, 0.08);
+      color: #8ea3b8;
     }
 
     .sidebar.collapsed .nav-label,
@@ -381,8 +404,8 @@
       top: 10px;
       z-index: 300;
       margin: 0;
-      background: var(--surface);
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+      background: var(--surface-strong);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
     }
 
     .sidebar.collapsed .sidebar-toggle {
@@ -401,10 +424,10 @@
     .sidebar-toggle {
       margin-top: auto;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 9px;
       padding: 6px 8px;
-      background: #f6f8fa;
-      color: var(--text);
+      background: rgba(148, 163, 184, 0.08);
+      color: #c7d6e6;
       cursor: pointer;
       font-size: 12px;
       display: flex;
@@ -413,7 +436,7 @@
     }
 
     body.dark .sidebar-toggle {
-      background: #0d1117;
+      background: rgba(148, 163, 184, 0.08);
     }
 
     .sidebar.collapsed .toggle-text {
@@ -424,10 +447,13 @@
 
     .main {
       flex: 1;
-      padding: 16px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      min-width: 0;
+      position: relative;
+      z-index: 1;
     }
 
     .topbar {
@@ -435,6 +461,13 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      min-height: 52px;
+      padding: 10px 14px;
+      background: rgba(8, 17, 32, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(18px);
     }
 
     .page-left {
@@ -444,8 +477,10 @@
     }
 
     .page-title {
-      font-size: 20px;
-      font-weight: 600;
+      font-size: 22px;
+      font-weight: 700;
+      color: #e5eef8;
+      letter-spacing: 0.2px;
     }
 
     .topbar-actions {
@@ -460,7 +495,7 @@
     #topbarGreeting {
       font-size: 14px;
       font-weight: 600;
-      color: #0f172a;
+      color: #cbd8e7;
       letter-spacing: 0.2px;
     }
 
@@ -517,8 +552,9 @@
       width: 36px;
       height: 18px;
       border-radius: 999px;
-      background: #d0d7de;
+      background: rgba(148, 163, 184, 0.18);
       transition: background 0.2s ease;
+      border: 1px solid rgba(148, 163, 184, 0.18);
     }
 
     .theme-slider::after {
@@ -535,7 +571,7 @@
     }
 
     .theme-toggle input:checked + .theme-slider {
-      background: var(--accent);
+      background: linear-gradient(135deg, #22d3ee, #6366f1);
     }
 
     .theme-toggle input:checked + .theme-slider::after {
@@ -561,12 +597,13 @@
 
     .card {
       background: var(--surface);
-      border-radius: 6px;
-      padding: 12px 14px;
+      border-radius: 14px;
+      padding: 14px 16px;
       border: 1px solid var(--border);
-      box-shadow: 0 1px 2px var(--shadow);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
       position: relative;
       animation: none;
+      backdrop-filter: blur(18px);
     }
 
     .section .card + .card {
@@ -578,6 +615,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      background:
+        linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(99, 102, 241, 0.12)),
+        var(--surface);
     }
 
     .quick-bar .card-title {
@@ -586,8 +626,10 @@
 
     .card-title {
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 4px;
+      color: #e5eef8;
+      letter-spacing: 0.15px;
     }
 
     .card-subtitle {
@@ -621,28 +663,30 @@
     .field-label {
       font-size: 12px;
       color: var(--muted);
+      font-weight: 600;
     }
 
     input, select, textarea {
       border: 1px solid var(--border);
-      background: #ffffff;
-      border-radius: 6px;
+      background: rgba(5, 12, 24, 0.64);
+      color: var(--text);
+      border-radius: 9px;
       padding: 8px 10px;
       font-size: 13px;
       font-family: inherit;
       outline: none;
-      transition: border 0.15s ease, box-shadow 0.15s ease;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
 
     body.dark input,
     body.dark select,
     body.dark textarea {
-      background: #0d1117;
+      background: rgba(5, 12, 24, 0.64);
       color: var(--text);
     }
 
     body.dark select option {
-      background: #0d1117;
+      background: #071426;
       color: var(--text);
     }
 
@@ -653,7 +697,8 @@
 
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.2);
+      background: rgba(8, 18, 34, 0.82);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15), 0 0 24px rgba(56, 189, 248, 0.08);
     }
 
     .field-error {
@@ -707,23 +752,30 @@
 
     button {
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 9px;
       padding: 7px 12px;
       font-size: 12px;
       cursor: pointer;
       font-family: inherit;
-      transition: background 0.15s ease, border 0.15s ease;
+      color: var(--text);
+      transition: background 0.15s ease, border 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
     }
 
     button.primary {
-      background: var(--accent);
+      background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 45%, #8b5cf6 100%);
       color: #fff;
-      border-color: var(--accent);
+      border-color: rgba(125, 211, 252, 0.42);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.26);
     }
 
     button.primary:hover {
-      background: var(--accent-hover);
-      border-color: var(--accent-hover);
+      background: linear-gradient(135deg, #5eead4 0%, #60a5fa 45%, #a78bfa 100%);
+      border-color: rgba(125, 211, 252, 0.58);
+      box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
     }
 
     #btnParse {
@@ -890,12 +942,19 @@
     }
 
     button.secondary {
-      background: #f6f8fa;
+      background: rgba(148, 163, 184, 0.09);
       color: var(--text);
+      border-color: rgba(148, 163, 184, 0.18);
     }
 
     body.dark button.secondary {
-      background: #0d1117;
+      background: rgba(148, 163, 184, 0.09);
+    }
+
+    button.secondary:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.32);
+      color: #e5eef8;
     }
 
 
@@ -904,10 +963,15 @@
       color: var(--muted);
     }
 
+    button.ghost:hover {
+      background: rgba(148, 163, 184, 0.08);
+      color: #dbe7f3;
+    }
+
     button.ghost-warn {
-      background: #fef3c7;
-      border-color: #facc15;
-      color: #92400e;
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.32);
+      color: #fbbf24;
     }
 
     body.dark button.ghost-warn {
@@ -918,9 +982,9 @@
 
     #filter_apply,
     #table_filter_apply {
-      background: rgba(16, 185, 129, 0.16);
-      border-color: rgba(16, 185, 129, 0.35);
-      color: #10b981;
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.22), rgba(14, 165, 233, 0.18));
+      border-color: rgba(45, 212, 191, 0.38);
+      color: #99f6e4;
     }
 
     #filter_today,
@@ -934,7 +998,7 @@
     #table_filter_yesterday {
       background: rgba(148, 163, 184, 0.16);
       border-color: rgba(148, 163, 184, 0.35);
-      color: #64748b;
+      color: #cbd5e1;
     }
 
     #filter_pending,
@@ -975,19 +1039,20 @@
     #table_filter_reset {
       background: rgba(148, 163, 184, 0.12);
       border-color: rgba(148, 163, 184, 0.35);
-      color: #64748b;
+      color: #cbd5e1;
     }
 
     button.danger {
-      background: transparent;
-      color: var(--muted);
-      border-color: var(--border);
+      background: rgba(244, 63, 94, 0.08);
+      color: #fda4af;
+      border-color: rgba(244, 63, 94, 0.22);
     }
 
     button.danger:hover {
-      color: var(--danger);
-      border-color: #ffd7db;
-      background: #fff5f5;
+      color: #ffe4e6;
+      border-color: rgba(251, 113, 133, 0.5);
+      background: rgba(244, 63, 94, 0.18);
+      box-shadow: 0 12px 24px rgba(244, 63, 94, 0.16);
     }
 
     body.dark button.danger:hover {
@@ -1022,11 +1087,13 @@
     }
 
     .today-count-number {
-      font-size: 24px;
-      font-weight: 700;
-      color: #e11d48;
+      font-size: 30px;
+      font-weight: 800;
+      color: #fb7185;
       margin: 0 4px;
       display: inline-block;
+      line-height: 1;
+      text-shadow: 0 0 24px rgba(251, 113, 133, 0.22);
     }
 
     .order-subtitle {
@@ -1036,9 +1103,9 @@
     }
 
     .order-subtitle .stat-number {
-      font-size: 18px;
-      font-weight: 700;
-      color: #e11d48;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fb7185;
       margin: 0 4px;
     }
 
@@ -1047,27 +1114,32 @@
     }
 
     .week-summary {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .week-line {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       font-size: 13px;
-      color: var(--text);
+      color: var(--muted);
       align-items: baseline;
+      padding: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(129, 140, 248, 0.06));
     }
 
     .week-number {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 28px;
+      font-weight: 800;
       margin-left: 4px;
       display: inline-flex;
       align-items: baseline;
-      color: #0f172a;
+      color: #dbe7f3;
+      line-height: 1;
     }
 
     .week-number.stored {
@@ -1111,10 +1183,11 @@
 
     .table-wrap {
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: auto;
-      background: var(--surface);
+      background: rgba(5, 12, 24, 0.54);
       -webkit-overflow-scrolling: touch;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
     }
 
     .order-table {
@@ -1122,12 +1195,13 @@
       border-collapse: collapse;
       min-width: 980px;
       font-size: 12px;
+      color: #cbd8e7;
     }
 
     .order-table th,
     .order-table td {
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--border);
+      padding: 7px 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
       text-align: left;
       white-space: nowrap;
     }
@@ -1140,9 +1214,11 @@
     .order-table thead th {
       position: sticky;
       top: 0;
-      background: var(--surface);
+      background: rgba(8, 17, 32, 0.96);
       z-index: 1;
-      font-weight: 600;
+      font-weight: 700;
+      color: #e5eef8;
+      backdrop-filter: blur(12px);
     }
 
     .th-sort {
@@ -1166,15 +1242,21 @@
       opacity: 1;
     }
 
+    .th-sort:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
     .table-chip {
       display: inline-flex;
       align-items: center;
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 999px;
       font-weight: 600;
       font-size: 11px;
       line-height: 1.4;
       white-space: nowrap;
+      background: rgba(148, 163, 184, 0.06);
     }
 
     .status-prefix-green {
@@ -1308,7 +1390,7 @@
     }
 
     .order-table tbody tr:hover {
-      background: rgba(14, 116, 144, 0.08);
+      background: rgba(56, 189, 248, 0.09);
     }
 
     .remark-tag {
@@ -1383,11 +1465,11 @@
     }
 
     .order-table tbody tr:nth-child(odd) {
-      background: rgba(15, 23, 42, 0.03);
+      background: rgba(148, 163, 184, 0.035);
     }
 
     body.dark .order-table tbody tr:nth-child(odd) {
-      background: rgba(148, 163, 184, 0.08);
+      background: rgba(148, 163, 184, 0.055);
     }
 
     .table-id {
@@ -1417,10 +1499,11 @@
       border-radius: 8px;
       border: 1px solid rgba(239, 68, 68, 0.45);
       background: rgba(239, 68, 68, 0.15);
+      box-shadow: 0 10px 24px rgba(239, 68, 68, 0.08);
     }
 
     .alert-item strong {
-      color: #1e3a5f;
+      color: #fecdd3;
     }
 
     .alert-item strong.alert-type-green {
@@ -1564,11 +1647,11 @@
     }
 
     .order-card {
-      border-radius: 6px;
-      padding: 5px 6px;
+      border-radius: 12px;
+      padding: 9px 10px;
       border: 1px solid var(--border);
       border-left: 4px solid var(--border);
-      background: #fff;
+      background: rgba(8, 17, 32, 0.68);
       display: grid;
       grid-template-columns: 1fr auto;
       align-items: start;
@@ -1576,32 +1659,33 @@
       animation: none;
       position: relative;
       padding-bottom: 44px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
     }
 
     .order-date-card {
       grid-column: 1 / -1;
       border: 1px dashed var(--border);
-      background: #f6f8fa;
+      background: rgba(148, 163, 184, 0.08);
       color: var(--muted);
       font-size: 12px;
       font-weight: 600;
       padding: 8px 12px;
-      border-radius: 6px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
     body.dark .order-date-card {
-      background: #0d1117;
+      background: rgba(148, 163, 184, 0.08);
     }
 
     .order-card.status-signed {
-      border-left-color: #0969da;
+      border-left-color: #38bdf8;
     }
 
     .order-card.status-group {
-      border-left-color: #bf8700;
+      border-left-color: #fbbf24;
     }
 
     .order-card.status-stored,
@@ -1635,11 +1719,12 @@
     .order-name {
       font-size: 20px;
       font-weight: 700;
+      color: #e5eef8;
     }
 
     .order-meta {
       font-size: 16px;
-      color: var(--text);
+      color: #dbe7f3;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -1654,7 +1739,7 @@
     }
 
     body:not(.dark) .order-submeta {
-      color: #0f172a;
+      color: #dbe7f3;
     }
 
     .activation-status {
@@ -1686,10 +1771,10 @@
     .order-remark {
       grid-column: 1 / -1;
       padding: 6px 8px;
-      border-radius: 6px;
+      border-radius: 9px;
       background: rgba(14, 116, 144, 0.12);
       border: 1px solid rgba(14, 116, 144, 0.4);
-      color: #0f172a;
+      color: #dbe7f3;
       font-size: 12px;
       font-weight: 600;
       white-space: normal;
@@ -1820,7 +1905,7 @@
     }
 
     body.dark .order-card {
-      background: #0d1117;
+      background: rgba(8, 17, 32, 0.68);
     }
 
     body.dark .order-grid {
@@ -1861,7 +1946,7 @@
       aspect-ratio: 1 / 1;
       border-radius: 4px;
       border: 1px solid var(--border);
-      background: #ffffff;
+      background: rgba(5, 12, 24, 0.64);
       display: inline-grid;
       place-content: center;
       cursor: pointer;
@@ -1903,13 +1988,13 @@
       gap: 6px;
       padding: 4px 8px;
       border-radius: 999px;
-      background: #f3f4f6;
+      background: rgba(148, 163, 184, 0.08);
       border: 1px solid var(--border);
       font-size: 12px;
     }
 
     body.dark .source-chip {
-      background: #0d1117;
+      background: rgba(148, 163, 184, 0.08);
     }
 
     .source-chip button {
@@ -1929,12 +2014,12 @@
       color: var(--text);
       padding: 6px 8px;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      background: #ffffff;
+      border-radius: 9px;
+      background: rgba(5, 12, 24, 0.54);
     }
 
     body.dark .price-row {
-      background: #0d1117;
+      background: rgba(5, 12, 24, 0.54);
     }
 
     body.dark .order-select-row input[type="checkbox"],
@@ -1949,8 +2034,8 @@
       margin-top: 10px;
       padding: 10px 12px;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--surface);
+      border-radius: 12px;
+      background: var(--surface-strong);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1958,8 +2043,9 @@
       flex-wrap: wrap;
       font-size: 12px;
       color: var(--muted);
-      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
       z-index: 5;
+      backdrop-filter: blur(16px);
     }
 
     .order-pagination {
@@ -2025,16 +2111,16 @@
 
     .empty-state {
       border: 1px dashed var(--border);
-      border-radius: 6px;
+      border-radius: 12px;
       padding: 18px;
       text-align: center;
       font-size: 12px;
       color: var(--muted);
-      background: #ffffff;
+      background: rgba(148, 163, 184, 0.05);
     }
 
     body.dark .empty-state {
-      background: #0d1117;
+      background: rgba(148, 163, 184, 0.05);
     }
 
     .modal {
@@ -2043,9 +2129,10 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(27, 31, 36, 0.45);
+      background: rgba(2, 6, 23, 0.68);
       padding: 10px;
       z-index: 100;
+      backdrop-filter: blur(10px);
     }
 
     .modal.show {
@@ -2062,13 +2149,14 @@
 
     .modal-card {
       width: min(460px, 92vw);
-      background: var(--surface);
-      border-radius: 8px;
-      padding: 12px;
+      background: var(--surface-strong);
+      border-radius: 14px;
+      padding: 14px;
       border: 1px solid var(--border);
-      box-shadow: 0 16px 40px rgba(27, 31, 36, 0.2);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.42), 0 0 34px rgba(56, 189, 248, 0.1);
       max-height: 86vh;
       overflow: auto;
+      backdrop-filter: blur(18px);
     }
 
     .edit-modal-card {
@@ -2089,7 +2177,7 @@
 
     .edit-modal-card label {
       font-weight: 600;
-      color: #0f172a;
+      color: #dbe7f3;
     }
 
     body.dark .edit-modal-card label {
@@ -2111,8 +2199,8 @@
     .modal-content {
       font-size: 12px;
       line-height: 1.6;
-      background: #f6f8fa;
-      border-radius: 6px;
+      background: rgba(5, 12, 24, 0.62);
+      border-radius: 10px;
       padding: 8px;
       border: 1px solid var(--border);
       margin-bottom: 10px;
@@ -2122,9 +2210,9 @@
     }
 
     body.dark .modal-content {
-      background: #0d1117;
+      background: rgba(5, 12, 24, 0.62);
       color: #e6edf3;
-      border-color: #30363d;
+      border-color: var(--border);
     }
 
     .modal-actions {
@@ -2143,13 +2231,13 @@
 
     .edit-section {
       border: 1px solid var(--border);
-      border-radius: 6px;
-      background: #f8fafc;
+      border-radius: 12px;
+      background: rgba(148, 163, 184, 0.06);
       padding: 8px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
     }
 
     .edit-section:last-of-type {
@@ -2157,12 +2245,12 @@
     }
 
     body.dark .edit-section {
-      background: #0b1220;
+      background: rgba(148, 163, 184, 0.06);
     }
 
     .edit-title {
       font-size: 12px;
-      color: #0f172a;
+      color: #dbe7f3;
       font-weight: 600;
       letter-spacing: 0.4px;
     }
@@ -2232,6 +2320,7 @@
         height: 100%;
         transform: translateX(-100%);
         z-index: 200;
+        width: min(82vw, 240px);
       }
 
       .sidebar.open {
@@ -2242,8 +2331,9 @@
         position: fixed;
         inset: 0;
         display: none;
-        background: rgba(27, 31, 36, 0.35);
+        background: rgba(2, 6, 23, 0.62);
         z-index: 150;
+        backdrop-filter: blur(6px);
       }
 
       .backdrop.show {
@@ -2261,6 +2351,24 @@
     }
 
     @media (max-width: 768px) {
+      .main {
+        padding: 12px;
+      }
+
+      .topbar,
+      .card {
+        border-radius: 12px;
+      }
+
+      .quick-bar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .week-summary {
+        grid-template-columns: 1fr;
+      }
+
       .form-grid {
         grid-template-columns: 1fr;
       }
@@ -4903,6 +5011,45 @@
       return `${date.getFullYear()}-${month}-${day}`;
     }
 
+    function formatFilenameDate(timestamp) {
+      return formatDateValue(timestamp || getBeijingNow().getTime()) || formatDateValue(getBeijingNow().getTime());
+    }
+
+    function formatFilenameDateRange(start, end) {
+      const startText = start ? formatFilenameDate(start) : "";
+      const endText = end ? formatFilenameDate(end) : "";
+      if (startText && endText && startText !== endText) return `${startText}至${endText}`;
+      if (startText) return startText;
+      if (endText) return endText;
+      return formatFilenameDate(getBeijingNow().getTime());
+    }
+
+    function getOrdersDateRange(list) {
+      const times = (list || [])
+        .map((order) => Number(order && order.createdAt))
+        .filter((time) => Number.isFinite(time) && time > 0)
+        .sort((a, b) => a - b);
+      if (!times.length) {
+        const today = getBeijingNow().getTime();
+        return { start: today, end: today };
+      }
+      return { start: times[0], end: times[times.length - 1] };
+    }
+
+    function sanitizeFilenamePart(value) {
+      return String(value || "")
+        .trim()
+        .replace(/[\\/:*?"<>|]+/g, "_")
+        .replace(/\s+/g, "")
+        .replace(/_+/g, "_") || "导出文件";
+    }
+
+    function buildExportFilename(content, suffix, options = {}) {
+      const rangeText = options.rangeText || formatFilenameDateRange(options.start, options.end);
+      const parts = [rangeText, content, options.scope].filter(Boolean).map(sanitizeFilenamePart);
+      return `${parts.join("_")}${suffix}`;
+    }
+
     function formatDateTime(timestamp) {
       const date = new Date(timestamp);
       if (Number.isNaN(date.getTime())) return "";
@@ -6493,13 +6640,22 @@
             { key: "remark", label: "备注" },
           ];
       const format = readValue("runaway_export_format") || "xlsx";
+      const start = parseDateInput(readValue("runaway_filter_start"));
+      const end = parseDateInput(readValue("runaway_filter_end"));
+      const fallbackRange = getOrdersDateRange(list);
+      const filenameOptions = {
+        start: start || fallbackRange.start,
+        end: end || fallbackRange.end,
+        scope: "当前筛选",
+      };
+      const filenameContent = meta.label;
       if (format === "csv") {
-        downloadCsv(`跑路哥_${batchExportFilename("filtered", ".csv")}`, toCsvWithLabels(rows, columns));
+        downloadCsv(buildExportFilename(filenameContent, ".csv", filenameOptions), toCsvWithLabels(rows, columns));
         return;
       }
       const workbook = buildExportWorkbook(rows, columns, "跑路哥");
       if (!workbook) return;
-      downloadXlsx(`跑路哥_${batchExportFilename("filtered", ".xlsx")}`, workbook);
+      downloadXlsx(buildExportFilename(filenameContent, ".xlsx", filenameOptions), workbook);
     }
 
     function buildAlertGroups(nowTs) {
@@ -6872,9 +7028,19 @@
       link.remove();
     }
 
-    function backupFilename(suffix) {
-      const today = formatOrderDate(getBeijingNow().getTime());
-      return `无责备份${today}${suffix}`;
+    function backupFilename(suffix, content = "全部订单备份", list = orders) {
+      const range = getOrdersDateRange(list);
+      return buildExportFilename(content, suffix, { start: range.start, end: range.end });
+    }
+
+    function batchExportFilename(range, suffix, list = getBatchExportOrders(range)) {
+      const dateRange = getOrdersDateRange(list);
+      const label = range === "selected" ? "选中" : range === "filtered" ? "当前筛选" : "全部订单";
+      return buildExportFilename("订单批量导出", suffix, {
+        start: dateRange.start,
+        end: dateRange.end,
+        scope: label,
+      });
     }
 
     function buildExportWorkbook(rows, columns, sheetName) {
@@ -6972,14 +7138,14 @@
     function exportOrdersCsv() {
       const rows = orders.map((order) => mapOrderForExportTable(order));
       const csv = toCsvWithLabels(rows, exportColumns);
-      downloadCsv(backupFilename(".csv"), csv);
+      downloadCsv(backupFilename(".csv", "全部订单备份", orders), csv);
     }
 
     function exportOrdersXlsx() {
       const rows = orders.map((order) => mapOrderForExportTable(order));
       const workbook = buildExportWorkbook(rows, exportColumns, "订单");
       if (!workbook) return;
-      downloadXlsx(backupFilename(".xlsx"), workbook);
+      downloadXlsx(backupFilename(".xlsx", "全部订单备份", orders), workbook);
     }
 
     function exportOrdersRangeXlsx() {
@@ -6998,7 +7164,7 @@
         .map((order) => mapOrderForExportTable(order));
       const workbook = buildExportWorkbook(rows, exportColumns, "订单");
       if (!workbook) return;
-      downloadXlsx(backupFilename("_分时段.xlsx"), workbook);
+      downloadXlsx(buildExportFilename("分时段订单备份", ".xlsx", { start, end }), workbook);
     }
 
     function exportTableFiltered() {
@@ -7011,19 +7177,20 @@
       const columns = getTableExportColumns(includeRunawayAmount);
       const rows = list.map((order) => mapOrderForTableExport(order, includeRunawayAmount));
       const format = $("tableExportFormat") ? $("tableExportFormat").value : "xlsx";
+      const fallbackRange = getOrdersDateRange(list);
+      const filenameOptions = {
+        start: parseDateInput(readValue("table_filter_start")) || fallbackRange.start,
+        end: parseDateInput(readValue("table_filter_end")) || fallbackRange.end,
+        scope: "当前筛选",
+      };
+      const filenameContent = getTableViewMeta().label;
       if (format === "csv") {
-        downloadCsv(batchExportFilename("filtered", ".csv"), toCsvWithLabels(rows, columns));
+        downloadCsv(buildExportFilename(filenameContent, ".csv", filenameOptions), toCsvWithLabels(rows, columns));
         return;
       }
       const workbook = buildExportWorkbook(rows, columns, "对账表格");
       if (!workbook) return;
-      downloadXlsx(batchExportFilename("filtered", ".xlsx"), workbook);
-    }
-
-    function batchExportFilename(range, suffix) {
-      const today = formatOrderDate(getBeijingNow().getTime());
-      const label = range === "selected" ? "选中" : range === "filtered" ? "筛选" : "全部";
-      return `无责备份${today}_${label}${suffix}`;
+      downloadXlsx(buildExportFilename(filenameContent, ".xlsx", filenameOptions), workbook);
     }
 
     function getBatchExportOrders(range) {
@@ -7040,7 +7207,7 @@
       const list = getBatchExportOrders(range);
       const rows = list.map((order) => mapOrderForExportTable(order));
       const csv = toCsvWithLabels(rows, exportColumns);
-      downloadCsv(batchExportFilename(range, ".csv"), csv);
+      downloadCsv(batchExportFilename(range, ".csv", list), csv);
     }
 
     function exportBatchXlsx(range) {
@@ -7048,18 +7215,18 @@
       const rows = list.map((order) => mapOrderForExportTable(order));
       const workbook = buildExportWorkbook(rows, exportColumns, "订单");
       if (!workbook) return;
-      downloadXlsx(batchExportFilename(range, ".xlsx"), workbook);
+      downloadXlsx(batchExportFilename(range, ".xlsx", list), workbook);
     }
 
     function exportTrashCsv() {
       const rows = trashedOrders.map((order) => mapOrderForExportTable(order));
       const csv = toCsvWithLabels(rows, exportColumns);
-      downloadCsv(backupFilename("_垃圾桶.csv"), csv);
+      downloadCsv(backupFilename(".csv", "垃圾桶备份", trashedOrders), csv);
     }
 
     function downloadTemplateCsv() {
       const csv = toCsvWithLabels([], csvColumns);
-      downloadCsv("无责备份模板.csv", csv);
+      downloadCsv(buildExportFilename("导入模板备份", ".csv"), csv);
     }
 
     function importCsv(text) {
@@ -8058,8 +8225,9 @@ function confirmDeleteAfterConfirm() {
       const blob = await response.blob();
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      const safeName = (data.seller_name || "未命名").replace(/[\\/:*?\"<>|]+/g, "_");
-      a.download = `${safeName}_买卖合同.docx`;
+      const contractDate = parseDateInput(data.order_date) || getBeijingNow().getTime();
+      const safeName = sanitizeFilenamePart(data.seller_name || "未命名");
+      a.download = buildExportFilename(`${safeName}_买卖合同`, ".docx", { start: contractDate, end: contractDate });
       document.body.appendChild(a);
       a.click();
       a.remove();

@@ -11,6 +11,11 @@
 - 模块：登录、合同生成、订单管理、对账表、跑路哥、安全功能、机型配置。
 - 页面：`home`、`runaway`、`contract`、`orders-table`、`orders`、`add`、`safety`、`config`。
 
+## 当前 UI
+- 主页面 `views/index.ejs` 已升级为现代暗黑科技 SaaS Dashboard 风格。
+- 视觉特征：深蓝黑渐变背景、左侧深色导航栏、顶部信息栏、半透明玻璃卡片、大数字 KPI、蓝紫/青绿色按钮高亮、紧凑表格和行 hover 高亮。
+- 本次仅调整 CSS/视觉样式，不修改业务逻辑、接口、数据库、字段名、计算公式或合同生成逻辑。
+
 ## 数据库
 - `state(key,value)`：配置 JSON，只存 `sources/defaultSource/models/modelColors/authRememberHours`。
 - `orders(id,payload,created_at,hash)`、`trash(id,payload,created_at,hash)`：业务字段都在 `payload`。
@@ -57,6 +62,7 @@
 
 ## 导出
 - 前端 `xlsx-js-style` + CSV(BOM)。
+- 导出文件名统一包含日期或日期范围，并标明导出内容类型与范围/筛选，例如全部订单备份、分时段订单备份、对账表格当前筛选、批量导出、跑路哥当前筛选、垃圾桶备份、导入模板备份、买卖合同。
 - 安全功能：全部订单 Excel、分时段 Excel、订单 CSV、垃圾桶 CSV、导入模板 CSV。
 - 对账表：当前筛选导出；成都相关视图额外导出“已转客户金额”。
 - 批量导出：选中/当前筛选/全部，Excel/CSV 可选。

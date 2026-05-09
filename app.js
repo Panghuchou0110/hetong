@@ -70,6 +70,7 @@ const defaultState = {
   defaultSource: "",
   models: [...defaultModels],
   modelColors: { ...defaultModelColors },
+  authRememberHours: {},
 };
 
 function dbRun(sql, params = []) {
@@ -139,6 +140,10 @@ function saveConfigState(state) {
         state.modelColors && typeof state.modelColors === "object"
           ? state.modelColors
           : { ...defaultState.modelColors },
+      authRememberHours:
+        state.authRememberHours && typeof state.authRememberHours === "object"
+          ? state.authRememberHours
+          : {},
     });
     db.run(
       "REPLACE INTO state (key, value) VALUES (?, ?)",
@@ -222,6 +227,8 @@ async function getState() {
       rawState.modelColors && typeof rawState.modelColors === "object"
         ? rawState.modelColors
         : { ...defaultState.modelColors },
+    authRememberHours:
+      rawState.authRememberHours && typeof rawState.authRememberHours === "object" ? rawState.authRememberHours : {},
   };
   let orders = await loadList("orders");
   let trash = await loadList("trash");
@@ -367,15 +374,24 @@ function parseCookies(req) {
   return cookies;
 }
 
-function createSession(user) {
+function getRememberMsForUser(state, user) {
+  const hoursRaw = state?.authRememberHours?.[user];
+  const hours = Number(hoursRaw);
+  if ([24, 36, 48].includes(hours)) {
+    return hours * 60 * 60 * 1000;
+  }
+  return loginRememberMs;
+}
+
+function createSession(user, rememberMs = loginRememberMs) {
   const token = crypto.randomBytes(24).toString("hex");
-  const expiresAt = Date.now() + loginRememberMs;
+  const expiresAt = Date.now() + rememberMs;
   sessionStore.set(token, { user, expiresAt });
   return { token, expiresAt };
 }
 
-function setSessionCookie(req, res, token) {
-  const maxAge = Math.floor(loginRememberMs / 1000);
+function setSessionCookie(req, res, token, rememberMs = loginRememberMs) {
+  const maxAge = Math.floor(rememberMs / 1000);
   const isSecure = req.secure || req.headers["x-forwarded-proto"] === "https";
   const secureFlag = isSecure ? "; Secure" : "";
   res.setHeader(
@@ -518,7 +534,7 @@ function extractPhoneFromString(value) {
 
 function extractPhone(text, labels) {
   for (const label of labels) {
-    const re = new RegExp(`${escapeRegex(label)}[^\\d]{0,8}(1[3-9]\\d{9})`);
+    const re = new RegExp(`${escapeRegex(label)}[^\\d]{0,8}(1[3-9]\\d{9})(?!\\d)`);
     const m = text.match(re);
     if (m) return m[1];
   }
@@ -540,6 +556,17 @@ function isValidChineseId(value) {
     .split("")
     .reduce((acc, ch, idx) => acc + Number(ch) * weights[idx], 0);
   return checkMap[sum % 11] === id[17];
+}
+
+function normalizeSellerName(raw) {
+  const cleaned = String(raw || "").replace(/[^\u4e00-\u9fa5]/g, "");
+  if (cleaned.length > 4) {
+    return { value: cleaned.slice(0, 3), warning: `识别到姓名“${cleaned}”超过4个中文，已保留前三位` };
+  }
+  if (cleaned && !/^[\u4e00-\u9fa5]{2,4}$/.test(cleaned)) {
+    return { value: cleaned, warning: "客户姓名应为2-4个中文字符，请核对" };
+  }
+  return { value: cleaned, warning: "" };
 }
 
 function parsePriceValue(raw) {
@@ -629,7 +656,8 @@ function matchColorFromList(rawText, colors) {
   (colors || []).forEach((color) => {
     const compact = String(color || "").replace(/\s+/g, "");
     if (!compact) return;
-    if (text.includes(compact) && compact.length > maxLen) {
+    const aliases = compact === "白色" ? ["白色", "银色"] : compact === "银色" ? ["银色", "白色"] : [compact];
+    if (aliases.some((alias) => text.includes(alias)) && compact.length > maxLen) {
       matched = color;
       maxLen = compact.length;
     }
@@ -668,6 +696,7 @@ function extractFromRaw(raw, options = {}) {
   const models = Array.isArray(options.models) ? options.models : [];
   const modelColors = options.modelColors && typeof options.modelColors === "object" ? options.modelColors : {};
   const t = normalizeText(raw);
+  const warnings = [];
 
   const nameLabels = [
     "\u59d3\u540d",
@@ -688,6 +717,7 @@ function extractFromRaw(raw, options = {}) {
     "\u5356\u65b9",
     "\u5356\u5bb6",
     "\u79f0\u547c",
+    "\u540d\u5b57",
   ];
 
   const phoneLabels = [
@@ -707,11 +737,21 @@ function extractFromRaw(raw, options = {}) {
   ];
 
   const idLabels = ["\u8eab\u4efd\u8bc1\u53f7\u7801", "\u8eab\u4efd\u8bc1\u53f7", "\u8eab\u4efd\u8bc1", "\u8eab\u4efd\u8bc1\u7f16\u53f7"];
-  const seller_name = pickByLabels(t, nameLabels);
+  const nameResult = normalizeSellerName(pickByLabels(t, nameLabels));
+  const seller_name = nameResult.value;
+  if (nameResult.warning) warnings.push(nameResult.warning);
   const seller_id_raw = pickByLabels(t, idLabels) || pick(t, /\u8eab\u4efd\u8bc1(?:\u53f7\u7801|\u53f7)?\s*:\s*([0-9Xx]{18})/);
   const seller_id_match = String(seller_id_raw || "").match(/\d{17}[\dXx]/);
   const seller_id = seller_id_match ? seller_id_match[0] : "";
+  if (seller_id_raw && (!seller_id || !isValidChineseId(seller_id))) {
+    warnings.push("身份证号可能错误，请核对");
+  }
   const seller_phone = extractPhone(t, phoneLabels);
+  const phoneRaw = pickByLabels(t, phoneLabels);
+  const phoneDigits = String(phoneRaw || "").replace(/\D/g, "");
+  if ((phoneRaw && phoneDigits.length !== 11) || (seller_phone && !isValidPhone(seller_phone))) {
+    warnings.push("手机号可能错误：手机号必须是11位");
+  }
 
   // \u578b\u53f7\u5185\u5b58\uff1a17promax 256G / \u4e5f\u517c\u5bb9?\u578b\u53f7\u5185\u5b58\uff1a?
   const model_mem =
@@ -760,15 +800,21 @@ function extractFromRaw(raw, options = {}) {
     pick(t, new RegExp("\\u4ef7\\u683c\\D*([0-9,]+)"))
   );
 
+  const color = matchColorFromList(t, colorOptions);
+  if (model && colorOptions.length && !color) {
+    warnings.push("未识别到有效颜色，请手动选择颜色");
+  }
+
   return {
     seller_name,
     seller_id,
     seller_phone,
     model,
     memory,
-    color: matchColorFromList(t, colorOptions),
+    color,
     total_price,
     unit_price: total_price || "", // default: unit price equals total price
+    warnings,
   };
 }
 
@@ -799,18 +845,22 @@ app.post("/api/auth/login", rateLimit, async (req, res) => {
   }
   const expected = authUsers.get(user);
   if (expected && expected === pass) {
-    const session = createSession(user);
-    setSessionCookie(req, res, session.token);
-    res.json({ ok: true, user, expiresIn: Math.floor(loginRememberMs / 1000) });
+    const state = await getState().catch(() => defaultState);
+    const rememberMs = getRememberMsForUser(state, user);
+    const session = createSession(user, rememberMs);
+    setSessionCookie(req, res, session.token, rememberMs);
+    res.json({ ok: true, user, expiresIn: Math.floor(rememberMs / 1000) });
     return;
   }
   try {
+    const state = await getState();
+    const rememberMs = getRememberMsForUser(state, user);
     if (authUsers.size === 0) {
       const total = await countAuthUsers();
       if (total === 0 && user === defaultAdminUser && pass === defaultAdminPass) {
-        const session = createSession(user);
-        setSessionCookie(req, res, session.token);
-        res.json({ ok: true, user, expiresIn: Math.floor(loginRememberMs / 1000) });
+        const session = createSession(user, rememberMs);
+        setSessionCookie(req, res, session.token, rememberMs);
+        res.json({ ok: true, user, expiresIn: Math.floor(rememberMs / 1000) });
         return;
       }
     }
@@ -824,9 +874,9 @@ app.post("/api/auth/login", rateLimit, async (req, res) => {
       res.status(401).json({ ok: false, error: "invalid_credentials" });
       return;
     }
-    const session = createSession(user);
-    setSessionCookie(req, res, session.token);
-    res.json({ ok: true, user, expiresIn: Math.floor(loginRememberMs / 1000) });
+    const session = createSession(user, rememberMs);
+    setSessionCookie(req, res, session.token, rememberMs);
+    res.json({ ok: true, user, expiresIn: Math.floor(rememberMs / 1000) });
   } catch (err) {
     writeLog(errorLogPath, { ts: new Date().toISOString(), type: "auth_login_failed", err: String(err) });
     res.status(500).json({ ok: false, error: "auth_login_failed" });
@@ -988,6 +1038,10 @@ app.post("/api/state", requireSession, requireAuth, rateLimit, async (req, res) 
         payload.modelColors && typeof payload.modelColors === "object"
           ? payload.modelColors
           : { ...defaultState.modelColors },
+      authRememberHours:
+        payload.authRememberHours && typeof payload.authRememberHours === "object"
+          ? payload.authRememberHours
+          : {},
     };
     await saveState(state);
     res.json({ ok: true });
@@ -1043,6 +1097,11 @@ app.post("/generate", requireSession, requireAuth, rateLimit, async (req, res) =
     unit_price: payload.unit_price || "",
     total_price: payload.total_price || "",
   };
+
+  if (!/^[\u4e00-\u9fa5]{2,4}$/.test(data.seller_name)) {
+    res.status(400).send("\u5ba2\u6237\u59d3\u540d\u5fc5\u987b\u662f2-4\u4e2a\u4e2d\u6587\u5b57\u7b26");
+    return;
+  }
 
   if (!isValidPhone(data.seller_phone)) {
     res.status(400).send("\u624b\u673a\u53f7\u683c\u5f0f\u4e0d\u6b63\u786e");

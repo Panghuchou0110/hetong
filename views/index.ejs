@@ -3628,6 +3628,7 @@
             </div>
           </div>
           <div class="button-row">
+            <button class="primary" id="exportBackupZip" type="button">一键导出备份</button>
             <button class="primary" id="exportOrdersXlsx" type="button">导出订单 Excel</button>
             <button class="secondary" id="exportOrdersRangeXlsx" type="button">分时段导出 Excel</button>
             <button class="ghost" id="exportOrdersCsv" type="button">备份订单 CSV</button>
@@ -4155,6 +4156,7 @@
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>
     const $ = (id) => document.getElementById(id);
 
@@ -7350,6 +7352,16 @@
       return text;
     }
 
+    function downloadBlob(filename, blob) {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    }
+
     const csvColumns = [
       { key: "order_date", label: "订单日期" },
       { key: "seller_name", label: "客户姓名" },
@@ -7465,6 +7477,172 @@
       };
     }
 
+    const backupAllColumns = [
+      { key: "order_time", label: "订单时间" },
+      { key: "source", label: "订单来源" },
+      { key: "seller_name", label: "客户姓名" },
+      { key: "seller_id", label: "身份证" },
+      { key: "seller_phone", label: "手机号" },
+      { key: "model", label: "机型" },
+      { key: "memory", label: "内存" },
+      { key: "color", label: "颜色" },
+      { key: "actual_model_color", label: "实际型号颜色" },
+      { key: "sf_no", label: "顺丰单号" },
+      { key: "buy_price", label: "下单价" },
+      { key: "settle_price", label: "结算价" },
+      { key: "status", label: "状态" },
+      { key: "settlement", label: "结算状态" },
+      { key: "activation", label: "激活状态" },
+      { key: "remark", label: "备注" },
+    ];
+
+    const backupWanshunRunawayColumns = [
+      { key: "order_time", label: "订单时间" },
+      { key: "source", label: "订单来源" },
+      { key: "seller_name", label: "客户姓名" },
+      { key: "seller_id", label: "身份证" },
+      { key: "seller_phone", label: "手机号" },
+      { key: "model_bundle", label: "手机型号" },
+      { key: "settle_price", label: "已结算金额" },
+      { key: "runaway_amount", label: "跑路金额" },
+      { key: "runaway_returned_amount", label: "客户退皖顺" },
+      { key: "runaway_returned_to_me_amount", label: "客户退我" },
+      { key: "runaway_total_returned_amount", label: "客户总退" },
+      { key: "runaway_remain_amount", label: "客户还欠" },
+      { key: "runaway_wanshun_returned_amount", label: "皖顺已退我" },
+      { key: "runaway_wanshun_remain_amount", label: "皖顺还差我" },
+      { key: "remark", label: "备注" },
+    ];
+
+    const backupChengduRunawayColumns = [
+      { key: "order_time", label: "订单时间" },
+      { key: "source", label: "订单来源" },
+      { key: "seller_name", label: "客户姓名" },
+      { key: "seller_id", label: "身份证" },
+      { key: "seller_phone", label: "手机号" },
+      { key: "model_bundle", label: "手机型号" },
+      { key: "settle_price", label: "已结算金额" },
+      { key: "runaway_amount", label: "跑路金额" },
+      { key: "runaway_returned_amount", label: "客户已退金额" },
+      { key: "runaway_remain_amount", label: "当前还欠金额" },
+      { key: "status", label: "状态" },
+      { key: "remark", label: "备注" },
+    ];
+
+    function mapBackupAllOrder(order) {
+      const activation = resolveActivation(order);
+      return {
+        order_time: formatDateTime(order.createdAt),
+        source: String(order.source || "").trim(),
+        seller_name: order.seller_name || "",
+        seller_id: String(order.seller_id || "").trim(),
+        seller_phone: String(order.seller_phone || "").trim(),
+        model: order.model || "",
+        memory: order.memory || "",
+        color: order.color || "",
+        actual_model_color: String(order.actual_model_color || "").trim(),
+        sf_no: String(order.sf_no || "").trim(),
+        buy_price: parsePrice(order.buy_price),
+        settle_price: parsePrice(order.settle_price),
+        status: orderStatusMap[order.status] || order.status || "",
+        settlement: orderSettlementMap[order.settlement] || order.settlement || "",
+        activation: activation.label,
+        remark: formatRemarkPlain(order.remark || ""),
+      };
+    }
+
+    function mapBackupWanshunRunawayOrder(order) {
+      const customerTaken = getRunawayCustomerTakenAmount(order);
+      const customerReturnedToWanShun = getRunawayCustomerReturnedToWanShunAmount(order);
+      const customerReturnedToMe = getRunawayCustomerReturnedToMeAmount(order);
+      const customerTotalReturned = getRunawayCustomerTotalReturnedAmount(order);
+      const customerRemain = getRunawayCustomerRemainAmount(order);
+      const wanshunReturnedToMe = getRunawayWanshunReturnedToMeAmount(order);
+      const wanshunRemainToMe = getRunawayWanshunRemainAmount(order);
+      return {
+        order_time: formatDateTime(order.createdAt),
+        source: String(order.source || "").trim(),
+        seller_name: order.seller_name || "",
+        seller_id: String(order.seller_id || "").trim(),
+        seller_phone: String(order.seller_phone || "").trim(),
+        model_bundle: [order.model, order.memory, order.color].filter(Boolean).join(" ").trim(),
+        settle_price: parsePrice(order.settle_price),
+        runaway_amount: Number.isFinite(customerTaken) ? customerTaken : 0,
+        runaway_returned_amount: Number.isFinite(customerReturnedToWanShun) ? customerReturnedToWanShun : 0,
+        runaway_returned_to_me_amount: Number.isFinite(customerReturnedToMe) ? customerReturnedToMe : 0,
+        runaway_total_returned_amount: Number.isFinite(customerTotalReturned) ? customerTotalReturned : 0,
+        runaway_remain_amount: Number.isFinite(customerRemain) ? customerRemain : 0,
+        runaway_wanshun_returned_amount: Number.isFinite(wanshunReturnedToMe) ? wanshunReturnedToMe : 0,
+        runaway_wanshun_remain_amount: Number.isFinite(wanshunRemainToMe) ? wanshunRemainToMe : 0,
+        remark: formatRemarkPlain(order.remark || ""),
+      };
+    }
+
+    function mapBackupChengduRunawayOrder(order) {
+      const customerTaken = getRunawayChengduTakenAmount(order);
+      const customerReturned = getRunawayChengduReturnedAmount(order);
+      const customerRemain = getRunawayChengduRemainAmount(order);
+      return {
+        order_time: formatDateTime(order.createdAt),
+        source: String(order.source || "").trim(),
+        seller_name: order.seller_name || "",
+        seller_id: String(order.seller_id || "").trim(),
+        seller_phone: String(order.seller_phone || "").trim(),
+        model_bundle: [order.model, order.memory, order.color].filter(Boolean).join(" ").trim(),
+        settle_price: parsePrice(order.settle_price),
+        runaway_amount: Number.isFinite(customerTaken) ? customerTaken : 0,
+        runaway_returned_amount: Number.isFinite(customerReturned) ? customerReturned : 0,
+        runaway_remain_amount: Number.isFinite(customerRemain) ? customerRemain : 0,
+        status: getRunawayChengduStatus(order),
+        remark: formatRemarkPlain(order.remark || ""),
+      };
+    }
+
+    async function exportBackupZip() {
+      if (!window.JSZip) {
+        alert("压缩组件未加载，请检查网络或刷新页面");
+        return;
+      }
+      const files = [
+        {
+          filename: "订单备份_全部订单_皖顺成都.xlsx",
+          sheetName: "全部订单",
+          columns: backupAllColumns,
+          rows: orders
+            .filter((order) => {
+              const source = String(order.source || "").trim();
+              return source === "皖顺" || source === "成都";
+            })
+            .map((order) => mapBackupAllOrder(order)),
+        },
+        {
+          filename: "跑路订单_皖顺.xlsx",
+          sheetName: "皖顺跑路",
+          columns: backupWanshunRunawayColumns,
+          rows: orders
+            .filter((order) => String(order.source || "").trim() === "皖顺" && order.status === "runaway")
+            .map((order) => mapBackupWanshunRunawayOrder(order)),
+        },
+        {
+          filename: "跑路订单_成都.xlsx",
+          sheetName: "成都跑路",
+          columns: backupChengduRunawayColumns,
+          rows: orders
+            .filter((order) => String(order.source || "").trim() === "成都" && order.status === "runaway")
+            .map((order) => mapBackupChengduRunawayOrder(order)),
+        },
+      ];
+      const zip = new window.JSZip();
+      for (const file of files) {
+        const workbook = buildExportWorkbook(file.rows, file.columns, file.sheetName);
+        if (!workbook) return;
+        const data = window.XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        zip.file(file.filename, data);
+      }
+      const blob = await zip.generateAsync({ type: "blob" });
+      downloadBlob(backupZipFilename(), blob);
+    }
+
     function mapRunawayOrderForExport(order) {
       const meta = getRunawayViewMeta();
       const modelText = [order.model, order.memory, order.color].filter(Boolean).join(" ").trim() || "--";
@@ -7565,32 +7743,25 @@
     }
 
     function downloadCsv(filename, csvText) {
-      const blob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      downloadBlob(filename, new Blob([csvText], { type: "text/csv;charset=utf-8;" }));
     }
 
     function downloadXlsx(filename, workbook) {
       if (!workbook || !window.XLSX) return;
       const data = window.XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-      const blob = new Blob([data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      downloadBlob(
+        filename,
+        new Blob([data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+      );
     }
 
     function backupFilename(suffix, content = "全部订单备份", list = orders) {
       const range = getOrdersDateRange(list);
       return buildExportFilename(content, suffix, { start: range.start, end: range.end });
+    }
+
+    function backupZipFilename() {
+      return `备份_${formatFilenameDate(getBeijingNow().getTime())}.zip`;
     }
 
     function batchExportFilename(range, suffix, list = getBatchExportOrders(range)) {
@@ -7665,15 +7836,23 @@
       const makeStyle = (key, value) => {
         const alignment = {
           vertical: "center",
-          horizontal: rightKeys.has(key) ? "right" : centerKeys.has(key) ? "center" : "left",
+          horizontal:
+            typeof value === "number" && Number.isFinite(value)
+              ? "right"
+              : rightKeys.has(key)
+              ? "right"
+              : centerKeys.has(key)
+              ? "center"
+              : "left",
           wrapText: key === "remark" || key === "model_bundle" || key === "actual_model_color",
         };
         let color = "";
         if (key === "activation") color = activationColors[String(value || "")] || "";
         if (key === "settlement") color = settlementColors[String(value || "")] || "";
         if (key === "status") color = resolveStatusColor(value);
-        if (!color) return { alignment };
-        return { alignment, font: { color: { rgb: color }, bold: true } };
+        const style = typeof value === "number" && Number.isFinite(value) ? { alignment, numFmt: "#,##0.##" } : { alignment };
+        if (!color) return style;
+        return { ...style, font: { color: { rgb: color }, bold: true } };
       };
 
       const totalCols = columns.length;
@@ -9345,6 +9524,7 @@ function confirmDeleteAfterConfirm() {
       renderOrders();
     });
 
+    $("exportBackupZip").addEventListener("click", exportBackupZip);
     $("exportOrdersCsv").addEventListener("click", exportOrdersCsv);
     $("exportOrdersXlsx").addEventListener("click", exportOrdersXlsx);
     $("exportOrdersRangeXlsx").addEventListener("click", exportOrdersRangeXlsx);

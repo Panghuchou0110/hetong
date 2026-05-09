@@ -43,7 +43,7 @@
 ## 跑路哥
 - 数据源：`orders` 中 `status==="runaway"`，按当前子入口固定 `source`。
 - 金额输入支持数字、`3000+6000`、`3000+6000=9000`，统计取最终值。
-- 默认筛最近一年；快捷筛选：全部/当月/上月；可按时间或金额排序并导出当前筛选 Excel/CSV。
+- 默认按时间从新到旧排序；快捷筛选：全部/当月/前月/前前月；支持清除筛选后一键恢复所有跑路哥列表；可按时间或金额排序并导出当前筛选 Excel/CSV。
 
 ### 皖顺模式
 - 字段：`settle_price`=已给皖顺结算；`runaway_amount`=客户已拿；`runaway_returned_amount`=客户退皖顺；`runaway_returned_to_me_amount`=客户退我；`runaway_wanshun_returned_amount`=皖顺已退我。

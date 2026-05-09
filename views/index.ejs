@@ -2724,16 +2724,17 @@
               <div class="button-row runaway-range-actions">
                 <button class="secondary" id="runaway_range_all" type="button">全部</button>
                 <button class="secondary" id="runaway_range_month" type="button">当月</button>
-                <button class="secondary" id="runaway_range_prev_month" type="button">上月</button>
+                <button class="secondary" id="runaway_range_prev_month" type="button">前月</button>
+                <button class="secondary" id="runaway_range_prev_prev_month" type="button">前前月</button>
               </div>
             </div>
             <div class="field">
               <label for="runaway_sort">客户还欠排序</label>
               <select id="runaway_sort">
-                <option value="amount_desc">金额从高到低</option>
-                <option value="amount_asc">金额从低到高</option>
                 <option value="time_desc">时间从新到旧</option>
                 <option value="time_asc">时间从旧到新</option>
+                <option value="amount_desc">金额从高到低</option>
+                <option value="amount_asc">金额从低到高</option>
               </select>
             </div>
             <div class="field">
@@ -2743,6 +2744,7 @@
                   <option value="xlsx">Excel</option>
                   <option value="csv">CSV</option>
                 </select>
+                <button class="secondary" id="runaway_clear_filters" type="button">清除筛选</button>
                 <button class="secondary" id="runaway_export" type="button">导出当前筛选</button>
               </div>
             </div>
@@ -5180,7 +5182,7 @@
       const meta = getRunawayViewMeta(view);
       if ($("runawayTitle")) $("runawayTitle").textContent = meta.title;
       if ($("runawaySubtitle")) $("runawaySubtitle").textContent = meta.subtitle;
-      setRunawaySort("remain", "desc", { syncSelect: true, render: false });
+      setRunawaySort("time", "desc", { syncSelect: true, render: false });
       if (view === "wanshun" || view === "chengdu") {
         setRunawayNavExpanded(true);
       }
@@ -6234,7 +6236,7 @@
     function getRunawayFilteredOrders() {
       const start = parseDateInput(readValue("runaway_filter_start"));
       const end = parseDateInput(readValue("runaway_filter_end"));
-      const sort = readValue("runaway_sort") || "amount_desc";
+      const sort = readValue("runaway_sort") || "time_desc";
       const sortMap =
         sort === "time_asc"
           ? { field: "time", dir: "asc" }
@@ -8908,7 +8910,7 @@ function confirmDeleteAfterConfirm() {
       $(id).addEventListener("change", renderRunaway);
     });
     $("runaway_sort").addEventListener("change", () => {
-      const sort = readValue("runaway_sort") || "amount_desc";
+      const sort = readValue("runaway_sort") || "time_desc";
       if (sort === "time_asc") {
         setRunawaySort("time", "asc");
       } else if (sort === "time_desc") {
@@ -8945,6 +8947,21 @@ function confirmDeleteAfterConfirm() {
       const end = new Date(now.getFullYear(), now.getMonth(), 0);
       $("runaway_filter_start").value = formatDateValue(start.getTime());
       $("runaway_filter_end").value = formatDateValue(end.getTime());
+      renderRunaway();
+    });
+    $("runaway_range_prev_prev_month").addEventListener("click", () => {
+      const now = getBeijingNow();
+      const start = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+      const end = new Date(now.getFullYear(), now.getMonth() - 1, 0);
+      $("runaway_filter_start").value = formatDateValue(start.getTime());
+      $("runaway_filter_end").value = formatDateValue(end.getTime());
+      renderRunaway();
+    });
+    $("runaway_clear_filters").addEventListener("click", () => {
+      $("runaway_filter_start").value = "";
+      $("runaway_filter_end").value = "";
+      $("runaway_sort").value = "time_desc";
+      setRunawaySort("time", "desc", { syncSelect: false });
       renderRunaway();
     });
     $("runaway_export").addEventListener("click", exportRunawayFiltered);

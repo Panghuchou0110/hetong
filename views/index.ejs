@@ -1113,6 +1113,338 @@
       color: #16a34a;
     }
 
+    .runaway-dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .runaway-panel {
+      overflow: hidden;
+      padding: 0;
+      margin-bottom: 14px;
+    }
+
+    .runaway-panel > summary {
+      list-style: none;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .runaway-panel > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .runaway-panel-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .runaway-panel-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .runaway-panel-arrow {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      background: rgba(15, 23, 42, 0.68);
+      color: #dbe7f3;
+      transition: transform 0.2s ease, background 0.2s ease;
+      flex: 0 0 auto;
+    }
+
+    .runaway-panel[open] .runaway-panel-arrow {
+      transform: rotate(90deg);
+      background: rgba(37, 99, 235, 0.18);
+    }
+
+    .runaway-panel-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 0 18px 18px;
+    }
+
+    .runaway-table-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .runaway-table-card .table-wrap {
+      border-radius: 14px 14px 0 0;
+    }
+
+    .runaway-table-card #runawayEmpty {
+      margin: 0 18px 18px;
+    }
+
+    .runaway-risk-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .runaway-risk-card,
+    .runaway-stat-card,
+    .runaway-chart-card {
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      background: linear-gradient(180deg, rgba(10, 20, 36, 0.92), rgba(8, 16, 30, 0.86));
+      border-radius: 14px;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(18px);
+    }
+
+    .runaway-risk-card {
+      grid-column: span 3;
+      padding: 14px 16px;
+      min-height: 148px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .runaway-risk-card.primary {
+      grid-column: span 6;
+      min-height: 180px;
+      background:
+        linear-gradient(135deg, rgba(248, 113, 113, 0.22), rgba(37, 99, 235, 0.16)),
+        linear-gradient(180deg, rgba(10, 20, 36, 0.96), rgba(8, 16, 30, 0.9));
+      border-color: rgba(248, 113, 113, 0.24);
+      box-shadow: 0 20px 44px rgba(244, 63, 94, 0.12);
+    }
+
+    .runaway-risk-card.warning {
+      background:
+        linear-gradient(135deg, rgba(34, 197, 94, 0.14), rgba(14, 165, 233, 0.12)),
+        linear-gradient(180deg, rgba(10, 20, 36, 0.96), rgba(8, 16, 30, 0.9));
+    }
+
+    .runaway-risk-card.info {
+      background:
+        linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(168, 85, 247, 0.12)),
+        linear-gradient(180deg, rgba(10, 20, 36, 0.96), rgba(8, 16, 30, 0.9));
+    }
+
+    .runaway-card-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #93c5fd;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .runaway-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #e5eef8;
+      line-height: 1.3;
+    }
+
+    .runaway-card-value {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+      color: #f8fafc;
+      text-shadow: 0 0 28px rgba(248, 113, 113, 0.18);
+    }
+
+    .runaway-card-value.primary {
+      font-size: 42px;
+      color: #fff1f2;
+      text-shadow: 0 0 34px rgba(248, 113, 113, 0.25);
+    }
+
+    .runaway-card-note {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .runaway-card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .runaway-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .runaway-stat-card {
+      padding: 12px 14px;
+      min-height: 108px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .runaway-stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .runaway-stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #e5eef8;
+      line-height: 1.1;
+    }
+
+    .runaway-chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .runaway-chart-card {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 220px;
+    }
+
+    .runaway-bar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .runaway-bar-item {
+      display: grid;
+      grid-template-columns: 100px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .runaway-bar-label {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+
+    .runaway-bar-track {
+      position: relative;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.12);
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    .runaway-bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(248, 113, 113, 0.92), rgba(249, 115, 22, 0.88));
+      box-shadow: 0 0 18px rgba(248, 113, 113, 0.2);
+    }
+
+    .runaway-bar-fill.warning {
+      background: linear-gradient(90deg, rgba(248, 113, 113, 0.92), rgba(249, 115, 22, 0.88));
+      box-shadow: 0 0 18px rgba(248, 113, 113, 0.2);
+    }
+
+    .runaway-bar-fill.alt {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.92), rgba(99, 102, 241, 0.88));
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.2);
+    }
+
+    .runaway-bar-fill.info {
+      background: linear-gradient(90deg, rgba(99, 102, 241, 0.92), rgba(168, 85, 247, 0.88));
+      box-shadow: 0 0 18px rgba(99, 102, 241, 0.2);
+    }
+
+    .runaway-bar-fill.good {
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.92), rgba(20, 184, 166, 0.88));
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.2);
+    }
+
+    .runaway-bar-value {
+      font-size: 12px;
+      color: #e2e8f0;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .runaway-progress {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .runaway-progress-total {
+      font-size: 16px;
+      font-weight: 800;
+      color: #e5eef8;
+    }
+
+    .runaway-progress-bar {
+      display: flex;
+      height: 18px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    .runaway-progress-paid {
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.9), rgba(20, 184, 166, 0.9));
+    }
+
+    .runaway-progress-remain {
+      background: linear-gradient(90deg, rgba(248, 113, 113, 0.92), rgba(239, 68, 68, 0.92));
+    }
+
+    .runaway-progress-legend {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .runaway-progress-legend strong {
+      display: block;
+      margin-bottom: 2px;
+      color: #e5eef8;
+      font-size: 13px;
+    }
+
+    .runaway-chengdu-period {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
     .week-summary {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2345,6 +2677,28 @@
         align-items: flex-start;
       }
 
+      .runaway-risk-grid,
+      .runaway-chart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .runaway-risk-card,
+      .runaway-risk-card.primary {
+        grid-column: auto;
+      }
+
+      .runaway-panel > summary {
+        padding: 14px 14px 12px;
+      }
+
+      .runaway-panel-body {
+        padding: 0 14px 14px;
+      }
+
+      .runaway-bar-item {
+        grid-template-columns: 84px minmax(0, 1fr) auto;
+      }
+
       #mobileMenu {
         display: inline-flex;
       }
@@ -2366,6 +2720,22 @@
       }
 
       .week-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .runaway-risk-grid {
+        gap: 10px;
+      }
+
+      .runaway-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .runaway-panel-meta {
+        justify-content: flex-start;
+      }
+
+      .runaway-progress-legend {
         grid-template-columns: 1fr;
       }
 
@@ -2455,6 +2825,14 @@
       .order-pagination {
 
         justify-content: center;
+      }
+
+      .runaway-card-value.primary {
+        font-size: 36px;
+      }
+
+      .runaway-card-value {
+        font-size: 28px;
       }
 
       .order-date-card {
@@ -2705,50 +3083,57 @@
       </section>
 
       <section id="section-runaway" class="section">
-        <div class="card">
-          <div class="order-toolbar">
-            <div>
+        <details class="card runaway-panel" id="runawayPanel" open>
+          <summary>
+            <div class="runaway-panel-heading">
               <div class="card-title" id="runawayTitle">跑路哥</div>
               <div class="card-subtitle" id="runawaySubtitle">数据来自总订单。红/绿/黄金额列可直接点击手动填写或修改。</div>
             </div>
-            <div class="order-count" id="runawayCount">共 0 单</div>
-          </div>
-          <div id="runawaySummary" class="order-subtitle"></div>
-          <div class="runaway-controls">
-            <div class="field full">
-              <label for="runaway_filter_start">时间范围</label>
-              <div class="range-row">
-                <input id="runaway_filter_start" type="date" />
-                <input id="runaway_filter_end" type="date" />
-              </div>
-              <div class="button-row runaway-range-actions">
-                <button class="secondary" id="runaway_range_all" type="button">全部</button>
-                <button class="secondary" id="runaway_range_month" type="button">当月</button>
-                <button class="secondary" id="runaway_range_prev_month" type="button">前月</button>
-                <button class="secondary" id="runaway_range_prev_prev_month" type="button">前前月</button>
-              </div>
+            <div class="runaway-panel-meta">
+              <div class="order-count" id="runawayCount">共 0 单</div>
+              <span class="runaway-panel-arrow" aria-hidden="true">▸</span>
             </div>
-            <div class="field">
-              <label for="runaway_sort">客户还欠排序</label>
-              <select id="runaway_sort">
-                <option value="time_desc">时间从新到旧</option>
-                <option value="time_asc">时间从旧到新</option>
-                <option value="amount_desc">金额从高到低</option>
-                <option value="amount_asc">金额从低到高</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="runaway_export_format">导出格式</label>
-              <div class="button-row" style="justify-content:flex-end;">
-                <select id="runaway_export_format" style="max-width:120px;">
-                  <option value="xlsx">Excel</option>
-                  <option value="csv">CSV</option>
+          </summary>
+          <div class="runaway-panel-body">
+            <div id="runawaySummary" class="order-subtitle"></div>
+            <div class="runaway-controls">
+              <div class="field full">
+                <label for="runaway_filter_start">时间范围</label>
+                <div class="range-row">
+                  <input id="runaway_filter_start" type="date" />
+                  <input id="runaway_filter_end" type="date" />
+                </div>
+                <div class="button-row runaway-range-actions">
+                  <button class="secondary" id="runaway_range_all" type="button">全部</button>
+                  <button class="secondary" id="runaway_range_month" type="button">当月</button>
+                  <button class="secondary" id="runaway_range_prev_month" type="button">前月</button>
+                  <button class="secondary" id="runaway_range_prev_prev_month" type="button">前前月</button>
+                </div>
+              </div>
+              <div class="field">
+                <label for="runaway_sort">客户还欠排序</label>
+                <select id="runaway_sort">
+                  <option value="time_desc">时间从新到旧</option>
+                  <option value="time_asc">时间从旧到新</option>
+                  <option value="amount_desc">金额从高到低</option>
+                  <option value="amount_asc">金额从低到高</option>
                 </select>
-                <button class="secondary" id="runaway_clear_filters" type="button">清除筛选</button>
-                <button class="secondary" id="runaway_export" type="button">导出当前筛选</button>
+              </div>
+              <div class="field">
+                <label for="runaway_export_format">导出格式</label>
+                <div class="button-row" style="justify-content:flex-end;">
+                  <select id="runaway_export_format" style="max-width:120px;">
+                    <option value="xlsx">Excel</option>
+                    <option value="csv">CSV</option>
+                  </select>
+                  <button class="secondary" id="runaway_clear_filters" type="button">清除筛选</button>
+                  <button class="secondary" id="runaway_export" type="button">导出当前筛选</button>
+                </div>
               </div>
             </div>
           </div>
+        </details>
+        <div class="card runaway-table-card">
           <div class="table-wrap">
             <table class="order-table runaway-table">
               <thead>
@@ -5139,7 +5524,7 @@
           label: "跑路哥-成都",
           source: "成都",
           title: "跑路哥 - 成都",
-          subtitle: "只显示成都来源的跑路订单。资金线只有“我 ↔ 客户”，金额按“客户已拿 / 客户已退 / 客户还欠 / 状态”显示。",
+          subtitle: "只显示成都来源的跑路订单。按当前筛选统计总跑路、已退回和当前还欠，不单列当月卡片。",
           settleLabel: "结算金额",
           takenLabel: "跑路金额",
           returnedLabel: "客户已退金额",
@@ -5182,6 +5567,7 @@
       const meta = getRunawayViewMeta(view);
       if ($("runawayTitle")) $("runawayTitle").textContent = meta.title;
       if ($("runawaySubtitle")) $("runawaySubtitle").textContent = meta.subtitle;
+      if ($("runawayPanel")) $("runawayPanel").open = true;
       setRunawaySort("time", "desc", { syncSelect: true, render: false });
       if (view === "wanshun" || view === "chengdu") {
         setRunawayNavExpanded(true);
@@ -6580,33 +6966,179 @@
           }, 0);
       if ($("runawayCount")) $("runawayCount").textContent = `共 ${list.length} 单`;
       renderRunawayTableHead(meta);
+      const cleanRunawaySummaryHtml = (html) => String(html || "").replace(/undefined/g, "");
       if ($("runawaySummary")) {
-        const summaryBits = meta.showChengduFlow
-          ? [
-              `跑路订单数 <span class="stat-number">${list.length}</span> 单`,
-              `${meta.takenLabel}总额 <span class="stat-number">${formatPrice(customerTaken)}</span> 元`,
-              `客户已退总额 <span class="stat-number stored">${formatPrice(customerTotalReturned)}</span> 元`,
-              `客户还欠总额 <span class="stat-number">${formatPrice(customerRemainTotal)}</span> 元`,
-              `追回中 <span class="stat-number">${list.filter((order) => getRunawayChengduRemainAmount(order) > 0).length}</span> 单`,
-              `已结清 <span class="stat-number stored">${list.filter((order) => getRunawayChengduRemainAmount(order) <= 0).length}</span> 单`,
-            ]
-          : [
-              `跑路订单数 <span class="stat-number">${list.length}</span> 单`,
-              `结算总额 <span class="stat-number stored">${formatPrice(settled)}</span> 元`,
-              `${meta.takenLabel}总额 <span class="stat-number">${formatPrice(customerTaken)}</span> 元`,
-              `客户总已退总额 <span class="stat-number stored">${formatPrice(customerTotalReturned)}</span> 元`,
-              `客户还欠总额 <span class="stat-number">${formatPrice(customerRemainTotal)}</span> 元`,
-            ];
-        if (!meta.showChengduFlow) {
-          if (meta.showWanshunNeed) {
-            summaryBits.push(`皖顺已退我总额 <span class="stat-number stored">${formatPrice(wanshunReturnedTotal)}</span> 元`);
-            summaryBits.push(`皖顺还差我汇总 <span class="stat-number stored">${escapeHtml(formatRunawayWanshunRemainText(wanshunRemainTotal))}</span>`);
-          } else {
-            summaryBits.push(`皖顺已退我总额 <span class="stat-number stored">--</span>`);
-            summaryBits.push(`皖顺还差我总额 <span class="stat-number stored">--</span>`);
-          }
+        if (meta.showWanshunNeed) {
+          const wanshunRiskAmount = Math.max(wanshunRemainTotal, 0);
+          const runawayAmountTotal = Math.max(customerTaken, 0);
+          const customerRiskAmount = Math.max(customerRemainTotal, 0);
+          const wanshunRefundedAmount = Math.max(wanshunReturnedTotal, 0);
+          const refundNeedTotal = wanshunRefundedAmount + wanshunRiskAmount;
+          const riskItems = [
+            { label: "皖顺还没退回", value: wanshunRiskAmount, tone: "danger" },
+            { label: "总共跑路", value: runawayAmountTotal, tone: "alt" },
+            { label: "客户还没要回", value: customerRiskAmount, tone: "good" },
+          ];
+          const riskMax = Math.max(...riskItems.map((item) => item.value), 1);
+          const statItems = [
+            { label: "跑路订单数", value: `${list.length} 单` },
+            { label: "结算总额", value: `${formatPrice(settled)} 元` },
+            { label: "客户已退总额", value: `${formatPrice(customerTotalReturned)} 元` },
+            { label: "皖顺已退我总额", value: `${formatPrice(wanshunRefundedAmount)} 元` },
+          ];
+          const chartBars = riskItems
+            .map((item) => {
+              const width = `${(item.value / riskMax) * 100}%`;
+              return `
+                <div class="runaway-bar-item">
+                  <div class="runaway-bar-label">${escapeHtml(item.label)}</div>
+                  <div class="runaway-bar-track"><div class="runaway-bar-fill ${item.tone}" style="width:${width};"></div></div>
+                  <div class="runaway-bar-value">${escapeHtml(formatPrice(item.value))} 元</div>
+                </div>
+              `;
+            })
+            .join("");
+          const refundPaidPct = refundNeedTotal > 0 ? (wanshunRefundedAmount / refundNeedTotal) * 100 : 0;
+          const refundRemainPct = refundNeedTotal > 0 ? (wanshunRiskAmount / refundNeedTotal) * 100 : 0;
+          const chartHtml = `
+            <div class="runaway-dashboard">
+              <div class="runaway-risk-grid">
+                <article class="runaway-risk-card primary">
+                  <div class="runaway-card-kicker">核心风险</div>
+                  <div class="runaway-card-title">皖顺还没退回金额</div>
+                  <div class="runaway-card-value primary">${escapeHtml(formatPrice(wanshunRiskAmount))} 元</div>
+                  <div class="runaway-card-note">按结算金额、客户还欠和皖顺已退自动计算</div>
+                </article>
+                <article class="runaway-risk-card warning">
+                  <div class="runaway-card-kicker">总风险</div>
+                  <div class="runaway-card-title">总共跑路金额</div>
+                  <div class="runaway-card-value">${escapeHtml(formatPrice(runawayAmountTotal))} 元</div>
+                  <div class="runaway-card-note">当前跑路金额汇总</div>
+                </article>
+                <article class="runaway-risk-card info">
+                  <div class="runaway-card-kicker">回收进度</div>
+                  <div class="runaway-card-title">客户还没要回金额</div>
+                  <div class="runaway-card-value">${escapeHtml(formatPrice(customerRiskAmount))} 元</div>
+                  <div class="runaway-card-note">当前客户还欠汇总</div>
+                </article>
+              </div>
+              <div class="runaway-stat-grid">
+                ${statItems
+                  .map(
+                    (item) => `
+                      <article class="runaway-stat-card">
+                        <div class="runaway-stat-label">${escapeHtml(item.label)}</div>
+                        <div class="runaway-stat-value">${escapeHtml(item.value)}</div>
+                      </article>
+                    `
+                  )
+                  .join("")}
+              </div>
+              <div class="runaway-chart-grid">
+                <section class="runaway-chart-card">
+                  <div class="card-title">风险金额对比</div>
+                  <div class="runaway-bar-list">${chartBars}</div>
+                </section>
+                <section class="runaway-chart-card">
+                  <div class="card-title">皖顺退款进度</div>
+                  <div class="runaway-progress">
+                    <div class="runaway-progress-total">皖顺应退总额：${escapeHtml(formatPrice(refundNeedTotal))} 元</div>
+                    <div class="runaway-progress-bar">
+                      <div class="runaway-progress-paid" style="width:${refundPaidPct}%;"></div>
+                      <div class="runaway-progress-remain" style="width:${refundRemainPct}%;"></div>
+                    </div>
+                    <div class="runaway-progress-legend">
+                      <div><strong>已从皖顺退回</strong>${escapeHtml(formatPrice(wanshunRefundedAmount))} 元</div>
+                      <div><strong>未退回</strong>${escapeHtml(formatPrice(wanshunRiskAmount))} 元</div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          `;
+          $("runawaySummary").innerHTML = cleanRunawaySummaryHtml(chartHtml);
+        } else if (meta.showChengduFlow) {
+          const runawayAmountTotal = Math.max(customerTaken, 0);
+          const returnedAmountTotal = Math.max(customerTotalReturned, 0);
+          const remainAmountTotal = Math.max(customerRemainTotal, 0);
+          const refundNeedTotal = returnedAmountTotal + remainAmountTotal;
+          const riskItems = [
+            { label: "总共跑路金额", value: runawayAmountTotal, tone: "warning" },
+            { label: "已退回金额", value: returnedAmountTotal, tone: "good" },
+            { label: "当前还欠金额", value: remainAmountTotal, tone: "info" },
+          ];
+          const riskMax = Math.max(...riskItems.map((item) => item.value), 1);
+          const chartBars = riskItems
+            .map((item) => {
+              const width = `${(item.value / riskMax) * 100}%`;
+              return `
+                <div class="runaway-bar-item">
+                  <div class="runaway-bar-label">${escapeHtml(item.label)}</div>
+                  <div class="runaway-bar-track"><div class="runaway-bar-fill ${item.tone}" style="width:${width};"></div></div>
+                  <div class="runaway-bar-value">${escapeHtml(formatPrice(item.value))} 元</div>
+                </div>
+              `;
+            })
+            .join("");
+          const refundPaidPct = refundNeedTotal > 0 ? (returnedAmountTotal / refundNeedTotal) * 100 : 0;
+          const refundRemainPct = refundNeedTotal > 0 ? (remainAmountTotal / refundNeedTotal) * 100 : 0;
+          const chartHtml = `
+            <div class="runaway-dashboard">
+              <div class="runaway-risk-grid">
+                <article class="runaway-risk-card primary">
+                  <div class="runaway-card-kicker">核心风险</div>
+                  <div class="runaway-card-title">总共跑路金额</div>
+                  <div class="runaway-card-value primary">${escapeHtml(formatPrice(runawayAmountTotal))} 元</div>
+                  <div class="runaway-card-note">按当前筛选统计成都跑路总额</div>
+                </article>
+                <article class="runaway-risk-card warning">
+                  <div class="runaway-card-kicker">回收金额</div>
+                  <div class="runaway-card-title">已退回金额</div>
+                  <div class="runaway-card-value">${escapeHtml(formatPrice(returnedAmountTotal))} 元</div>
+                  <div class="runaway-card-note">当前已从客户追回的金额</div>
+                </article>
+                <article class="runaway-risk-card info">
+                  <div class="runaway-card-kicker">未收回金额</div>
+                  <div class="runaway-card-title">当前还欠金额</div>
+                  <div class="runaway-card-value">${escapeHtml(formatPrice(remainAmountTotal))} 元</div>
+                  <div class="runaway-card-note">当前仍需要追回的金额</div>
+                </article>
+              </div>
+              <div class="runaway-chart-grid">
+                <section class="runaway-chart-card">
+                  <div class="card-title">跑路金额对比</div>
+                  <div class="runaway-bar-list">${chartBars}</div>
+                </section>
+                <section class="runaway-chart-card">
+                  <div class="card-title">退回进度</div>
+                  <div class="runaway-progress">
+                    <div class="runaway-progress-total">当前应回收总额：${escapeHtml(formatPrice(refundNeedTotal))} 元</div>
+                    <div class="runaway-progress-bar">
+                      <div class="runaway-progress-paid" style="width:${refundPaidPct}%;"></div>
+                      <div class="runaway-progress-remain" style="width:${refundRemainPct}%;"></div>
+                    </div>
+                    <div class="runaway-progress-legend">
+                      <div><strong>已退回</strong>${escapeHtml(formatPrice(returnedAmountTotal))} 元</div>
+                      <div><strong>当前还欠</strong>${escapeHtml(formatPrice(remainAmountTotal))} 元</div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          `;
+          $("runawaySummary").innerHTML = cleanRunawaySummaryHtml(chartHtml);
+        } else {
+          const summaryBits = [
+            `跑路订单数 <span class="stat-number">${list.length}</span> 单`,
+            `结算总额 <span class="stat-number stored">${formatPrice(settled)}</span> 元`,
+            `${meta.takenLabel}总额 <span class="stat-number">${formatPrice(customerTaken)}</span> 元`,
+            `客户总已退总额 <span class="stat-number stored">${formatPrice(customerTotalReturned)}</span> 元`,
+            `客户还欠总额 <span class="stat-number">${formatPrice(customerRemainTotal)}</span> 元`,
+          ];
+          summaryBits.push(`皖顺已退我总额 <span class="stat-number stored">--</span>`);
+          summaryBits.push(`皖顺还差我总额 <span class="stat-number stored">--</span>`);
+          $("runawaySummary").innerHTML = cleanRunawaySummaryHtml(summaryBits.join("，"));
         }
-        $("runawaySummary").innerHTML = summaryBits.join("，");
       }
       if ($("runawayTableBody")) {
         $("runawayTableBody").innerHTML = list.map(runawayRowHtml).join("");

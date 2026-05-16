@@ -2548,6 +2548,39 @@
       backdrop-filter: blur(16px);
     }
 
+    .table-bulk {
+      position: sticky;
+      top: 10px;
+      bottom: auto;
+      margin: 0 0 10px;
+    }
+
+    #section-orders-table:not(.table-batch-mode) .table-select-cell {
+      display: none;
+    }
+
+    #section-orders-table:not(.table-batch-mode) #tableBulk {
+      display: none;
+    }
+
+    .table-toolbar-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .table-select-cell {
+      width: 76px;
+      text-align: center;
+    }
+
+    .table-select-row {
+      justify-content: center;
+      margin: 0;
+    }
+
     .order-pagination {
       display: flex;
       align-items: center;
@@ -3100,7 +3133,7 @@
               </span>
               <span class="nav-label">对账表格-成都</span>
             </button>
-            <button data-target="section-orders" data-label="订单列表">
+            <button data-target="section-orders" data-label="卡片订单">
               <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img" focusable="false">
                   <path d="M7 7h12M7 12h12M7 17h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -3109,7 +3142,7 @@
                   <circle cx="4" cy="17" r="1" fill="currentColor"/>
                 </svg>
               </span>
-              <span class="nav-label">订单列表</span>
+              <span class="nav-label">卡片订单</span>
             </button>
             <button data-target="section-add" data-label="添加订单">
               <span class="nav-icon" aria-hidden="true">
@@ -3230,7 +3263,7 @@
             <button class="primary" id="goContract" type="button">生成合同</button>
             <button class="secondary" id="goAddOrder" type="button">添加订单</button>
             <button class="secondary" id="goIphonePrice" type="button">iPhone价格表</button>
-            <button class="secondary" id="goOrdersList" type="button">订单列表</button>
+            <button class="secondary" id="goOrdersList" type="button">卡片订单</button>
           </div>
         </div>
         <div class="card" id="weekSummary"></div>
@@ -3487,8 +3520,8 @@
             <div class="field full">
               <div class="button-row">
                 <button class="primary" id="table_filter_apply" type="button">搜索</button>
-                <button class="ghost ghost-warn" id="table_filter_today" type="button">今月订单</button>
-                <button class="ghost ghost-warn" id="table_filter_yesterday" type="button">上月订单</button>
+                <button class="ghost ghost-warn" id="table_filter_today" type="button">今日订单</button>
+                <button class="ghost ghost-warn" id="table_filter_yesterday" type="button">昨日订单</button>
                 <button class="ghost ghost-warn" id="table_filter_pending" type="button">待结算订单</button>
                 <button class="ghost ghost-warn" id="table_filter_pending_gap" type="button">待补差订单</button>
                 <button class="ghost ghost-warn" id="table_filter_fixed_gap" type="button">已补差订单</button>
@@ -3511,12 +3544,38 @@
             <div>
               <div class="card-title" id="orderTableTitle">对账表格（日期范围）</div>
             </div>
-            <div class="order-count" id="tableOrderCount">共0单</div>
+            <div class="table-toolbar-actions">
+              <div class="order-count" id="tableOrderCount">共0单</div>
+              <button class="secondary" id="tableBatchModeBtn" type="button">批量操作</button>
+            </div>
+          </div>
+          <div class="order-bulk table-bulk" id="tableBulk">
+            <label class="order-select-row">
+              <input id="tableSelectAllOrders" type="checkbox" />
+              <span>全选当前表格</span>
+            </label>
+            <div>
+              <span id="tableSelectedCount">已选 0 单</span>
+              <button class="primary" id="tableBtnBatchSettle" type="button">批量结算</button>
+              <button class="ghost ghost-warn" id="tableBtnBatchFillPrice" type="button">批量填结算价</button>
+              <button class="secondary" id="tableBtnBatchBill" type="button">生成结算账单</button>
+              <button class="secondary" id="tableBtnBatchExport" type="button">批量导出</button>
+              <button class="secondary" id="tableBtnBatchStored" type="button">批量已入库</button>
+              <button class="secondary" id="tableBtnBatchGroup" type="button">批量拉群</button>
+              <button class="danger" id="tableBtnBatchDelete" type="button">批量删除</button>
+              <button class="secondary" id="tableBatchCancel" type="button">退出批量</button>
+            </div>
           </div>
           <div class="table-wrap">
             <table class="order-table">
               <thead>
                 <tr>
+                  <th class="table-select-cell">
+                    <label class="order-select-row table-select-row">
+                      <input id="tableSelectAllHeader" type="checkbox" />
+                      <span>选择</span>
+                    </label>
+                  </th>
                   <th>订单编号</th>
                   <th>订单来源</th>
                   <th>
@@ -3647,7 +3706,7 @@
         <div class="card">
           <div class="order-toolbar">
             <div>
-              <div class="card-title">订单列表</div>
+              <div class="card-title">卡片订单</div>
               <div class="card-subtitle" id="orderListRange">（日期范围）</div>
               <div class="order-subtitle" id="orderListStats"></div>
               <div class="card-subtitle">订单状态与来源一目了然，可快速编辑与批量结算。</div>
@@ -4419,6 +4478,8 @@
     let tableSortField = "";
     let tableSortDir = "asc";
     let currentTableView = "all";
+    let tableBatchMode = false;
+    let batchExportSource = "orders";
     let currentRunawayView = "wanshun";
     let currentRunawaySortField = "remain";
     let currentRunawaySortDir = "desc";
@@ -6104,11 +6165,64 @@
       if (total === 0) {
         selectAll.checked = false;
         selectAll.indeterminate = false;
+        updateTableSelectedSummary();
         return;
       }
       const selectedOnPage = visibleOrders.filter((order) => selectedOrderIds.has(order.id)).length;
       selectAll.checked = selectedOnPage === total;
       selectAll.indeterminate = selectedOnPage > 0 && selectedOnPage < total;
+      updateTableSelectedSummary();
+    }
+
+    function updateTableSelectedSummary(visibleOrders = null) {
+      const countEl = $("tableSelectedCount");
+      const bulk = $("tableBulk");
+      const selectAll = $("tableSelectAllOrders");
+      const headerSelectAll = $("tableSelectAllHeader");
+      const section = $("section-orders-table");
+      const batchModeBtn = $("tableBatchModeBtn");
+      if (!countEl || !selectAll || !headerSelectAll) return;
+      if (section) {
+        section.classList.toggle("table-batch-mode", tableBatchMode);
+      }
+      if (batchModeBtn) {
+        batchModeBtn.textContent = tableBatchMode ? "退出批量" : "批量操作";
+      }
+      const tableOrders = visibleOrders || getTableFilteredOrders();
+      countEl.textContent = `已选 ${selectedOrderIds.size} 单`;
+      if (bulk) {
+        bulk.style.display = tableBatchMode && tableOrders.length ? "flex" : "none";
+      }
+      if (!tableBatchMode) {
+        selectAll.checked = false;
+        selectAll.indeterminate = false;
+        headerSelectAll.checked = false;
+        headerSelectAll.indeterminate = false;
+        return;
+      }
+      if (!tableOrders.length) {
+        selectAll.checked = false;
+        selectAll.indeterminate = false;
+        headerSelectAll.checked = false;
+        headerSelectAll.indeterminate = false;
+        return;
+      }
+      const selectedInTable = tableOrders.filter((order) => selectedOrderIds.has(order.id)).length;
+      const allChecked = selectedInTable === tableOrders.length;
+      const indeterminate = selectedInTable > 0 && selectedInTable < tableOrders.length;
+      selectAll.checked = allChecked;
+      selectAll.indeterminate = indeterminate;
+      headerSelectAll.checked = allChecked;
+      headerSelectAll.indeterminate = indeterminate;
+    }
+
+    function setTableBatchMode(active, options = {}) {
+      tableBatchMode = active;
+      if (!active && options.clearSelection) {
+        selectedOrderIds.clear();
+      }
+      renderOrderTable();
+      updateSelectedSummary();
     }
 
     function getPagedOrders() {
@@ -6192,7 +6306,7 @@
         dateCard.innerHTML = `
           <label class="order-select-row">
             <input class="date-checkbox" type="checkbox" data-date="${dateKey}" ${allChecked ? "checked" : ""} data-indeterminate="${anyChecked && !allChecked ? "1" : ""}" />
-            <span>${dateKey} ${weekdayLabel} 订单列表</span>
+            <span>${dateKey} ${weekdayLabel} 卡片订单</span>
           </label>
         `;
         list.appendChild(dateCard);
@@ -6295,6 +6409,13 @@
           const sfText = String(order.sf_no || "").trim() || "--";
           return `
             <tr data-id="${escapeHtml(order.id || "")}">
+              <td class="table-select-cell">
+                <label class="order-select-row table-select-row" title="选择订单">
+                  <input class="table-order-checkbox" type="checkbox" data-id="${escapeHtml(order.id || "")}" aria-label="选择订单 ${escapeHtml(order.id || "")}" ${
+                    selectedOrderIds.has(order.id) ? "checked" : ""
+                  } />
+                </label>
+              </td>
               <td><span class="table-id">${escapeHtml(order.id || "")}</span></td>
               <td data-field="source">${escapeHtml(order.source || "--")}</td>
               <td>${escapeHtml(formatDateValue(order.createdAt))}</td>
@@ -6312,6 +6433,7 @@
           `;
         })
         .join("");
+      updateTableSelectedSummary(visibleOrders);
     }
 
     function getTableFilteredOrders() {
@@ -7526,7 +7648,7 @@
         const dateCard = document.createElement("div");
         dateCard.className = "order-date-card";
         dateCard.style.setProperty("--delay", `${groupIndex * 0.05}s`);
-        dateCard.textContent = `${dateKey} 订单列表`;
+        dateCard.textContent = `${dateKey} 卡片订单`;
         list.appendChild(dateCard);
         grouped[dateKey].forEach((order, index) => {
         if (!order.color) {
@@ -7987,7 +8109,14 @@
 
     function batchExportFilename(range, suffix, list = getBatchExportOrders(range)) {
       const dateRange = getOrdersDateRange(list);
-      const label = range === "selected" ? "选中" : range === "filtered" ? "当前筛选" : "全部订单";
+      const label =
+        range === "selected"
+          ? "选中"
+          : range === "filtered"
+          ? batchExportSource === "table"
+            ? "当前表格筛选"
+            : "当前筛选"
+          : "全部订单";
       return buildExportFilename("订单批量导出", suffix, {
         start: dateRange.start,
         end: dateRange.end,
@@ -8158,6 +8287,9 @@
         return orders.filter((order) => selectedOrderIds.has(order.id));
       }
       if (range === "filtered") {
+        if (batchExportSource === "table") {
+          return getTableFilteredOrders();
+        }
         return applyOrderFilter(orders);
       }
       return orders.slice();
@@ -8615,12 +8747,15 @@ function confirmDeleteAfterConfirm() {
         range === "selected"
           ? "仅选中"
           : range === "filtered"
-          ? "当前筛选"
+          ? batchExportSource === "table"
+            ? "当前表格筛选"
+            : "当前筛选"
           : "全部订单";
       $("batchExportCount").textContent = `${label}共 ${list.length} 单`;
     }
 
-    function openBatchExportModal() {
+    function openBatchExportModal(source = "orders") {
+      batchExportSource = source;
       if (selectedOrderIds.size > 0 && !confirmBatchAction("批量导出")) return;
       const defaultRange = selectedOrderIds.size > 0 ? "selected" : "filtered";
       $("batchExportRange").value = defaultRange;
@@ -9171,7 +9306,7 @@ function confirmDeleteAfterConfirm() {
       const shouldAddOrder = await openAddOrderPrompt();
       if (shouldAddOrder) {
         addOrder(data);
-        updateSection("section-orders", "订单列表");
+        updateSection("section-orders", "卡片订单");
       }
       const response = await fetch("/generate", {
         method: "POST",
@@ -9216,7 +9351,7 @@ function confirmDeleteAfterConfirm() {
       if (defaultSource) $("order_source").value = defaultSource;
       updateColorOptions($("order_color"), "", "");
       $("order_date").value = formatDateInput(getBeijingNow().getTime());
-      updateSection("section-orders", "订单列表");
+      updateSection("section-orders", "卡片订单");
       renderHome();
     });
 
@@ -9274,6 +9409,19 @@ function confirmDeleteAfterConfirm() {
         return;
       }
       openFieldEditModal(order, field);
+    });
+
+    $("orderTableBody").addEventListener("change", (event) => {
+      const checkbox = event.target.closest("input.table-order-checkbox");
+      if (!checkbox) return;
+      const orderId = checkbox.dataset.id;
+      if (checkbox.checked) {
+        selectedOrderIds.add(orderId);
+      } else {
+        selectedOrderIds.delete(orderId);
+      }
+      updateTableSelectedSummary();
+      updateSelectedSummary();
     });
 
     $("orderList").addEventListener("change", (event) => {
@@ -9426,6 +9574,33 @@ function confirmDeleteAfterConfirm() {
       renderHome();
     });
 
+    function toggleCurrentTableSelection(checked) {
+      const visibleOrders = getTableFilteredOrders();
+      if (checked) {
+        visibleOrders.forEach((order) => selectedOrderIds.add(order.id));
+      } else {
+        visibleOrders.forEach((order) => selectedOrderIds.delete(order.id));
+      }
+      renderOrderTable();
+      updateSelectedSummary();
+    }
+
+    $("tableSelectAllOrders").addEventListener("change", (event) => {
+      toggleCurrentTableSelection(event.target.checked);
+    });
+
+    $("tableSelectAllHeader").addEventListener("change", (event) => {
+      toggleCurrentTableSelection(event.target.checked);
+    });
+
+    $("tableBatchModeBtn").addEventListener("click", () => {
+      setTableBatchMode(!tableBatchMode, { clearSelection: tableBatchMode });
+    });
+
+    $("tableBatchCancel").addEventListener("click", () => {
+      setTableBatchMode(false, { clearSelection: true });
+    });
+
     $("pagePrev").addEventListener("click", () => {
       if (!usePagination) return;
       if (currentPage > 1) {
@@ -9471,15 +9646,9 @@ function confirmDeleteAfterConfirm() {
     });
 
     $("table_filter_today").addEventListener("click", () => {
-      const now = getBeijingNow();
-      const start = new Date(now);
-      start.setDate(1);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(now);
-      end.setMonth(end.getMonth() + 1, 0);
-      end.setHours(23, 59, 59, 999);
-      $("table_filter_start").value = formatDateValue(start.getTime());
-      $("table_filter_end").value = formatDateValue(end.getTime());
+      const today = getBeijingNow().getTime();
+      $("table_filter_start").value = formatDateValue(today);
+      $("table_filter_end").value = formatDateValue(today);
       renderOrderTable();
     });
 
@@ -9491,16 +9660,9 @@ function confirmDeleteAfterConfirm() {
     });
 
     $("table_filter_yesterday").addEventListener("click", () => {
-      const now = getBeijingNow();
-      const start = new Date(now);
-      start.setDate(1);
-      start.setHours(0, 0, 0, 0);
-      start.setMonth(start.getMonth() - 1);
-      const end = new Date(start);
-      end.setMonth(end.getMonth() + 1, 0);
-      end.setHours(23, 59, 59, 999);
-      $("table_filter_start").value = formatDateValue(start.getTime());
-      $("table_filter_end").value = formatDateValue(end.getTime());
+      const yesterday = getBeijingNow().getTime() - 24 * 60 * 60 * 1000;
+      $("table_filter_start").value = formatDateValue(yesterday);
+      $("table_filter_end").value = formatDateValue(yesterday);
       renderOrderTable();
     });
 
@@ -9631,6 +9793,13 @@ function confirmDeleteAfterConfirm() {
     $("btnBatchStored").addEventListener("click", () => openBatchStatusConfirm("stored"));
     $("btnBatchGroup").addEventListener("click", () => openBatchStatusConfirm("group"));
     $("btnBatchDelete").addEventListener("click", openBatchDeleteConfirm);
+    $("tableBtnBatchSettle").addEventListener("click", openBatchConfirm);
+    $("tableBtnBatchFillPrice").addEventListener("click", openBatchFillPrice);
+    $("tableBtnBatchBill").addEventListener("click", openBatchBill);
+    $("tableBtnBatchExport").addEventListener("click", () => openBatchExportModal("table"));
+    $("tableBtnBatchStored").addEventListener("click", () => openBatchStatusConfirm("stored"));
+    $("tableBtnBatchGroup").addEventListener("click", () => openBatchStatusConfirm("group"));
+    $("tableBtnBatchDelete").addEventListener("click", openBatchDeleteConfirm);
 
     $("filterToggle").addEventListener("click", () => {
       const card = $("filterToggle").closest(".card");
@@ -9744,7 +9913,7 @@ function confirmDeleteAfterConfirm() {
       });
       alertFilterIds = new Set(checked);
       selectedOrderIds = new Set(checked);
-      updateSection("section-orders", "订单列表");
+      updateSection("section-orders", "卡片订单");
       renderOrders();
     });
 
@@ -9840,7 +10009,7 @@ function confirmDeleteAfterConfirm() {
     });
 
     $("goOrdersList").addEventListener("click", () => {
-      updateSection("section-orders", "订单列表");
+      updateSection("section-orders", "卡片订单");
     });
 
     if ($("goRunaway")) {

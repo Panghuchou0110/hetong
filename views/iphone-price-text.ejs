@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <title>iPhone17系列新机价格</title>
+  <style>
+    :root {
+      --bg0: #030816;
+      --bg1: #071326;
+      --bg2: #0a1b35;
+      --line: rgba(127, 182, 255, 0.16);
+      --text: #eef5ff;
+      --muted: #98aec6;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(44, 101, 202, 0.24), transparent 34%),
+        radial-gradient(circle at top right, rgba(14, 188, 169, 0.16), transparent 34%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 55%, var(--bg2));
+    }
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 12px;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+    .kicker {
+      margin-bottom: 5px;
+      color: #7ecaff;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(8, 15, 30, 0.72);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 11px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(10, 18, 34, 0.78);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, rgba(36, 114, 255, 0.94), rgba(17, 209, 191, 0.92));
+      border-color: transparent;
+      color: #fff;
+    }
+    .card {
+      border: 1px solid var(--line);
+      background: rgba(7, 13, 26, 0.84);
+      border-radius: 16px;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 10px;
+      border-bottom: 1px solid rgba(127, 182, 255, 0.12);
+      background: rgba(10, 18, 36, 0.92);
+    }
+    .card-body {
+      padding: 12px;
+    }
+    .copy-text {
+      margin: 0;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.65;
+      font-size: 13px;
+      color: #eff6ff;
+      font-family: "SFMono-Regular", "Menlo", "Consolas", "PingFang SC", "Microsoft YaHei", monospace;
+    }
+    .copy-text .headline {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #f6f9ff;
+    }
+    .copy-text .time {
+      display: block;
+      margin-bottom: 8px;
+      color: #7ecaff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .copy-text .section {
+      display: block;
+      margin-top: 8px;
+      font-size: 15px;
+      font-weight: 900;
+      color: #dce8f8;
+    }
+    .copy-text .row {
+      display: block;
+      margin-top: 3px;
+      padding-left: 2px;
+      color: #d8e4f4;
+    }
+    .copy-text .price {
+      color: #ffb347;
+      font-weight: 800;
+      text-shadow: 0 0 10px rgba(255, 179, 71, 0.22);
+    }
+    .copy-text .footer {
+      display: block;
+      margin-top: 10px;
+      color: #a9bbd0;
+      font-size: 11px;
+    }
+    .foot {
+      margin-top: 10px;
+      text-align: center;
+      color: #a9bbd0;
+      font-size: 10px;
+    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%) translateY(8px);
+      padding: 10px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(132, 184, 255, 0.22);
+      background: rgba(8, 13, 23, 0.96);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.32);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.16s ease, transform 0.16s ease;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+<%
+  const models = [
+    { key: "promax", title: "iPhone 17 Pro Max", short: "17PM", section: "normal" },
+    { key: "pro", title: "iPhone 17 Pro", short: "17Pro", section: "normal" },
+    { key: "iphone17", title: "iPhone 17", short: "17", section: "normal" },
+    { key: "promaxActive", title: "iPhone 17 Pro Max 仅激活", short: "17PM", section: "active" },
+  ];
+  const capacities = ["256G", "512G"];
+  const colorMap = {
+    promax: [
+      { key: "blue", label: "蓝", name: "蓝色" },
+      { key: "orange", label: "橙", name: "橙色" },
+      { key: "white", label: "白", name: "白色" },
+    ],
+    pro: [
+      { key: "blue", label: "蓝", name: "蓝色" },
+      { key: "orange", label: "橙", name: "橙色" },
+      { key: "white", label: "白", name: "白色" },
+    ],
+    iphone17: [
+      { key: "black", label: "黑", name: "黑色" },
+      { key: "white", label: "白", name: "白色" },
+      { key: "mistBlue", label: "青", name: "青雾蓝" },
+      { key: "sageGreen", label: "绿", name: "鼠尾草绿" },
+      { key: "lavenderPurple", label: "紫", name: "薰衣草紫" },
+    ],
+    promaxActive: [
+      { key: "blue", label: "蓝", name: "蓝色" },
+      { key: "orange", label: "橙", name: "橙色" },
+      { key: "white", label: "白", name: "白色" },
+    ],
+  };
+  function formatClock(ts) {
+    const date = new Date(Number(ts) || Date.now());
+    const formatter = new Intl.DateTimeFormat("zh-CN", {
+      timeZone: "Asia/Shanghai",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    const parts = Object.fromEntries(
+      formatter.formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+    );
+    return `${parts.year}/${parts.month}/${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
+  }
+  function formatTitleDate(ts) {
+    const date = new Date(Number(ts) || Date.now());
+    const formatter = new Intl.DateTimeFormat("zh-CN", {
+      timeZone: "Asia/Shanghai",
+      month: "numeric",
+      day: "numeric",
+    });
+    const parts = Object.fromEntries(
+      formatter.formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+    );
+    return `${Number(parts.month)}月${Number(parts.day)}日`;
+  }
+  function getCell(state, modelKey, capacity, colorKey) {
+    const prices = state && state.prices ? state.prices : {};
+    return (((prices[modelKey] || {})[capacity] || {})[colorKey]) || "";
+  }
+  function buildShort(model) {
+    if (model.short) return model.short;
+    if (model.title.includes("Pro Max")) return "17PM";
+    if (model.title.includes("Pro")) return "17Pro";
+    return "17";
+  }
+  function buildCopyText(state) {
+    const lines = [`【iPhone17系列新机价格】`, `北京时间：${formatClock(pageUpdatedAt)}`];
+    const active = models.filter((item) => item.section === "active");
+    const normal = models.filter((item) => item.section === "normal");
+    normal.forEach((model) => {
+      const colors = colorMap[model.key] || colorMap.promax;
+      capacities.forEach((capacity) => {
+        lines.push(`${buildShort(model)} ${capacity}`);
+        const colorLine = colors.map((color) => `${color.name}：${getCell(state, model.key, capacity, color.key) || "未填"}`);
+        for (let i = 0; i < colorLine.length; i += 3) {
+          lines.push(colorLine.slice(i, i + 3).join("　"));
+        }
+      });
+    });
+    if (active.length) {
+      lines.push("【仅激活】");
+      active.forEach((model) => {
+        const colors = colorMap[model.key] || colorMap.promax;
+        capacities.forEach((capacity) => {
+          lines.push(`${buildShort(model)} ${capacity}`);
+          const colorLine = colors.map((color) => `${color.name}：${getCell(state, model.key, capacity, color.key) || "未填"}`);
+          for (let i = 0; i < colorLine.length; i += 3) {
+            lines.push(colorLine.slice(i, i + 3).join("　"));
+          }
+        });
+      });
+    }
+    lines.push("价格实时浮动，下单前请以确认价为准。");
+    return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  }
+  function buildCopyHtml(state) {
+    const html = [`<span class="headline">【iPhone17系列新机价格】</span>`, `<span class="time">北京时间：${formatClock(pageUpdatedAt)}</span>`];
+    const active = models.filter((item) => item.section === "active");
+    const normal = models.filter((item) => item.section === "normal");
+    const priceText = (value) => `<span class="price">${value || "未填"}</span>`;
+    normal.forEach((model) => {
+      const colors = colorMap[model.key] || colorMap.promax;
+      capacities.forEach((capacity) => {
+        html.push(`<span class="section">${buildShort(model)} ${capacity}</span>`);
+        const colorLine = colors.map((color) => `${color.name}：${priceText(getCell(state, model.key, capacity, color.key))}`);
+        for (let i = 0; i < colorLine.length; i += 3) {
+          html.push(`<span class="row">${colorLine.slice(i, i + 3).join("　")}</span>`);
+        }
+      });
+    });
+    if (active.length) {
+      html.push(`<span class="section">【仅激活】</span>`);
+      active.forEach((model) => {
+        const colors = colorMap[model.key] || colorMap.promax;
+        capacities.forEach((capacity) => {
+          html.push(`<span class="section">${buildShort(model)} ${capacity}</span>`);
+          const colorLine = colors.map((color) => `${color.name}：${priceText(getCell(state, model.key, capacity, color.key))}`);
+          for (let i = 0; i < colorLine.length; i += 3) {
+            html.push(`<span class="row">${colorLine.slice(i, i + 3).join("　")}</span>`);
+          }
+        });
+      });
+    }
+    html.push(`<span class="footer">价格实时浮动，下单前请以确认价为准。</span>`);
+    return html.join("");
+  }
+%>
+  <div class="page">
+    <div class="top">
+      <div>
+        <div class="kicker">IPHONE 17 SERIES</div>
+        <h1>iPhone17系列新机价格</h1>
+        <div class="badge" id="clock">北京时间：<%= formatClock(pageUpdatedAt) %></div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="/iphone-price">返回UI页</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="label">微信发送内容</div>
+        <button class="btn primary" id="copyBtn" type="button">复制文字版</button>
+      </div>
+      <div class="card-body">
+        <div class="copy-text" id="copyText"><%- buildCopyHtml(initialState) %></div>
+      </div>
+    </div>
+
+    <div class="foot">价格实时浮动，下单前请以确认价为准。</div>
+  </div>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+    const models = <%- JSON.stringify(models).replace(/</g, "\\u003c") %>;
+    const capacities = <%- JSON.stringify(capacities) %>;
+    const colorMap = <%- JSON.stringify(colorMap).replace(/</g, "\\u003c") %>;
+    const initialState = <%- JSON.stringify(initialState).replace(/</g, "\\u003c") %>;
+    let currentState = initialState;
+    const clockEl = document.getElementById("clock");
+    const copyTextEl = document.getElementById("copyText");
+    const toastEl = document.getElementById("toast");
+    const apiPath = "/api/iphone-price";
+
+    function showToast(text) {
+      toastEl.textContent = text;
+      toastEl.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toastEl.classList.remove("show"), 1400);
+    }
+
+    function formatDate(date) {
+      const formatter = new Intl.DateTimeFormat("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+      const parts = Object.fromEntries(
+        formatter.formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+      );
+      return `${parts.year}/${parts.month}/${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
+    }
+
+    function formatTitleDate(date) {
+      const formatter = new Intl.DateTimeFormat("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        month: "2-digit",
+        day: "2-digit",
+        hour12: false,
+      });
+      const parts = Object.fromEntries(
+        formatter.formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+      );
+      return `${parts.month}.${parts.day}`;
+    }
+
+    function formatTitleLabel(date) {
+      const formatter = new Intl.DateTimeFormat("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        month: "numeric",
+        day: "numeric",
+      });
+      const parts = Object.fromEntries(
+        formatter.formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+      );
+      return `${Number(parts.month)}月${Number(parts.day)}日`;
+    }
+
+    function getValue(modelKey, capacity, colorKey) {
+      const prices = currentState && currentState.prices ? currentState.prices : {};
+      return String((((prices[modelKey] || {})[capacity] || {})[colorKey]) || "").trim();
+    }
+
+    function getColors(modelKey) {
+      return colorMap[modelKey] || colorMap.promax;
+    }
+
+    function formatCell(rawValue) {
+      if (!rawValue) return "未填";
+      const raw = Number(rawValue);
+      if (!Number.isFinite(raw)) return "未填";
+      return String(raw);
+    }
+
+    function buildCopyText() {
+      const lines = [`【iPhone17系列 报价表｜${formatTitleDate(new Date())}】`, ""];
+      const active = models.filter((item) => item.section === "active");
+      const normal = models.filter((item) => item.section === "normal");
+      normal.forEach((model) => {
+        const colors = getColors(model.key);
+        capacities.forEach((capacity) => {
+          lines.push(`${buildShort(model)} ${capacity}`);
+          lines.push(colors.map((color) => `${color.name}：${formatCell(getValue(model.key, capacity, color.key))}`).join("　"));
+          lines.push("");
+        });
+      });
+      if (active.length) {
+        lines.push("【仅激活】");
+        active.forEach((model) => {
+          const colors = getColors(model.key);
+          capacities.forEach((capacity) => {
+            lines.push(`${buildShort(model)} ${capacity}`);
+            lines.push(colors.map((color) => `${color.name}：${formatCell(getValue(model.key, capacity, color.key))}`).join("　"));
+            lines.push("");
+          });
+        });
+      }
+      lines.push("价格实时浮动，下单前请以确认价为准。");
+      return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+      return new Promise((resolve, reject) => {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand("copy");
+          ta.remove();
+          ok ? resolve() : reject(new Error("copy_failed"));
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
+
+    function refresh() {
+      copyTextEl.innerHTML = buildCopyHtml(currentState);
+      clockEl.textContent = `北京时间：${formatDate(new Date())}`;
+    }
+
+    async function reloadState() {
+      try {
+        const response = await fetch(apiPath, { cache: "no-store" });
+        const data = await response.json();
+        if (data && data.ok && data.state) {
+          currentState = data.state;
+          refresh();
+        }
+      } catch (err) {
+        // 保持当前页面状态，不打断手动复制
+      }
+    }
+
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      try {
+        await copyToClipboard(buildCopyText());
+        showToast("已复制文字版");
+      } catch (err) {
+        showToast("复制失败");
+      }
+    });
+
+    refresh();
+    reloadState();
+    const title = document.querySelector("h1");
+    if (title) title.textContent = `iPhone17系列·文字报价·${formatTitleLabel(new Date())}`;
+    setInterval(() => {
+      refresh();
+      reloadState();
+    }, 10000);
+  </script>
+</body>
+</html>

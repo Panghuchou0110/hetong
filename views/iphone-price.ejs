@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <title>iPhone17系列 · 报价表</title>
+  <style>
+    :root {
+      --bg0: #030816;
+      --bg1: #071326;
+      --bg2: #0a1b35;
+      --line: rgba(127, 182, 255, 0.16);
+      --text: #eef5ff;
+      --muted: #98aec6;
+      --accent: #4fb5ff;
+      --shadow: 0 16px 38px rgba(0, 0, 0, 0.3);
+      --r: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(44, 101, 202, 0.24), transparent 34%),
+        radial-gradient(circle at top right, rgba(14, 188, 169, 0.16), transparent 34%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 55%, var(--bg2));
+    }
+
+    body { position: relative; overflow-x: hidden; }
+    body::before, body::after {
+      content: "";
+      position: fixed;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      filter: blur(18px);
+      opacity: 0.28;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before { left: -90px; top: 120px; background: rgba(38, 108, 255, 0.22); }
+    body::after { right: -90px; bottom: 60px; background: rgba(30, 224, 207, 0.18); }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 12px 12px 16px;
+    }
+
+    .topbar {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+      padding-right: 66px;
+    }
+
+    .vip-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 50px;
+      height: 24px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 215, 155, 0.52);
+      background: rgba(7, 13, 26, 0.34);
+      color: #f3d79b;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      z-index: 2;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: 0.01em;
+    }
+
+    .kicker {
+      margin-bottom: 5px;
+      color: #7ecaff;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(8, 15, 30, 0.72);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .clock-badge {
+      color: #7ee7ff;
+      border-color: rgba(126, 231, 255, 0.32);
+      background: rgba(11, 29, 40, 0.84);
+    }
+
+    .price-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr;
+    }
+
+    .model-card {
+      background: linear-gradient(180deg, rgba(14, 26, 47, 0.92), rgba(7, 13, 26, 0.88));
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .model-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .model-title {
+      margin: 0;
+      flex: 1 1 auto;
+      font-size: 17px;
+      font-weight: 950;
+      line-height: 1.12;
+      letter-spacing: 0.01em;
+      color: #ffffff;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.24);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .model-title-main {
+      display: block;
+      width: 100%;
+    }
+
+    .model-title-active {
+      display: block;
+      width: 100%;
+      margin-top: 2px;
+      color: #7ee7ff;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+
+    .section-chip { display: none; }
+
+    .memory-block {
+      border-radius: 13px;
+      border: 1px solid rgba(160, 203, 255, 0.24);
+      background: rgba(5, 11, 22, 0.5);
+      padding: 9px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    }
+
+    .memory-block + .memory-block { margin-top: 8px; }
+
+    .memory-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .memory-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #f5f9ff;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .dot-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 16px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
+    }
+    .color-label { display: none; }
+
+    .price-input {
+      width: 100%;
+      height: 32px;
+      padding: 0 7px;
+      border-radius: 11px;
+      border: 1px solid rgba(141, 188, 255, 0.26);
+      background: rgba(6, 10, 20, 0.95);
+      color: #fff;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      outline: none;
+    }
+    .price-input:focus {
+      border-color: rgba(79, 181, 255, 0.88);
+      box-shadow: 0 0 0 3px rgba(79, 181, 255, 0.16);
+    }
+
+    .price-view {
+      display: none;
+      width: 100%;
+      height: 34px;
+      padding: 0 7px;
+      border-radius: 11px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #fff;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 34px;
+      letter-spacing: 0.01em;
+    }
+
+    .price-field.view-mode .price-input { display: none; }
+    .price-field.view-mode .price-view { display: block; }
+    .price-field.view-mode .price-view {
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
+      height: 34px;
+      line-height: 34px;
+    }
+    .price-field.compact .dot { margin-right: 0; }
+
+    .model-sync {
+      display: none;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(126, 231, 255, 0.26);
+      background: rgba(11, 29, 40, 0.7);
+      color: #7ee7ff;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .model-sync.show { display: inline-flex; }
+    .model-sync.active {
+      border-color: rgba(79, 181, 255, 0.72);
+      background: rgba(42, 108, 255, 0.24);
+      color: #eaf7ff;
+    }
+
+    .bottom-dock {
+      margin-top: 10px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      background: rgba(7, 13, 26, 0.9);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .bottom-dock > summary {
+      list-style: none;
+      cursor: pointer;
+    }
+    .bottom-dock > summary::-webkit-details-marker { display: none; }
+
+    .dock-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(127, 182, 255, 0.12);
+      background: rgba(10, 18, 36, 0.92);
+    }
+
+    .dock-body { padding: 10px 12px 12px; }
+
+    .dock-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .dock-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .dock-head .dock-label {
+      color: #f3d79b;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .preset {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(11, 20, 38, 0.82);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .preset.active {
+      border-color: rgba(79, 181, 255, 0.72);
+      background: rgba(42, 108, 255, 0.22);
+    }
+
+    .custom-confirm {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 7px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(10, 18, 34, 0.76);
+    }
+    .custom-confirm.show { display: inline-flex; }
+    .custom-confirm input {
+      width: 80px;
+      height: 32px;
+      border-radius: 10px;
+      border: 1px solid rgba(143, 190, 255, 0.28);
+      background: rgba(6, 11, 22, 0.95);
+      color: #fff;
+      text-align: center;
+      outline: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .dock-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 13px;
+      border: 1px solid var(--line);
+      background: rgba(10, 18, 34, 0.76);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, rgba(36, 114, 255, 0.94), rgba(17, 209, 191, 0.92));
+      border-color: transparent;
+      color: #fff;
+    }
+    .btn:disabled,
+    .preset:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: saturate(0.75);
+    }
+
+    .btn.sync-model-btn {
+      display: none;
+    }
+    .btn.sync-model-btn.show {
+      display: inline-flex;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%) translateY(8px);
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(132, 184, 255, 0.22);
+      background: rgba(8, 13, 23, 0.96);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.32);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.16s ease, transform 0.16s ease;
+      z-index: 20;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (min-width: 380px) {
+      .price-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 540px) {
+      .topbar { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<%
+  const models = [
+    { key: "promax", title: "iPhone 17 Pro Max", section: "normal" },
+    { key: "pro", title: "iPhone 17 Pro", section: "normal" },
+    { key: "iphone17", title: "iPhone 17", section: "normal" },
+    { key: "promaxActive", title: "iPhone 17 Pro Max 仅激活", section: "active" },
+  ];
+  const capacities = ["256G", "512G"];
+  const colorMap = {
+    promax: [
+      { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
+      { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
+      { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+    ],
+    pro: [
+      { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
+      { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
+      { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+    ],
+    iphone17: [
+      { key: "black", label: "黑", name: "黑色", dot: "#111111" },
+      { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+      { key: "mistBlue", label: "青", name: "青雾蓝", dot: "#5aaed8" },
+      { key: "sageGreen", label: "绿", name: "鼠尾草绿", dot: "#98b58c" },
+      { key: "lavenderPurple", label: "紫", name: "薰衣草紫", dot: "#b58cff" },
+    ],
+    promaxActive: [
+      { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
+      { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
+      { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+    ],
+  };
+  function getColors(modelKey) {
+    return colorMap[modelKey] || colorMap.promax;
+  }
+  function formatClock(ts) {
+    const date = new Date(Number(ts) || Date.now());
+    const formatter = new Intl.DateTimeFormat("zh-CN", {
+      timeZone: "Asia/Shanghai",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    const parts = Object.fromEntries(
+      formatter.formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+    );
+    return `${parts.year}/${parts.month}/${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
+  }
+  function formatTitleDate(ts) {
+    const date = new Date(Number(ts) || Date.now());
+    const formatter = new Intl.DateTimeFormat("zh-CN", {
+      timeZone: "Asia/Shanghai",
+      month: "numeric",
+      day: "numeric",
+    });
+    const parts = Object.fromEntries(
+      formatter.formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+    );
+    return `${Number(parts.month)}月${Number(parts.day)}日`;
+  }
+  function getCell(state, modelKey, capacity, colorKey) {
+    const prices = state && state.prices ? state.prices : {};
+    return (((prices[modelKey] || {})[capacity] || {})[colorKey]) || "";
+  }
+%>
+  <div class="page">
+    <header class="topbar">
+      <div class="title">
+        <div class="kicker">IPHONE 17 SERIES</div>
+        <h1>Apple新机专业报价·<span id="titleDate"><%= formatTitleDate(pageUpdatedAt) %></span></h1>
+        <div class="meta">
+          <span class="badge clock-badge" id="clock">北京时间：<%= formatClock(pageUpdatedAt) %></span>
+          <span class="badge">价格实时浮动，仅供参考</span>
+        </div>
+      </div>
+      <div class="vip-badge" aria-hidden="true">SVIP</div>
+    </header>
+
+    <section class="price-grid" aria-label="价格表">
+      <% models.forEach(function(model) { %>
+        <article class="model-card">
+          <div class="model-head">
+            <div class="model-title">
+              <% if (model.key === "promaxActive") { %>
+                <span class="model-title-main">iPhone 17 Pro Max</span>
+                <span class="model-title-active">（仅激活）</span>
+              <% } else { %>
+                <span class="model-title-main"><%= model.title %></span>
+              <% } %>
+            </div>
+            <% if (getColors(model.key).length > 1) { %>
+              <button class="model-sync" type="button" data-sync-model="<%= model.key %>">全色联动：开</button>
+            <% } %>
+          </div>
+
+          <% capacities.forEach(function(capacity) { %>
+            <div class="memory-block">
+              <div class="memory-head">
+                <div class="memory-label"><%= capacity %></div>
+              </div>
+              <div class="color-grid">
+                <% getColors(model.key).forEach(function(color) { %>
+                  <label class="field price-field compact view-mode">
+                    <span class="dot-wrap"><span class="dot" style="background:<%= color.dot %>" title="<%= color.name %>"></span></span>
+                    <input
+                      class="price-input price-input-js"
+                      data-model="<%= model.key %>"
+                      data-capacity="<%= capacity %>"
+                      data-color="<%= color.key %>"
+                      inputmode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="0"
+                      value="<%= getCell(initialState, model.key, capacity, color.key) %>"
+                    />
+                    <span class="price-view price-view-js"><%= getCell(initialState, model.key, capacity, color.key) || "未填" %></span>
+                  </label>
+                <% }); %>
+              </div>
+            </div>
+          <% }); %>
+        </article>
+      <% }); %>
+    </section>
+
+    <details class="bottom-dock" aria-label="底部控制">
+      <summary class="dock-head">
+        <div class="dock-label">内部使用 请勿外传</div>
+        <div class="dock-label">点击展开</div>
+      </summary>
+      <div class="dock-body">
+      <div class="dock-row">
+        <span class="dock-label">复制版本</span>
+        <button class="preset active" type="button" data-delta="0">原价版</button>
+        <button class="preset" type="button" data-delta="350">-350</button>
+        <button class="preset" type="button" data-delta="400">-400</button>
+        <button class="preset" type="button" data-delta="450">-450</button>
+        <button class="preset" type="button" data-delta="custom">自定义</button>
+        <div class="custom-confirm" id="customBox">
+          <input id="customDelta" type="number" min="0" step="1" value="350" />
+          <button class="btn" id="applyCustomBtn" type="button">确定</button>
+        </div>
+      </div>
+        <div class="dock-actions">
+          <button class="btn" id="toggleEditBtn" type="button">编辑价格</button>
+          <button class="btn" id="clearBtn" type="button">清空价格</button>
+          <button class="btn primary" id="saveBtn" type="button">保存价格</button>
+          <a class="btn" href="/iphone-price/text">文字页</a>
+          <a class="btn" href="/">返回首页</a>
+        </div>
+      </div>
+    </details>
+
+  </div>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+    const models = <%- JSON.stringify(models).replace(/</g, "\\u003c") %>;
+    const capacities = <%- JSON.stringify(capacities) %>;
+    const colorMap = <%- JSON.stringify(colorMap).replace(/</g, "\\u003c") %>;
+    const initialState = <%- JSON.stringify(initialState).replace(/</g, "\\u003c") %>;
+    const clockEl = document.getElementById("clock");
+    const customBox = document.getElementById("customBox");
+    const customDeltaInput = document.getElementById("customDelta");
+    const toastEl = document.getElementById("toast");
+    const presetButtons = Array.from(document.querySelectorAll(".preset"));
+    const toggleEditBtn = document.getElementById("toggleEditBtn");
+    const applyCustomBtn = document.getElementById("applyCustomBtn");
+    const modelSyncButtons = Array.from(document.querySelectorAll(".model-sync"));
+    const priceFields = Array.from(document.querySelectorAll(".price-field"));
+    const apiPath = "/api/iphone-price";
+    let adjustmentMode = { type: "preset", value: 0 };
+    let editingMode = false;
+    const syncModes = {};
+    models.forEach((model) => {
+      syncModes[model.key] = getColors(model.key).length > 1;
+    });
+
+    function showToast(text) {
+      toastEl.textContent = text;
+      toastEl.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toastEl.classList.remove("show"), 1400);
+    }
+
+    function formatDate(date) {
+      const formatter = new Intl.DateTimeFormat("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+      const parts = Object.fromEntries(
+        formatter.formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+      );
+      return `${parts.year}/${parts.month}/${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
+    }
+
+    function formatTitleDate(date) {
+      const formatter = new Intl.DateTimeFormat("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        month: "2-digit",
+        day: "2-digit",
+        hour12: false,
+      });
+      const parts = Object.fromEntries(
+        formatter.formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+      );
+      return `${parts.month}.${parts.day}`;
+    }
+
+    function getAdjustedDelta() {
+      return adjustmentMode.type === "custom"
+        ? Math.max(0, Number(customDeltaInput.value) || 0)
+        : Math.max(0, Number(adjustmentMode.value) || 0);
+    }
+
+    function canEditPrices() {
+      return adjustmentMode.type === "preset" && Number(adjustmentMode.value) === 0;
+    }
+
+    function updateAdjustUI() {
+      const currentDelta = getAdjustedDelta();
+      presetButtons.forEach((btn) => {
+        const isCustom = btn.dataset.delta === "custom";
+        const active =
+          (adjustmentMode.type === "custom" && isCustom) ||
+          (adjustmentMode.type === "preset" && !isCustom && Number(btn.dataset.delta) === currentDelta);
+        btn.classList.toggle("active", active);
+      });
+      customBox.classList.toggle("show", adjustmentMode.type === "custom");
+      const editAllowed = canEditPrices();
+      document.getElementById("clearBtn").disabled = !editAllowed || !editingMode;
+      document.getElementById("saveBtn").disabled = !editAllowed || !editingMode;
+      if (!editAllowed) editingMode = false;
+    }
+
+    function renderEditMode() {
+      const editable = canEditPrices();
+      const showInputs = editable && editingMode;
+      priceFields.forEach((field) => {
+        field.classList.toggle("view-mode", !showInputs);
+        const input = field.querySelector(".price-input-js");
+        if (input) input.disabled = !showInputs;
+      });
+      modelSyncButtons.forEach((btn) => {
+        const modelKey = btn.dataset.syncModel;
+        const visible = editable && editingMode && isSyncableModel(modelKey);
+        btn.classList.toggle("show", visible);
+        btn.classList.toggle("active", !!syncModes[modelKey]);
+        btn.textContent = syncModes[modelKey] ? "全色联动：开" : "全色联动：关";
+      });
+      toggleEditBtn.disabled = !editable;
+      toggleEditBtn.textContent = editable ? (editingMode ? "查看价格" : "编辑价格") : "原价可编辑";
+    }
+
+    function getInput(modelKey, capacity, colorKey) {
+      return document.querySelector(
+        `.price-input-js[data-model="${modelKey}"][data-capacity="${capacity}"][data-color="${colorKey}"]`
+      );
+    }
+
+    function getRawValue(modelKey, capacity, colorKey) {
+      const input = getInput(modelKey, capacity, colorKey);
+      return input ? String(input.value || "").trim() : "";
+    }
+
+    function formatCell(rawValue) {
+      if (!rawValue) return "未填";
+      const raw = Number(rawValue);
+      if (!Number.isFinite(raw)) return "未填";
+      return String(Math.max(0, raw - getAdjustedDelta()));
+    }
+
+    function buildShort(model) {
+      if (model.short) return model.short;
+      if (model.title.includes("Pro Max")) return "17PM";
+      if (model.title.includes("Pro")) return "17Pro";
+      return "17";
+    }
+
+    function getColors(modelKey) {
+      return colorMap[modelKey] || colorMap.promax;
+    }
+
+    function isSyncableModel(modelKey) {
+      return (getColors(modelKey) || []).length > 1;
+    }
+
+    function syncSiblingInputs(modelKey, capacity, colorKey, value) {
+      if (!syncModes[modelKey] || !isSyncableModel(modelKey)) return;
+      getColors(modelKey).forEach((color) => {
+        if (color.key === colorKey) return;
+        const target = getInput(modelKey, capacity, color.key);
+        if (target) {
+          target.value = value;
+        }
+      });
+    }
+
+    function buildCopyText() {
+      const lines = [`【iPhone17系列 报价表｜${formatTitleDate(new Date())}】`, ""];
+      const normalModels = models.filter((item) => item.section === "normal");
+      const activeModels = models.filter((item) => item.section === "active");
+
+      normalModels.forEach((model) => {
+        const colors = getColors(model.key);
+        capacities.forEach((capacity) => {
+          lines.push(`${buildShort(model)} ${capacity}`);
+          lines.push(
+              colors
+              .map((color) => `${color.name}：${formatCell(getRawValue(model.key, capacity, color.key))}`)
+                .join("　")
+          );
+          lines.push("");
+        });
+      });
+
+      if (activeModels.length) {
+        lines.push("【仅激活】");
+        activeModels.forEach((model) => {
+          const colors = getColors(model.key);
+          capacities.forEach((capacity) => {
+            lines.push(`${buildShort(model)} ${capacity}`);
+            lines.push(
+              colors
+                .map((color) => `${color.name}：${formatCell(getRawValue(model.key, capacity, color.key))}`)
+                .join("　")
+            );
+            lines.push("");
+          });
+        });
+      }
+
+      lines.push("价格实时浮动，下单前请以确认价为准。");
+      return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+      return new Promise((resolve, reject) => {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand("copy");
+          ta.remove();
+          ok ? resolve() : reject(new Error("copy_failed"));
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
+
+    async function savePrices() {
+      const prices = {};
+      models.forEach((model) => {
+        prices[model.key] = {};
+        capacities.forEach((capacity) => {
+          prices[model.key][capacity] = {};
+          getColors(model.key).forEach((color) => {
+            const colorKey = color.key;
+            const input = getInput(model.key, capacity, colorKey);
+            prices[model.key][capacity][colorKey] = input ? String(input.value || "").replace(/[^\d]/g, "") : "";
+          });
+        });
+      });
+      const response = await fetch(apiPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ state: { prices } }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.ok) throw new Error(data.error || "保存失败");
+    }
+
+    function syncViewValues() {
+      priceFields.forEach((field) => {
+        const input = field.querySelector(".price-input-js");
+        const view = field.querySelector(".price-view-js");
+        if (!input || !view) return;
+        view.textContent = formatCell(String(input.value || "").trim());
+      });
+    }
+
+    function setClock() {
+      clockEl.textContent = `北京时间：${formatDate(new Date())}`;
+      const titleDateEl = document.getElementById("titleDate");
+      if (titleDateEl) titleDateEl.textContent = formatTitleDate(Date.now());
+    }
+
+    document.querySelectorAll(".price-input-js").forEach((input) => {
+      input.addEventListener("input", () => {
+        input.value = String(input.value || "").replace(/[^\d]/g, "");
+        syncSiblingInputs(input.dataset.model, input.dataset.capacity, input.dataset.color, input.value);
+        syncViewValues();
+      });
+    });
+
+    presetButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        adjustmentMode =
+          btn.dataset.delta === "custom"
+            ? { type: "custom", value: Math.max(0, Number(customDeltaInput.value) || 0) }
+            : { type: "preset", value: Math.max(0, Number(btn.dataset.delta) || 0) };
+        updateAdjustUI();
+        syncViewValues();
+        renderEditMode();
+      });
+    });
+
+    applyCustomBtn.addEventListener("click", () => {
+      adjustmentMode = { type: "custom", value: Math.max(0, Number(customDeltaInput.value) || 0) };
+      updateAdjustUI();
+      syncViewValues();
+      renderEditMode();
+    });
+
+    modelSyncButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const modelKey = btn.dataset.syncModel;
+        if (!canEditPrices() || !editingMode || !isSyncableModel(modelKey)) return;
+        syncModes[modelKey] = !syncModes[modelKey];
+        renderEditMode();
+        showToast(syncModes[modelKey] ? "已开启联动" : "已关闭联动");
+      });
+    });
+
+    toggleEditBtn.addEventListener("click", () => {
+      if (!canEditPrices()) {
+        showToast("请先切到原价版");
+        return;
+      }
+      editingMode = !editingMode;
+      updateAdjustUI();
+      renderEditMode();
+      showToast(editingMode ? "进入编辑" : "切换查看");
+    });
+
+    document.getElementById("saveBtn").addEventListener("click", async () => {
+      if (!canEditPrices()) {
+        showToast("请先切到原价版");
+        return;
+      }
+      try {
+        await savePrices();
+        editingMode = false;
+        updateAdjustUI();
+        renderEditMode();
+        showToast("价格已保存");
+      } catch (err) {
+        showToast(err && err.message ? err.message : "保存失败");
+      }
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", async () => {
+      if (!canEditPrices() || !editingMode) {
+        showToast("请先进入原价编辑");
+        return;
+      }
+      if (!confirm("确认清空全部价格？")) return;
+      document.querySelectorAll(".price-input-js").forEach((input) => (input.value = ""));
+      syncViewValues();
+      try {
+        await savePrices();
+        showToast("已清空");
+      } catch (err) {
+        showToast(err && err.message ? err.message : "清空失败");
+      }
+    });
+
+    syncViewValues();
+    adjustmentMode = { type: "preset", value: 0 };
+    renderEditMode();
+    updateAdjustUI();
+    setClock();
+    setInterval(setClock, 1000);
+  </script>
+</body>
+</html>

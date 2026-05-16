@@ -72,6 +72,42 @@ const defaultState = {
   modelColors: { ...defaultModelColors },
   authRememberHours: {},
 };
+const iphonePriceFile = path.join(dataDir, "iphone-prices.json");
+const iphonePriceCatalog = [
+  { key: "promax", title: "iPhone 17 Pro Max", short: "17PM", section: "normal" },
+  { key: "pro", title: "iPhone 17 Pro", short: "17Pro", section: "normal" },
+  { key: "iphone17", title: "iPhone 17", short: "17", section: "normal" },
+  { key: "promaxActive", title: "iPhone 17 Pro Max 仅激活", short: "17PM", section: "active" },
+];
+const iphonePriceCapacities = ["256G", "512G"];
+const iphonePriceColorMap = {
+  promax: [
+    { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
+    { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
+    { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+  ],
+  pro: [
+    { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
+    { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
+    { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+  ],
+  iphone17: [
+    { key: "black", label: "黑", name: "黑色", dot: "#111111" },
+    { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+    { key: "mistBlue", label: "青", name: "青雾蓝", dot: "#5aaed8" },
+    { key: "sageGreen", label: "绿", name: "鼠尾草绿", dot: "#98b58c" },
+    { key: "lavenderPurple", label: "紫", name: "薰衣草紫", dot: "#b58cff" },
+  ],
+  promaxActive: [
+    { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
+    { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
+    { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+  ],
+};
+
+function getIphonePriceColors(modelKey) {
+  return iphonePriceColorMap[modelKey] || iphonePriceColorMap.promax;
+}
 
 function dbRun(sql, params = []) {
   return new Promise((resolve, reject) => {
@@ -253,6 +289,73 @@ async function saveState(state) {
   await syncList("orders", Array.isArray(payload.orders) ? payload.orders : []);
   await syncList("trash", Array.isArray(payload.trash) ? payload.trash : []);
   await saveConfigState(payload);
+}
+
+function createIphonePriceGrid() {
+  const prices = {};
+  iphonePriceCatalog.forEach((model) => {
+    prices[model.key] = {};
+    iphonePriceCapacities.forEach((capacity) => {
+      prices[model.key][capacity] = {};
+      getIphonePriceColors(model.key).forEach((color) => {
+        prices[model.key][capacity][color.key] = "";
+      });
+    });
+  });
+  return prices;
+}
+
+function createDefaultIphonePriceState() {
+  return {
+    updatedAt: 0,
+    prices: createIphonePriceGrid(),
+  };
+}
+
+function normalizeIphonePriceCell(value) {
+  const digits = String(value ?? "")
+    .replace(/[^\d]/g, "")
+    .trim();
+  if (!digits) return "";
+  return String(Number(digits));
+}
+
+function normalizeIphonePriceState(raw) {
+  const base = createDefaultIphonePriceState();
+  const source = raw && typeof raw === "object" ? raw : {};
+  const rawPrices = source.prices && typeof source.prices === "object" ? source.prices : {};
+  const prices = createIphonePriceGrid();
+  iphonePriceCatalog.forEach((model) => {
+    const rawModel = rawPrices[model.key];
+    const colors = getIphonePriceColors(model.key);
+    iphonePriceCapacities.forEach((capacity) => {
+      const rawCapacity = rawModel && typeof rawModel === "object" ? rawModel[capacity] : null;
+      colors.forEach((color) => {
+        const rawValue = rawCapacity && typeof rawCapacity === "object" ? rawCapacity[color.key] : "";
+        prices[model.key][capacity][color.key] = normalizeIphonePriceCell(rawValue);
+      });
+    });
+  });
+  return {
+    updatedAt: Number(source.updatedAt) || base.updatedAt,
+    prices,
+  };
+}
+
+async function readIphonePriceState() {
+  try {
+    const raw = await fs.promises.readFile(iphonePriceFile, "utf8");
+    return normalizeIphonePriceState(JSON.parse(raw));
+  } catch (err) {
+    return createDefaultIphonePriceState();
+  }
+}
+
+async function saveIphonePriceState(state) {
+  const normalized = normalizeIphonePriceState(state);
+  normalized.updatedAt = Date.now();
+  await fs.promises.writeFile(iphonePriceFile, JSON.stringify(normalized, null, 2), "utf8");
+  return normalized;
 }
 
 function loadAuthUsers() {
@@ -1605,6 +1708,57 @@ app.post("/api/state", requireSession, requireAuth, rateLimit, async (req, res) 
 });
 
 app.get("/", (req, res) => res.render("index"));
+
+app.get("/iphone-price", async (req, res) => {
+  try {
+    const state = await readIphonePriceState();
+    res.render("iphone-price", {
+      initialState: state,
+      pageUpdatedAt: state.updatedAt || Date.now(),
+    });
+  } catch (err) {
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_read_failed", err: String(err) });
+    res.status(500).send("iphone_price_read_failed");
+  }
+});
+
+app.get("/iphone-price/text", async (req, res) => {
+  try {
+    const state = await readIphonePriceState();
+    res.render("iphone-price-text", {
+      initialState: state,
+      pageUpdatedAt: state.updatedAt || Date.now(),
+    });
+  } catch (err) {
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_read_failed", err: String(err) });
+    res.status(500).send("iphone_price_read_failed");
+  }
+});
+
+app.get("/api/iphone-price", rateLimit, async (req, res) => {
+  try {
+    const state = await readIphonePriceState();
+    res.json({ ok: true, state });
+  } catch (err) {
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_read_failed", err: String(err) });
+    res.status(500).json({ ok: false, error: "iphone_price_read_failed" });
+  }
+});
+
+app.post("/api/iphone-price", rateLimit, async (req, res) => {
+  try {
+    const payload = req.body && typeof req.body === "object" ? req.body.state : null;
+    if (!payload || typeof payload !== "object") {
+      res.status(400).json({ ok: false, error: "invalid_state" });
+      return;
+    }
+    const nextState = await saveIphonePriceState(payload);
+    res.json({ ok: true, state: nextState });
+  } catch (err) {
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_write_failed", err: String(err) });
+    res.status(500).json({ ok: false, error: "iphone_price_write_failed" });
+  }
+});
 
 // 1) 识别接口
 app.post("/parse", requireSession, requireAuth, rateLimit, async (req, res) => {

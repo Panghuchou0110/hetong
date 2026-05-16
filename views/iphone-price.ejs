@@ -125,9 +125,9 @@
     }
 
     .clock-badge {
-      color: #7ee7ff;
-      border-color: rgba(126, 231, 255, 0.32);
-      background: rgba(11, 29, 40, 0.84);
+      color: #f3d79b;
+      border-color: rgba(243, 215, 155, 0.34);
+      background: rgba(36, 27, 10, 0.84);
     }
 
     .price-grid {
@@ -200,25 +200,37 @@
       justify-content: space-between;
       align-items: center;
       gap: 4px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .memory-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 58px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(160, 203, 255, 0.4);
+      background: linear-gradient(180deg, rgba(18, 33, 58, 0.96), rgba(9, 18, 34, 0.9));
       font-size: 13px;
       font-weight: 800;
       color: #f5f9ff;
+      letter-spacing: 0.02em;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 6px 14px rgba(2, 8, 20, 0.18);
     }
 
     .color-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      gap: 9px;
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
       align-items: center;
       min-width: 0;
     }
@@ -895,6 +907,8 @@
       updateAdjustUI();
       syncViewValues();
       renderEditMode();
+      const delta = getAdjustedDelta();
+      showToast(delta > 0 ? `已应用自定义减额：-${delta}` : "已应用自定义减额：原价版");
     });
 
     modelSyncButtons.forEach((btn) => {

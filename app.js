@@ -532,6 +532,16 @@ function requireSession(req, res, next) {
   next();
 }
 
+function requirePageSession(req, res, next) {
+  const session = getSession(req);
+  if (!session) {
+    res.redirect("/");
+    return;
+  }
+  req.session = session;
+  next();
+}
+
 function requireAdmin(req, res, next) {
   const session = req.session || getSession(req);
   if (!session) {
@@ -1709,7 +1719,7 @@ app.post("/api/state", requireSession, requireAuth, rateLimit, async (req, res) 
 
 app.get("/", (req, res) => res.render("index"));
 
-app.get("/iphone-price", async (req, res) => {
+app.get("/iphone-price", requirePageSession, requireAuth, async (req, res) => {
   try {
     const state = await readIphonePriceState();
     res.render("iphone-price", {
@@ -1722,7 +1732,7 @@ app.get("/iphone-price", async (req, res) => {
   }
 });
 
-app.get("/iphone-price/text", async (req, res) => {
+app.get("/iphone-price/text", requirePageSession, requireAuth, async (req, res) => {
   try {
     const state = await readIphonePriceState();
     res.render("iphone-price-text", {
@@ -1735,7 +1745,7 @@ app.get("/iphone-price/text", async (req, res) => {
   }
 });
 
-app.get("/api/iphone-price", rateLimit, async (req, res) => {
+app.get("/api/iphone-price", requireSession, requireAuth, rateLimit, async (req, res) => {
   try {
     const state = await readIphonePriceState();
     res.json({ ok: true, state });
@@ -1745,7 +1755,7 @@ app.get("/api/iphone-price", rateLimit, async (req, res) => {
   }
 });
 
-app.post("/api/iphone-price", rateLimit, async (req, res) => {
+app.post("/api/iphone-price", requireSession, requireAuth, rateLimit, async (req, res) => {
   try {
     const payload = req.body && typeof req.body === "object" ? req.body.state : null;
     if (!payload || typeof payload !== "object") {

@@ -1046,14 +1046,16 @@
     }
 
     #filter_today,
-    #table_filter_today {
+    #table_filter_today,
+    #table_filter_this_month {
       background: rgba(14, 165, 233, 0.16);
       border-color: rgba(14, 165, 233, 0.35);
       color: #0ea5e9;
     }
 
     #filter_yesterday,
-    #table_filter_yesterday {
+    #table_filter_yesterday,
+    #table_filter_last_month {
       background: rgba(148, 163, 184, 0.16);
       border-color: rgba(148, 163, 184, 0.35);
       color: #475569;
@@ -1107,6 +1109,7 @@
 
     body.dark #filter_yesterday,
     body.dark #table_filter_yesterday,
+    body.dark #table_filter_last_month,
     body.dark #filter_reset,
     body.dark #table_filter_reset {
       color: #cbd5e1;
@@ -2522,6 +2525,49 @@
       background: rgba(5, 12, 24, 0.54);
     }
 
+    .model-price-list {
+      display: grid;
+      gap: 8px;
+      max-height: 48vh;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .model-price-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 128px;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    body.dark .model-price-item {
+      background: rgba(5, 12, 24, 0.54);
+    }
+
+    .model-price-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .model-price-note {
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .model-price-item input {
+      width: 100%;
+      text-align: center;
+      font-weight: 700;
+    }
+
     body.dark .order-select-row input[type="checkbox"],
     body.dark #selectAllOrders {
       background: #0d1117;
@@ -3522,6 +3568,8 @@
                 <button class="primary" id="table_filter_apply" type="button">搜索</button>
                 <button class="ghost ghost-warn" id="table_filter_today" type="button">今日订单</button>
                 <button class="ghost ghost-warn" id="table_filter_yesterday" type="button">昨日订单</button>
+                <button class="ghost ghost-warn" id="table_filter_this_month" type="button">今月订单</button>
+                <button class="ghost ghost-warn" id="table_filter_last_month" type="button">上月订单</button>
                 <button class="ghost ghost-warn" id="table_filter_pending" type="button">待结算订单</button>
                 <button class="ghost ghost-warn" id="table_filter_pending_gap" type="button">待补差订单</button>
                 <button class="ghost ghost-warn" id="table_filter_fixed_gap" type="button">已补差订单</button>
@@ -3557,7 +3605,8 @@
             <div>
               <span id="tableSelectedCount">已选 0 单</span>
               <button class="primary" id="tableBtnBatchSettle" type="button">批量结算</button>
-              <button class="ghost ghost-warn" id="tableBtnBatchFillPrice" type="button">批量填结算价</button>
+              <button class="ghost ghost-warn" id="tableBtnBatchFillPrice" type="button">按客户填价</button>
+              <button class="ghost ghost-warn" id="tableBtnBatchFillModelPrice" type="button">按机型填价</button>
               <button class="secondary" id="tableBtnBatchBill" type="button">生成结算账单</button>
               <button class="secondary" id="tableBtnBatchExport" type="button">批量导出</button>
               <button class="secondary" id="tableBtnBatchStored" type="button">批量已入库</button>
@@ -3729,7 +3778,8 @@
             <div>
               <span id="selectedCount">已选 0 单</span>
               <button class="primary" id="btnBatchSettle" type="button">批量结算</button>
-              <button class="ghost ghost-warn" id="btnBatchFillPrice" type="button">批量填结算价</button>
+              <button class="ghost ghost-warn" id="btnBatchFillPrice" type="button">按客户填价</button>
+              <button class="ghost ghost-warn" id="btnBatchFillModelPrice" type="button">按机型填价</button>
               <button class="secondary" id="btnBatchBill" type="button">生成结算账单</button>
               <button class="secondary" id="btnBatchExport" type="button">批量导出</button>
               <button class="secondary" id="btnBatchStored" type="button">批量已入库</button>
@@ -4387,6 +4437,18 @@
     </div>
   </div>
 
+  <div class="modal" id="batchModelPriceModal">
+    <div class="modal-card edit-modal-card">
+      <div class="modal-title">按机型填写结算价</div>
+      <div class="modal-text" id="batchModelPriceSummary">按机型、容量、颜色、激活类型分组填写。</div>
+      <div class="model-price-list" id="batchModelPriceList"></div>
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button class="secondary" id="btnBatchModelPriceCancel" type="button">取消</button>
+        <button class="primary" id="btnBatchModelPriceApply" type="button">应用价格</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal" id="safetyPasswordModal">
     <div class="modal-card">
       <div class="modal-title" id="safetyPasswordTitle">管理员验证</div>
@@ -4471,6 +4533,7 @@
     let pendingPriceOrders = [];
     let pendingPriceIndex = 0;
     let pendingPriceDraft = new Map();
+    let pendingModelPriceGroups = [];
     let lastFilterSignature = "";
     let selectedOrderIds = new Set();
     let alertFilterIds = null;
@@ -5843,6 +5906,10 @@
       if (subtitle) {
         subtitle.textContent = meta.source ? `当前固定来源：${meta.source}` : "当前显示全部来源订单";
       }
+      ["table_filter_this_month", "table_filter_last_month"].forEach((id) => {
+        const button = $(id);
+        if (button) button.style.display = view === "all" ? "" : "none";
+      });
     }
 
     function applyRunawayViewPreset(view = currentRunawayView) {
@@ -8641,7 +8708,7 @@ function confirmDeleteAfterConfirm() {
         alert("请先选择订单");
         return;
       }
-      if (!confirmBatchAction("批量填写结算价")) return;
+      if (!confirmBatchAction("按客户填写结算价")) return;
       const selected = orders.filter((order) => selectedOrderIds.has(order.id));
       const hasExisting = selected.some((order) => parsePrice(order.settle_price) > 0);
       const missing = selected.filter((order) => parsePrice(order.settle_price) <= 0);
@@ -8738,6 +8805,127 @@ function confirmDeleteAfterConfirm() {
       pendingPriceOrders = [];
       pendingPriceDraft.clear();
       closeModal("batchPriceModal");
+    }
+
+    function buildModelPriceGroups(list) {
+      const map = new Map();
+      list.forEach((order) => {
+        const activation = resolveActivation(order);
+        const model = String(order.model || "未填写机型").trim() || "未填写机型";
+        const memory = String(order.memory || "未填写容量").trim() || "未填写容量";
+        const color = String(order.color || "未填写颜色").trim() || "未填写颜色";
+        const key = JSON.stringify([model, memory, color, activation.label]);
+        if (!map.has(key)) {
+          map.set(key, {
+            key,
+            label: `${model} ${memory} ${color}`,
+            activation,
+            orders: [],
+          });
+        }
+        map.get(key).orders.push(order);
+      });
+      return Array.from(map.values()).sort((a, b) => {
+        const left = `${a.label} ${a.activation.label}`;
+        const right = `${b.label} ${b.activation.label}`;
+        return left.localeCompare(right, "zh-Hans-CN");
+      });
+    }
+
+    function openBatchFillModelPrice() {
+      if (selectedOrderIds.size === 0) {
+        alert("请先选择订单");
+        return;
+      }
+      if (!confirmBatchAction("按机型填写结算价")) return;
+      const selected = orders.filter((order) => selectedOrderIds.has(order.id));
+      const hasExisting = selected.some((order) => parsePrice(order.settle_price) > 0);
+      const missing = selected.filter((order) => parsePrice(order.settle_price) <= 0);
+      if (missing.length === 0) {
+        const shouldSettle = confirm("全部已有结算价，是否更新为已结算状态？");
+        if (!shouldSettle) return;
+        orders = orders.map((order) => {
+          if (!selectedOrderIds.has(order.id)) return order;
+          return { ...order, settlement: "settled" };
+        });
+        selectedOrderIds.clear();
+        saveOrders();
+        renderOrders();
+        return;
+      }
+      const targetOrders = hasExisting
+        ? confirm("已包含有结算价的订单，是否也要按机型覆盖这些价格？\n\n确定：覆盖所选订单价格\n取消：只填写未填结算价的订单")
+          ? selected
+          : missing
+        : missing;
+      pendingModelPriceGroups = buildModelPriceGroups(targetOrders);
+      renderBatchModelPriceGroups();
+      openModal("batchModelPriceModal");
+    }
+
+    function renderBatchModelPriceGroups() {
+      const list = $("batchModelPriceList");
+      const totalOrders = pendingModelPriceGroups.reduce((sum, group) => sum + group.orders.length, 0);
+      $("batchModelPriceSummary").textContent = `共 ${totalOrders} 单，合并成 ${pendingModelPriceGroups.length} 个机型/激活类型价格。`;
+      list.innerHTML = pendingModelPriceGroups
+        .map((group) => {
+          const names = group.orders
+            .slice(0, 5)
+            .map((order) => order.seller_name || "未填写姓名")
+            .join("、");
+          const extra = group.orders.length > 5 ? ` 等 ${group.orders.length} 单` : ` 共 ${group.orders.length} 单`;
+          return `
+            <label class="model-price-item">
+              <div>
+                <div class="model-price-title">
+                  ${escapeHtml(group.label)} / <span class="activation-status ${group.activation.className}">${escapeHtml(group.activation.label)}</span>
+                </div>
+                <div class="model-price-note">${escapeHtml(names)}${escapeHtml(extra)}</div>
+              </div>
+              <input class="batch-model-price-input" data-key="${escapeHtml(group.key)}" type="number" min="0" placeholder="结算价" />
+            </label>
+          `;
+        })
+        .join("");
+    }
+
+    function applyBatchModelPrices() {
+      if (!pendingModelPriceGroups.length) {
+        closeBatchModelPriceModal();
+        return;
+      }
+      const inputs = Array.from($("batchModelPriceList").querySelectorAll("input.batch-model-price-input"));
+      const draftByGroup = new Map();
+      for (const input of inputs) {
+        const value = parsePrice(input.value);
+        if (value <= 0) {
+          alert("每个机型分组都需要填写有效结算价");
+          input.focus();
+          return;
+        }
+        draftByGroup.set(input.dataset.key, value);
+      }
+      const shouldSettle = confirm("是否同时更新为已结算状态？");
+      const priceByOrderId = new Map();
+      pendingModelPriceGroups.forEach((group) => {
+        const price = draftByGroup.get(group.key);
+        group.orders.forEach((order) => priceByOrderId.set(order.id, price));
+      });
+      orders = orders.map((order) => {
+        if (!priceByOrderId.has(order.id)) return order;
+        const next = { ...order, settle_price: priceByOrderId.get(order.id) };
+        return shouldSettle ? { ...next, settlement: "settled" } : next;
+      });
+      pendingModelPriceGroups = [];
+      selectedOrderIds.clear();
+      saveOrders();
+      renderOrders();
+      closeModal("batchModelPriceModal");
+    }
+
+    function closeBatchModelPriceModal() {
+      pendingModelPriceGroups = [];
+      closeModal("batchModelPriceModal");
     }
 
     function updateBatchExportCount() {
@@ -9666,6 +9854,33 @@ function confirmDeleteAfterConfirm() {
       renderOrderTable();
     });
 
+    $("table_filter_this_month").addEventListener("click", () => {
+      const now = getBeijingNow();
+      const start = new Date(now);
+      start.setDate(1);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(now);
+      end.setMonth(end.getMonth() + 1, 0);
+      end.setHours(23, 59, 59, 999);
+      $("table_filter_start").value = formatDateValue(start.getTime());
+      $("table_filter_end").value = formatDateValue(end.getTime());
+      renderOrderTable();
+    });
+
+    $("table_filter_last_month").addEventListener("click", () => {
+      const now = getBeijingNow();
+      const start = new Date(now);
+      start.setDate(1);
+      start.setHours(0, 0, 0, 0);
+      start.setMonth(start.getMonth() - 1);
+      const end = new Date(start);
+      end.setMonth(end.getMonth() + 1, 0);
+      end.setHours(23, 59, 59, 999);
+      $("table_filter_start").value = formatDateValue(start.getTime());
+      $("table_filter_end").value = formatDateValue(end.getTime());
+      renderOrderTable();
+    });
+
     $("filter_pending").addEventListener("click", () => {
       $("filter_status").value = "unsettled";
       renderOrders();
@@ -9795,6 +10010,7 @@ function confirmDeleteAfterConfirm() {
     $("btnBatchDelete").addEventListener("click", openBatchDeleteConfirm);
     $("tableBtnBatchSettle").addEventListener("click", openBatchConfirm);
     $("tableBtnBatchFillPrice").addEventListener("click", openBatchFillPrice);
+    $("tableBtnBatchFillModelPrice").addEventListener("click", openBatchFillModelPrice);
     $("tableBtnBatchBill").addEventListener("click", openBatchBill);
     $("tableBtnBatchExport").addEventListener("click", () => openBatchExportModal("table"));
     $("tableBtnBatchStored").addEventListener("click", () => openBatchStatusConfirm("stored"));
@@ -9834,9 +10050,12 @@ function confirmDeleteAfterConfirm() {
     $("btnSafetyPasswordCancel").addEventListener("click", () => closeModal("safetyPasswordModal"));
     $("btnSafetyPasswordConfirm").addEventListener("click", confirmSafetyPassword);
     $("btnBatchFillPrice").addEventListener("click", openBatchFillPrice);
+    $("btnBatchFillModelPrice").addEventListener("click", openBatchFillModelPrice);
     $("btnBatchPricePrev").addEventListener("click", handleBatchPricePrev);
     $("btnBatchPriceNext").addEventListener("click", handleBatchPriceNext);
     $("btnBatchPriceCancel").addEventListener("click", closeBatchPriceModal);
+    $("btnBatchModelPriceCancel").addEventListener("click", closeBatchModelPriceModal);
+    $("btnBatchModelPriceApply").addEventListener("click", applyBatchModelPrices);
     $("btnBatchExport").addEventListener("click", openBatchExportModal);
     $("batchExportRange").addEventListener("change", updateBatchExportCount);
     $("btnBatchExportCancel").addEventListener("click", () => closeModal("batchExportModal"));

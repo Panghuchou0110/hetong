@@ -31,5 +31,6 @@ git pull origin master
 
 npm install
 
-pm2 restart hetong
+pm2 restart hetong   /   pm2 restart all
 pm2 status
+---

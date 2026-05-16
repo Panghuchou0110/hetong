@@ -150,8 +150,12 @@ async function ensureSchema() {
   await dbRun(
     "CREATE TABLE IF NOT EXISTS auth_users (username TEXT PRIMARY KEY, salt TEXT NOT NULL, hash TEXT NOT NULL, created_at TEXT NOT NULL)"
   );
+  await dbRun(
+    "CREATE TABLE IF NOT EXISTS operation_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at INTEGER NOT NULL, user TEXT NOT NULL, action TEXT NOT NULL, summary TEXT NOT NULL, detail TEXT NOT NULL, undo_state TEXT, before_version INTEGER, after_version INTEGER, undone_at INTEGER, undone_by TEXT)"
+  );
   await ensureColumns("orders", [{ name: "hash", type: "TEXT" }]);
   await ensureColumns("trash", [{ name: "hash", type: "TEXT" }]);
+  await dbRun("CREATE INDEX IF NOT EXISTS idx_operation_logs_created_at ON operation_logs (created_at DESC)");
 }
 
 function readRawState() {
@@ -323,6 +327,218 @@ async function saveState(state) {
   await syncList("orders", Array.isArray(payload.orders) ? payload.orders : []);
   await syncList("trash", Array.isArray(payload.trash) ? payload.trash : []);
   await saveConfigState(payload);
+}
+
+function snapshotStateForUndo(state) {
+  return {
+    orders: Array.isArray(state?.orders) ? state.orders : [],
+    trash: Array.isArray(state?.trash) ? state.trash : [],
+    sources: Array.isArray(state?.sources) ? state.sources : [...defaultState.sources],
+    defaultSource: typeof state?.defaultSource === "string" ? state.defaultSource : "",
+    models: Array.isArray(state?.models) && state.models.length ? state.models : [...defaultState.models],
+    modelColors: state?.modelColors && typeof state.modelColors === "object" ? state.modelColors : { ...defaultState.modelColors },
+    authRememberHours:
+      state?.authRememberHours && typeof state.authRememberHours === "object" ? state.authRememberHours : {},
+  };
+}
+
+function indexById(list) {
+  const map = new Map();
+  (Array.isArray(list) ? list : []).forEach((item) => {
+    if (item && item.id) map.set(String(item.id), item);
+  });
+  return map;
+}
+
+const operationFieldLabels = {
+  seller_name: "客户姓名",
+  seller_id: "身份证",
+  seller_phone: "手机号",
+  model: "机型",
+  memory: "容量",
+  color: "颜色",
+  actual_model_color: "实际入库型号",
+  sf_no: "顺丰单号",
+  buy_price: "回收价",
+  settle_price: "结算价",
+  source: "来源",
+  status: "订单状态",
+  settlement: "结算状态",
+  activation: "激活类型",
+  remark: "备注",
+  runaway_amount: "跑路金额",
+  runaway_returned_amount: "客户已退",
+  runaway_returned_to_me_amount: "客户退我",
+  runaway_wanshun_returned_amount: "皖顺已退我",
+  createdAt: "订单时间",
+};
+
+const operationTrackedFields = Object.keys(operationFieldLabels);
+
+function formatOperationValue(value) {
+  if (value === undefined || value === null || value === "") return "空";
+  if (typeof value === "number" && value > 10_000_000_000 && value < 99_999_999_999_999) {
+    return new Date(value).toISOString().slice(0, 10);
+  }
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+function describeOrderForLog(order) {
+  const id = order?.id || "--";
+  const name = order?.seller_name || "未填写姓名";
+  const model = [order?.model, order?.memory, order?.color].filter(Boolean).join(" ") || "未填写机型";
+  return `#${id} ${name} ${model}`;
+}
+
+function describeOrderDetailForLog(order) {
+  if (!order) return "";
+  const parts = [
+    `客户姓名=${formatOperationValue(order.seller_name)}`,
+    `手机号=${formatOperationValue(order.seller_phone)}`,
+    `身份证=${formatOperationValue(order.seller_id)}`,
+    `机型=${formatOperationValue(order.model)}`,
+    `容量=${formatOperationValue(order.memory)}`,
+    `颜色=${formatOperationValue(order.color)}`,
+    `激活类型=${formatOperationValue(order.activation)}`,
+    `回收价=${formatOperationValue(order.buy_price)}`,
+    `结算价=${formatOperationValue(order.settle_price)}`,
+    `来源=${formatOperationValue(order.source)}`,
+    `订单状态=${formatOperationValue(order.status)}`,
+    `结算状态=${formatOperationValue(order.settlement)}`,
+    `顺丰单号=${formatOperationValue(order.sf_no)}`,
+    `备注=${formatOperationValue(order.remark)}`,
+    `订单时间=${formatOperationValue(order.createdAt)}`,
+  ];
+  return parts.join("；");
+}
+
+function describeOrderDiff(before, after) {
+  const changes = [];
+  operationTrackedFields.forEach((field) => {
+    const left = before ? before[field] : undefined;
+    const right = after ? after[field] : undefined;
+    if (JSON.stringify(left ?? "") !== JSON.stringify(right ?? "")) {
+      changes.push(`${operationFieldLabels[field]}：${formatOperationValue(left)} -> ${formatOperationValue(right)}`);
+    }
+  });
+  return changes;
+}
+
+function pushOperationLine(lines, counts, type, text) {
+  counts[type] = (counts[type] || 0) + 1;
+  lines.push(text);
+}
+
+function buildStateOperationLog(beforeState, afterState) {
+  const beforeOrders = indexById(beforeState.orders);
+  const beforeTrash = indexById(beforeState.trash);
+  const afterOrders = indexById(afterState.orders);
+  const afterTrash = indexById(afterState.trash);
+  const ids = new Set([...beforeOrders.keys(), ...beforeTrash.keys(), ...afterOrders.keys(), ...afterTrash.keys()]);
+  const lines = [];
+  const counts = {};
+
+  ids.forEach((id) => {
+    const beforeLoc = beforeOrders.has(id) ? "orders" : beforeTrash.has(id) ? "trash" : "";
+    const afterLoc = afterOrders.has(id) ? "orders" : afterTrash.has(id) ? "trash" : "";
+    const before = beforeOrders.get(id) || beforeTrash.get(id);
+    const after = afterOrders.get(id) || afterTrash.get(id);
+
+    if (!beforeLoc && afterLoc === "orders") {
+      pushOperationLine(lines, counts, "新增", `新增订单：${describeOrderForLog(after)}；${describeOrderDetailForLog(after)}`);
+      return;
+    }
+    if (beforeLoc === "orders" && afterLoc === "trash") {
+      pushOperationLine(lines, counts, "删除到垃圾桶", `移入垃圾桶：${describeOrderForLog(before)}；${describeOrderDetailForLog(before)}`);
+      return;
+    }
+    if (beforeLoc === "trash" && afterLoc === "orders") {
+      pushOperationLine(lines, counts, "恢复", `恢复订单：${describeOrderForLog(after)}；${describeOrderDetailForLog(after)}`);
+      return;
+    }
+    if (beforeLoc === "trash" && !afterLoc) {
+      pushOperationLine(lines, counts, "永久删除", `永久删除垃圾桶订单：${describeOrderForLog(before)}；${describeOrderDetailForLog(before)}`);
+      return;
+    }
+    if (beforeLoc === "orders" && !afterLoc) {
+      pushOperationLine(lines, counts, "删除", `删除订单：${describeOrderForLog(before)}；${describeOrderDetailForLog(before)}`);
+      return;
+    }
+    if (beforeLoc && afterLoc && JSON.stringify(before) !== JSON.stringify(after)) {
+      const changes = describeOrderDiff(before, after);
+      if (changes.length) {
+        const area = beforeLoc === "trash" && afterLoc === "trash" ? "修改垃圾桶订单" : "修改订单";
+        pushOperationLine(lines, counts, "修改", `${area}：${describeOrderForLog(after)}；${changes.join("；")}`);
+      }
+    }
+  });
+
+  const configChanges = [];
+  [
+    ["defaultSource", "默认来源"],
+    ["sources", "来源列表"],
+    ["models", "机型列表"],
+    ["modelColors", "机型颜色"],
+    ["authRememberHours", "账号登录时长"],
+  ].forEach(([key, label]) => {
+    if (JSON.stringify(beforeState[key] ?? "") !== JSON.stringify(afterState[key] ?? "")) {
+      configChanges.push(label);
+    }
+  });
+  if (configChanges.length) {
+    pushOperationLine(lines, counts, "配置", `修改配置：${configChanges.join("、")}`);
+  }
+
+  if (!lines.length) return null;
+  const summaryPrefix = Object.entries(counts)
+    .map(([key, count]) => `${key}${count}`)
+    .join("，");
+  const summary = lines.length === 1 ? lines[0].split("；")[0] : `批量操作：${summaryPrefix}，共 ${lines.length} 项`;
+  return {
+    action: lines.length === 1 ? Object.keys(counts)[0] : "批量操作",
+    summary,
+    detail: lines.join("\n"),
+  };
+}
+
+async function insertOperationLog({ user, action, summary, detail, undoState, beforeVersion, afterVersion }) {
+  const createdAt = Date.now();
+  await dbRun(
+    "INSERT INTO operation_logs (created_at, user, action, summary, detail, undo_state, before_version, after_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [
+      createdAt,
+      user || "unknown",
+      action || "操作",
+      summary || "数据变更",
+      detail || "",
+      undoState ? JSON.stringify(undoState) : null,
+      Number(beforeVersion) || 0,
+      Number(afterVersion) || 0,
+    ]
+  );
+  await dbRun("DELETE FROM operation_logs WHERE created_at < ?", [Date.now() - 7 * 24 * 60 * 60 * 1000]);
+}
+
+function listOperationLogs() {
+  const since = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  return dbAll(
+    "SELECT id, created_at, user, action, summary, detail, before_version, after_version, undone_at, undone_by, CASE WHEN undo_state IS NULL OR undone_at IS NOT NULL THEN 0 ELSE 1 END AS can_undo FROM operation_logs WHERE created_at >= ? ORDER BY created_at DESC LIMIT 300",
+    [since]
+  );
+}
+
+function getOperationLog(id) {
+  return new Promise((resolve, reject) => {
+    db.get("SELECT * FROM operation_logs WHERE id = ?", [id], (err, row) => {
+      if (err) return reject(err);
+      resolve(row || null);
+    });
+  });
+}
+
+async function markOperationLogUndone(id, user) {
+  await dbRun("UPDATE operation_logs SET undone_at = ?, undone_by = ? WHERE id = ?", [Date.now(), user || "unknown", id]);
 }
 
 function createIphonePriceGrid() {
@@ -1758,14 +1974,99 @@ app.post("/api/state", requireSession, requireAuth, rateLimit, async (req, res) 
         res.status(409).json({ ok: false, error: "state_conflict", stateVersion: currentVersion });
         return;
       }
+      const beforeState = await getState();
+      const operationLog = buildStateOperationLog(snapshotStateForUndo(beforeState), snapshotStateForUndo(state));
       await saveState(state);
       const nextVersion = currentVersion + 1;
       await saveStateVersion(nextVersion);
+      if (operationLog) {
+        try {
+          await insertOperationLog({
+            user: req.session && req.session.user,
+            ...operationLog,
+            undoState: snapshotStateForUndo(beforeState),
+            beforeVersion: currentVersion,
+            afterVersion: nextVersion,
+          });
+        } catch (logErr) {
+          writeLog(errorLogPath, { ts: new Date().toISOString(), type: "operation_log_insert_failed", err: String(logErr) });
+        }
+      }
       res.json({ ok: true, stateVersion: nextVersion });
     });
   } catch (err) {
     writeLog(errorLogPath, { ts: new Date().toISOString(), type: "state_write_failed", err: String(err) });
     res.status(500).json({ ok: false, error: "state_write_failed" });
+  }
+});
+
+app.get("/api/operation-logs", requireSession, requireAuth, rateLimit, async (req, res) => {
+  try {
+    const rows = await listOperationLogs();
+    res.json({ ok: true, logs: rows });
+  } catch (err) {
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "operation_logs_read_failed", err: String(err) });
+    res.status(500).json({ ok: false, error: "operation_logs_read_failed" });
+  }
+});
+
+app.post("/api/operation-logs/:id/undo", requireSession, requireAuth, requireAdmin, rateLimit, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id <= 0) {
+      res.status(400).json({ ok: false, error: "invalid_log_id" });
+      return;
+    }
+    await enqueueStateWrite(async () => {
+      const log = await getOperationLog(id);
+      if (!log) {
+        res.status(404).json({ ok: false, error: "log_not_found" });
+        return;
+      }
+      if (log.undone_at) {
+        res.status(409).json({ ok: false, error: "already_undone" });
+        return;
+      }
+      if (!log.undo_state) {
+        res.status(409).json({ ok: false, error: "undo_not_available" });
+        return;
+      }
+      const currentVersion = await getStateVersion();
+      if (Number(log.after_version) !== currentVersion) {
+        res.status(409).json({ ok: false, error: "state_changed", stateVersion: currentVersion });
+        return;
+      }
+      let undoState;
+      try {
+        undoState = snapshotStateForUndo(JSON.parse(log.undo_state));
+      } catch (parseErr) {
+        res.status(500).json({ ok: false, error: "undo_state_corrupted" });
+        return;
+      }
+      const stateBeforeUndo = snapshotStateForUndo(await getState());
+      await saveState(undoState);
+      const nextVersion = currentVersion + 1;
+      await saveStateVersion(nextVersion);
+      const user = req.session && req.session.user;
+      await markOperationLogUndone(id, user);
+      try {
+        await insertOperationLog({
+          user,
+          action: "撤回",
+          summary: `撤回操作 #${id}：${log.summary}`,
+          detail: `撤回人：${user || "unknown"}\n撤回时间：${new Date().toISOString()}\n原操作：${log.detail || log.summary}`,
+          undoState: stateBeforeUndo,
+          beforeVersion: currentVersion,
+          afterVersion: nextVersion,
+        });
+      } catch (logErr) {
+        writeLog(errorLogPath, { ts: new Date().toISOString(), type: "operation_log_undo_insert_failed", err: String(logErr) });
+      }
+      res.json({ ok: true, stateVersion: nextVersion });
+    });
+  } catch (err) {
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "operation_log_undo_failed", err: String(err) });
+    res.status(500).json({ ok: false, error: "operation_log_undo_failed" });
   }
 });
 

@@ -54,6 +54,9 @@
 - 订单数据读取失败时，前端不再用空数据继续启动；登录和自动登录流程会等数据加载成功后才隐藏登录层，避免服务器异常时进入空壳页面或误保存空订单。
 - `iPhone` 报价 JSON 读取失败不再静默返回空价格；只有文件不存在时才初始化为空，保存时改为临时文件写入后 rename，降低半写入损坏风险。
 - 数据库结构初始化失败时服务不再继续监听端口，而是退出交给 PM2 报错/重启，避免页面能打开但数据不可用。
+- 安全功能页已改为折叠面板结构，备份/恢复、操作记录、订单垃圾桶、订单来源管理、账号管理、修改密码都可单独展开/折叠。
+- 安全功能新增“操作记录”，展示最近 7 天订单/垃圾桶/配置修改记录，记录账号、操作时间、操作类型、纯文本明细；新增订单、删除、恢复、价格变更、批量操作都会记录。
+- 操作记录支持对当前最新一次可撤回变更执行撤回，撤回前需要管理员密码；若该记录之后已有新修改，系统会拒绝撤回，避免覆盖后续数据；撤回行为本身也会写入操作记录，并保存撤回前快照，方便误撤回时在无新修改的前提下再撤回这次撤回。
 - Excel/ZIP 导出依赖已改成本地 `/vendor/xlsx-js-style` 和 `/vendor/jszip` 加载，不再依赖外部 CDN；`package.json` 已加入 `xlsx-js-style` 与 `jszip` 依赖。
 - 主导航和快捷操作已新增 `iPhone价格表` 入口，可直接跳转到报价表页面，不影响合同、订单、结算流程。
 
@@ -62,6 +65,7 @@
 - `defaultSource` 当前默认值为 `皖顺`；来源下拉仍可手动切换到 `成都` 或配置页中的其他来源。
 - `orders(id,payload,created_at,hash)`、`trash(id,payload,created_at,hash)`：业务字段都在 `payload`。
 - `auth_users(username,salt,hash,created_at)`：页面账号。
+- `operation_logs(id,created_at,user,action,summary,detail,undo_state,before_version,after_version,undone_at,undone_by)`：安全功能操作记录，保存最近 7 天可查看记录；`undo_state` 用于撤回当前最新一次变更。
 - 不随意改 SQLite 表结构。
 
 ## 订单字段

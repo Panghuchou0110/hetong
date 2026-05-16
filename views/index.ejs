@@ -2594,6 +2594,93 @@
       backdrop-filter: blur(16px);
     }
 
+    .safety-panel {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .safety-panel summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+
+    .safety-panel summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .safety-panel-body {
+      padding: 0 16px 14px;
+    }
+
+    .safety-panel-arrow {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      transition: transform 0.18s ease;
+      flex: 0 0 auto;
+    }
+
+    .safety-panel[open] .safety-panel-arrow {
+      transform: rotate(90deg);
+    }
+
+    .operation-log-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .operation-log-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    body.dark .operation-log-item {
+      background: rgba(5, 12, 24, 0.54);
+    }
+
+    .operation-log-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .operation-log-title {
+      font-weight: 700;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .operation-log-meta {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .operation-log-detail {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
     .table-bulk {
       position: sticky;
       top: 10px;
@@ -3910,113 +3997,168 @@
       </section>
 
       <section id="section-safety" class="section">
-        <div class="card">
-          <div class="card-title">备份/恢复</div>
-          <div class="card-subtitle">备份/恢复订单数据（CSV 格式），可导入模板数据。</div>
-          <div class="form-grid">
-            <div class="field">
-              <label for="export_start">导出开始日期</label>
-              <input id="export_start" type="date" />
+        <details class="card safety-panel" open>
+          <summary>
+            <div>
+              <div class="card-title">备份/恢复</div>
+              <div class="card-subtitle">备份/恢复订单数据（CSV 格式），可导入模板数据。</div>
             </div>
-            <div class="field">
-              <label for="export_end">导出结束日期</label>
-              <input id="export_end" type="date" />
+            <span class="safety-panel-arrow">▸</span>
+          </summary>
+          <div class="safety-panel-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="export_start">导出开始日期</label>
+                <input id="export_start" type="date" />
+              </div>
+              <div class="field">
+                <label for="export_end">导出结束日期</label>
+                <input id="export_end" type="date" />
+              </div>
             </div>
+            <div class="button-row">
+              <button class="primary" id="exportBackupZip" type="button">一键导出备份</button>
+              <button class="primary" id="exportOrdersXlsx" type="button">导出订单 Excel</button>
+              <button class="secondary" id="exportOrdersRangeXlsx" type="button">分时段导出 Excel</button>
+              <button class="ghost" id="exportOrdersCsv" type="button">备份订单 CSV</button>
+              <button class="secondary" id="exportTrashCsv" type="button">备份垃圾桶 CSV</button>
+              <button class="ghost" id="downloadTemplateCsv" type="button">下载导入模板</button>
+              <button class="primary" id="importCsvBtn" type="button">导入 CSV</button>
+            </div>
+            <input id="importCsvInput" type="file" accept=".csv" style="display:none;" />
+            <div class="hint">导入会追加到现有订单，不会覆盖。模板字段请保持不变。</div>
           </div>
-          <div class="button-row">
-            <button class="primary" id="exportBackupZip" type="button">一键导出备份</button>
-            <button class="primary" id="exportOrdersXlsx" type="button">导出订单 Excel</button>
-            <button class="secondary" id="exportOrdersRangeXlsx" type="button">分时段导出 Excel</button>
-            <button class="ghost" id="exportOrdersCsv" type="button">备份订单 CSV</button>
-            <button class="secondary" id="exportTrashCsv" type="button">备份垃圾桶 CSV</button>
-            <button class="ghost" id="downloadTemplateCsv" type="button">下载导入模板</button>
-            <button class="primary" id="importCsvBtn" type="button">导入 CSV</button>
+        </details>
+
+        <details class="card safety-panel" open>
+          <summary>
+            <div>
+              <div class="card-title">操作记录</div>
+              <div class="card-subtitle">最近 7 天的数据修改记录，包含账号、时间和详细变更。</div>
+            </div>
+            <span class="safety-panel-arrow">▸</span>
+          </summary>
+          <div class="safety-panel-body">
+            <div class="button-row">
+              <button class="secondary" id="refreshOperationLogs" type="button">刷新记录</button>
+              <span class="hint">可撤回的记录会显示“撤回”按钮；若之后已有新修改，为避免覆盖新数据将不允许撤回。</span>
+            </div>
+            <div id="operationLogList" class="operation-log-list"></div>
+            <div id="operationLogEmpty" class="empty-state">最近 7 天暂无操作记录。</div>
           </div>
-          <input id="importCsvInput" type="file" accept=".csv" style="display:none;" />
-          <div class="hint">导入会追加到现有订单，不会覆盖。模板字段请保持不变。</div>
-        </div>
-        <div class="card">
-          <div class="order-toolbar">
+        </details>
+
+        <details class="card safety-panel" open>
+          <summary>
             <div>
               <div class="card-title">订单垃圾桶</div>
               <div class="card-subtitle">被删除的订单会暂存在这里，确认后才永久删除。</div>
             </div>
-            <div class="button-row">
-              <button class="danger" id="btnEmptyTrash" type="button">清空垃圾桶</button>
-              <div class="order-count" id="trashCount">共 0 单</div>
+            <span class="safety-panel-arrow">▸</span>
+          </summary>
+          <div class="safety-panel-body">
+            <div class="order-toolbar">
+              <div class="button-row">
+                <button class="danger" id="btnEmptyTrash" type="button">清空垃圾桶</button>
+                <div class="order-count" id="trashCount">共 0 单</div>
+              </div>
+            </div>
+            <div id="trashLocked" class="empty-state">请输入管理员密码后查看垃圾桶。</div>
+            <div id="trashList" class="order-list"></div>
+            <div id="trashEmpty" class="empty-state">暂无已删除订单。</div>
+          </div>
+        </details>
+
+        <details class="card safety-panel">
+          <summary>
+            <div>
+              <div class="card-title">订单来源管理</div>
+              <div class="card-subtitle">管理来源选项，可添加新来源；已有订单使用的来源不允许删除。</div>
+            </div>
+            <span class="safety-panel-arrow">▸</span>
+          </summary>
+          <div class="safety-panel-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="source_name">新增来源</label>
+                <input id="source_name" placeholder="客户" />
+              </div>
+              <div class="field" style="justify-content:flex-end;">
+                <span class="field-label" aria-hidden="true">&nbsp;</span>
+                <button class="primary" id="addSourceBtn" type="button">添加来源</button>
+              </div>
+              <div class="field full">
+                <label for="default_source">默认来源</label>
+                <select id="default_source">
+                  <option value="">不设置</option>
+                </select>
+                <div class="hint">新建订单会自动选中默认来源。</div>
+              </div>
+            </div>
+            <div class="source-list" id="sourceList"></div>
+          </div>
+        </details>
+
+        <details class="card safety-panel" id="accountManagementCard">
+          <summary>
+            <div>
+              <div class="card-title">账号管理</div>
+              <div class="card-subtitle">添加可登录账号（环境变量账号不可在此删除）。</div>
+            </div>
+            <span class="safety-panel-arrow">▸</span>
+          </summary>
+          <div class="safety-panel-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="auth_user_name">账号</label>
+                <input id="auth_user_name" placeholder="例如：panghuchou" />
+              </div>
+              <div class="field">
+                <label for="auth_user_pass">密码</label>
+                <input id="auth_user_pass" type="password" autocomplete="new-password" />
+              </div>
+              <div class="field" style="justify-content:flex-end;">
+                <span class="field-label" aria-hidden="true">&nbsp;</span>
+                <button class="primary" id="addAuthUserBtn" type="button">添加账号</button>
+              </div>
+            </div>
+            <div class="source-list" id="authUserList"></div>
+          </div>
+        </details>
+
+        <details class="card safety-panel">
+          <summary>
+            <div>
+              <div class="card-title">修改密码</div>
+              <div class="card-subtitle">修改当前登录账号密码，需要二次确认。</div>
+            </div>
+            <span class="safety-panel-arrow">▸</span>
+          </summary>
+          <div class="safety-panel-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="auth_change_user">账号</label>
+                <input id="auth_change_user" placeholder="请输入当前账号" />
+              </div>
+              <div class="field">
+                <label for="auth_old_pass">原密码</label>
+                <input id="auth_old_pass" type="password" autocomplete="current-password" />
+              </div>
+              <div class="field">
+                <label for="auth_new_pass">新密码</label>
+                <input id="auth_new_pass" type="password" autocomplete="new-password" />
+              </div>
+              <div class="field">
+                <label for="auth_new_pass_confirm">确认新密码</label>
+                <input id="auth_new_pass_confirm" type="password" autocomplete="new-password" />
+              </div>
+              <div class="field" style="justify-content:flex-end;">
+                <span class="field-label" aria-hidden="true">&nbsp;</span>
+                <button class="primary" id="changeAuthPassBtn" type="button">修改密码</button>
+              </div>
             </div>
           </div>
-          <div id="trashLocked" class="empty-state">请输入管理员密码后查看垃圾桶。</div>
-          <div id="trashList" class="order-list"></div>
-          <div id="trashEmpty" class="empty-state">暂无已删除订单。</div>
-        </div>
-        <div class="card">
-          <div class="card-title">订单来源管理</div>
-          <div class="card-subtitle">管理来源选项，可添加新来源；已有订单使用的来源不允许删除。</div>
-          <div class="form-grid">
-            <div class="field">
-              <label for="source_name">新增来源</label>
-              <input id="source_name" placeholder="客户" />
-            </div>
-            <div class="field" style="justify-content:flex-end;">
-              <span class="field-label" aria-hidden="true">&nbsp;</span>
-              <button class="primary" id="addSourceBtn" type="button">添加来源</button>
-            </div>
-            <div class="field full">
-              <label for="default_source">默认来源</label>
-              <select id="default_source">
-                <option value="">不设置</option>
-              </select>
-              <div class="hint">新建订单会自动选中默认来源。</div>
-            </div>
-          </div>
-          <div class="source-list" id="sourceList"></div>
-        </div>
-        <div class="card" id="accountManagementCard">
-          <div class="card-title">账号管理</div>
-          <div class="card-subtitle">添加可登录账号（环境变量账号不可在此删除）。</div>
-          <div class="form-grid">
-            <div class="field">
-              <label for="auth_user_name">账号</label>
-              <input id="auth_user_name" placeholder="例如：panghuchou" />
-            </div>
-            <div class="field">
-              <label for="auth_user_pass">密码</label>
-              <input id="auth_user_pass" type="password" autocomplete="new-password" />
-            </div>
-            <div class="field" style="justify-content:flex-end;">
-              <span class="field-label" aria-hidden="true">&nbsp;</span>
-              <button class="primary" id="addAuthUserBtn" type="button">添加账号</button>
-            </div>
-          </div>
-          <div class="source-list" id="authUserList"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">修改密码</div>
-          <div class="card-subtitle">修改当前登录账号密码，需要二次确认。</div>
-          <div class="form-grid">
-            <div class="field">
-              <label for="auth_change_user">账号</label>
-              <input id="auth_change_user" placeholder="请输入当前账号" />
-            </div>
-            <div class="field">
-              <label for="auth_old_pass">原密码</label>
-              <input id="auth_old_pass" type="password" autocomplete="current-password" />
-            </div>
-            <div class="field">
-              <label for="auth_new_pass">新密码</label>
-              <input id="auth_new_pass" type="password" autocomplete="new-password" />
-            </div>
-            <div class="field">
-              <label for="auth_new_pass_confirm">确认新密码</label>
-              <input id="auth_new_pass_confirm" type="password" autocomplete="new-password" />
-            </div>
-            <div class="field" style="justify-content:flex-end;">
-              <span class="field-label" aria-hidden="true">&nbsp;</span>
-              <button class="primary" id="changeAuthPassBtn" type="button">修改密码</button>
-            </div>
-          </div>
-        </div>
+        </details>
       </section>
       <section id="section-config" class="section">
         <div class="card">
@@ -4555,6 +4697,8 @@
     let savePending = false;
     let stateVersion = 0;
     let stateConflictShown = false;
+    let operationLogs = [];
+    let operationLogsLoaded = false;
 
     function buildDefaultState() {
       return {
@@ -4615,6 +4759,7 @@
       const result = await response.json();
       if (!result || !result.ok) throw new Error("state_save_failed");
       stateVersion = Number(result.stateVersion) || stateVersion;
+      operationLogsLoaded = false;
     }
 
     function handleStateConflict() {
@@ -5809,6 +5954,18 @@
       const hour = String(date.getHours()).padStart(2, "0");
       const minute = String(date.getMinutes()).padStart(2, "0");
       return `${year}-${month}-${day} ${hour}:${minute}`;
+    }
+
+    function formatOperationLogTime(timestamp) {
+      const date = new Date(timestamp);
+      if (Number.isNaN(date.getTime())) return "";
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hour = String(date.getHours()).padStart(2, "0");
+      const minute = String(date.getMinutes()).padStart(2, "0");
+      const second = String(date.getSeconds()).padStart(2, "0");
+      return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
     }
 
     function getFilterValues() {
@@ -7739,6 +7896,115 @@
       }
     }
 
+    function renderOperationLogs() {
+      const list = $("operationLogList");
+      const empty = $("operationLogEmpty");
+      if (!list || !empty) return;
+      list.innerHTML = "";
+      if (!operationLogs.length) {
+        empty.textContent = "最近 7 天暂无操作记录。";
+        empty.style.display = "block";
+        return;
+      }
+      empty.style.display = "none";
+      operationLogs.forEach((log) => {
+        const item = document.createElement("div");
+        item.className = "operation-log-item";
+        const undoneAt = Number(log.undone_at) || 0;
+        const canUndo = !undoneAt && Number(log.can_undo) === 1 && Number(log.after_version) === Number(stateVersion);
+        const undoStatus = undoneAt
+          ? `已撤回：${escapeHtml(log.undone_by || "unknown")} · ${escapeHtml(formatOperationLogTime(undoneAt))}`
+          : canUndo
+            ? "可撤回"
+            : "不可撤回";
+        item.innerHTML = `
+          <div class="operation-log-head">
+            <div>
+              <div class="operation-log-title">${escapeHtml(log.summary || "数据变更")}</div>
+              <div class="operation-log-meta">
+                ${escapeHtml(formatOperationLogTime(Number(log.created_at)) || "--")} · ${escapeHtml(log.user || "unknown")} · ${escapeHtml(log.action || "操作")} · ${undoStatus}
+              </div>
+            </div>
+            ${
+              canUndo
+                ? `<button class="secondary" type="button" data-action="undo-operation-log" data-id="${escapeHtml(log.id)}">撤回</button>`
+                : ""
+            }
+          </div>
+          <div class="operation-log-detail">${escapeHtml(log.detail || log.summary || "")}</div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    async function loadOperationLogs(force = false) {
+      if (operationLogsLoaded && !force) {
+        renderOperationLogs();
+        return;
+      }
+      const list = $("operationLogList");
+      const empty = $("operationLogEmpty");
+      if (list) {
+        list.innerHTML = '<div class="empty-state">正在读取操作记录...</div>';
+      }
+      if (empty) empty.style.display = "none";
+      if (empty) empty.textContent = "最近 7 天暂无操作记录。";
+      try {
+        const response = await fetch("/api/operation-logs");
+        if (response.status === 401) {
+          handleUnauthorized();
+          return;
+        }
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.ok) throw new Error(result.error || "operation_logs_failed");
+        operationLogs = Array.isArray(result.logs) ? result.logs : [];
+        operationLogsLoaded = true;
+        renderOperationLogs();
+      } catch (err) {
+        console.error("operation logs failed", err);
+        if (list) list.innerHTML = "";
+        if (empty) {
+          empty.style.display = "block";
+          empty.textContent = "操作记录读取失败，请稍后重试。";
+        }
+      }
+    }
+
+    async function undoOperationLog(id) {
+      if (!id) return;
+      if (!confirm("确认撤回这次操作吗？撤回会恢复到这次操作之前的数据；如果之后已有新修改，系统会拒绝撤回。")) return;
+      openSafetyPassword(async () => {
+        try {
+          const response = await fetch(`/api/operation-logs/${encodeURIComponent(id)}/undo`, { method: "POST" });
+          if (response.status === 401) {
+            handleUnauthorized();
+            return;
+          }
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.ok) {
+            const messageMap = {
+              already_undone: "这条记录已经撤回过。",
+              undo_not_available: "这条记录不支持撤回。",
+              state_changed: "撤回失败：这次操作之后已有新修改。为避免覆盖新数据，请先备份后手动处理。",
+              log_not_found: "没有找到这条操作记录。",
+              undo_state_corrupted: "撤回快照损坏，不能自动撤回。",
+            };
+            alert(messageMap[result.error] || "撤回失败，请稍后重试。");
+            return;
+          }
+          alert("已撤回本次操作，并写入撤回记录。页面将刷新最新数据。");
+          window.location.reload();
+        } catch (err) {
+          console.error("operation undo failed", err);
+          alert("撤回失败，请检查服务器状态。");
+        }
+      }, {
+        title: "撤回操作验证",
+        hint: "撤回会恢复到该操作之前的数据，需要管理员密码确认。",
+        label: "管理员密码",
+      });
+    }
+
     function openTrashPasswordModal() {
       $("trashPassword").value = "";
       openModal("trashPasswordModal");
@@ -9284,6 +9550,9 @@ function confirmDeleteAfterConfirm() {
       if (targetId === "section-safety" && !trashUnlocked) {
         openTrashPasswordModal();
       }
+      if (targetId === "section-safety") {
+        loadOperationLogs();
+      }
       if (targetId !== "section-contract") {
         $("orderGroup").classList.remove("collapsed");
         $("orderGroupWrap").classList.remove("collapsed");
@@ -10143,6 +10412,12 @@ function confirmDeleteAfterConfirm() {
     $("exportTableFiltered").addEventListener("click", exportTableFiltered);
     $("exportTrashCsv").addEventListener("click", exportTrashCsv);
     $("downloadTemplateCsv").addEventListener("click", downloadTemplateCsv);
+    $("refreshOperationLogs").addEventListener("click", () => loadOperationLogs(true));
+    $("operationLogList").addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-action='undo-operation-log']");
+      if (!btn) return;
+      undoOperationLog(btn.dataset.id);
+    });
     $("importCsvBtn").addEventListener("click", () => openSafetyPassword(() => $("importCsvInput").click()));
     $("addSourceBtn").addEventListener("click", () => openSafetyPassword(() => addSource(readValue("source_name"))));
     $("default_source").addEventListener("change", () => {

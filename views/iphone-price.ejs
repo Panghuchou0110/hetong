@@ -178,7 +178,7 @@
       width: 100%;
       margin-top: 2px;
       color: #7ee7ff;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 900;
       letter-spacing: 0.04em;
     }
@@ -189,30 +189,30 @@
       border-radius: 13px;
       border: 1px solid rgba(160, 203, 255, 0.24);
       background: rgba(5, 11, 22, 0.5);
-      padding: 9px;
+      padding: 7px;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
     }
 
-    .memory-block + .memory-block { margin-top: 8px; }
+    .memory-block + .memory-block { margin-top: 6px; }
 
     .memory-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 4px;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
     }
 
     .memory-label {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 58px;
-      padding: 5px 10px;
+      min-width: 50px;
+      padding: 3px 8px;
       border-radius: 999px;
       border: 1px solid rgba(160, 203, 255, 0.4);
       background: linear-gradient(180deg, rgba(18, 33, 58, 0.96), rgba(9, 18, 34, 0.9));
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       color: #f5f9ff;
       letter-spacing: 0.02em;
@@ -230,13 +230,13 @@
     .field {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 3px;
       align-items: center;
       min-width: 0;
     }
 
     .price-field {
-      gap: 5px;
+      gap: 3px;
       position: relative;
     }
 
@@ -256,8 +256,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 16px;
-      padding-bottom: 6px;
+      gap: 4px;
+      min-height: 15px;
+      padding-bottom: 3px;
       border-bottom: 1px solid rgba(141, 188, 255, 0.24);
     }
 
@@ -268,11 +269,25 @@
       flex: 0 0 auto;
       box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
     }
-    .color-label { display: none; }
+    .color-label {
+      display: none;
+      max-width: 28px;
+      overflow: hidden;
+      color: rgba(224, 238, 255, 0.88);
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    body.show-color-text .color-label {
+      display: inline-flex;
+    }
 
     .price-input {
       width: 100%;
-      height: 32px;
+      height: 30px;
       padding: 0 7px;
       border-radius: 11px;
       border: 1px solid rgba(141, 188, 255, 0.26);
@@ -291,7 +306,7 @@
     .price-view {
       display: none;
       width: 100%;
-      height: 34px;
+      height: 31px;
       padding: 0 7px;
       border-radius: 11px;
       border: 1px solid transparent;
@@ -300,7 +315,7 @@
       text-align: center;
       font-size: 16px;
       font-weight: 800;
-      line-height: 34px;
+      line-height: 31px;
       letter-spacing: 0.01em;
     }
 
@@ -311,8 +326,8 @@
       background: transparent;
       box-shadow: none;
       padding: 0;
-      height: 34px;
-      line-height: 34px;
+      height: 31px;
+      line-height: 31px;
     }
     .price-field.compact .dot { margin-right: 0; }
 
@@ -377,6 +392,28 @@
       font-size: 11px;
       color: var(--muted);
       font-weight: 700;
+    }
+
+    .color-text-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 32px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(11, 20, 38, 0.72);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .color-text-toggle input {
+      width: 13px;
+      height: 13px;
+      accent-color: #4fb5ff;
     }
 
     .dock-head .dock-label {
@@ -568,7 +605,6 @@
   <div class="page">
     <header class="topbar">
       <div class="title">
-        <div class="kicker">IPHONE 17 SERIES</div>
         <h1>Apple新机专业报价·<span id="titleDate"><%= formatTitleDate(pageUpdatedAt) %></span></h1>
         <div class="meta">
           <span class="badge clock-badge" id="clock">北京时间：<%= formatClock(pageUpdatedAt) %></span>
@@ -603,7 +639,10 @@
               <div class="color-grid">
                 <% getColors(model.key).forEach(function(color) { %>
                   <label class="field price-field compact view-mode">
-                    <span class="dot-wrap"><span class="dot" style="background:<%= color.dot %>" title="<%= color.name %>"></span></span>
+                    <span class="dot-wrap">
+                      <span class="dot" style="background:<%= color.dot %>" title="<%= color.name %>"></span>
+                      <span class="color-label" title="<%= color.name %>"><%= color.label %></span>
+                    </span>
                     <input
                       class="price-input price-input-js"
                       data-model="<%= model.key %>"
@@ -641,12 +680,16 @@
           <input id="customDelta" type="number" min="0" step="1" value="350" />
           <button class="btn" id="applyCustomBtn" type="button">确定</button>
         </div>
+        <label class="color-text-toggle" for="showColorTextToggle">
+          <input id="showColorTextToggle" type="checkbox" checked />
+          <span>展示颜色文字</span>
+        </label>
       </div>
         <div class="dock-actions">
           <button class="btn" id="toggleEditBtn" type="button">编辑价格</button>
           <button class="btn" id="clearBtn" type="button">清空价格</button>
           <button class="btn primary" id="saveBtn" type="button">保存价格</button>
-          <a class="btn" href="/iphone-price/text">文字页</a>
+          <a class="btn" id="textPageLink" href="/iphone-price/text">文字页</a>
           <a class="btn" href="/">返回首页</a>
         </div>
       </div>
@@ -667,12 +710,15 @@
     const toastEl = document.getElementById("toast");
     const presetButtons = Array.from(document.querySelectorAll(".preset"));
     const toggleEditBtn = document.getElementById("toggleEditBtn");
+    const textPageLink = document.getElementById("textPageLink");
+    const showColorTextToggle = document.getElementById("showColorTextToggle");
     const applyCustomBtn = document.getElementById("applyCustomBtn");
     const modelSyncButtons = Array.from(document.querySelectorAll(".model-sync"));
     const priceFields = Array.from(document.querySelectorAll(".price-field"));
     const apiPath = "/api/iphone-price";
     let adjustmentMode = { type: "preset", value: 0 };
     let editingMode = false;
+    let priceDirty = false;
     const syncModes = {};
     models.forEach((model) => {
       syncModes[model.key] = getColors(model.key).length > 1;
@@ -883,6 +929,8 @@
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data.ok) throw new Error(data.error || "保存失败");
+      priceDirty = false;
+      return data.state;
     }
 
     function syncViewValues() {
@@ -900,9 +948,14 @@
       if (titleDateEl) titleDateEl.textContent = formatTitleDate(Date.now());
     }
 
+    function applyColorTextVisibility() {
+      document.body.classList.toggle("show-color-text", !!showColorTextToggle.checked);
+    }
+
     document.querySelectorAll(".price-input-js").forEach((input) => {
       input.addEventListener("input", () => {
         input.value = String(input.value || "").replace(/[^\d]/g, "");
+        priceDirty = true;
         syncSiblingInputs(input.dataset.model, input.dataset.capacity, input.dataset.color, input.value);
         syncViewValues();
       });
@@ -929,6 +982,8 @@
       showToast(delta > 0 ? `已应用自定义减额：-${delta}` : "已应用自定义减额：原价版");
     });
 
+    showColorTextToggle.addEventListener("change", applyColorTextVisibility);
+
     modelSyncButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const modelKey = btn.dataset.syncModel;
@@ -937,6 +992,27 @@
         renderEditMode();
         showToast(syncModes[modelKey] ? "已开启联动" : "已关闭联动");
       });
+    });
+
+    textPageLink.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const targetUrl = new URL(textPageLink.href, window.location.origin);
+      const delta = getAdjustedDelta();
+      if (delta > 0) {
+        targetUrl.searchParams.set("delta", String(delta));
+      } else {
+        targetUrl.searchParams.delete("delta");
+      }
+      if (priceDirty) {
+        try {
+          showToast("正在同步价格...");
+          await savePrices();
+        } catch (err) {
+          showToast(err && err.message ? err.message : "同步失败，请先保存");
+          return;
+        }
+      }
+      window.location.href = targetUrl.toString();
     });
 
     toggleEditBtn.addEventListener("click", () => {
@@ -973,6 +1049,7 @@
       }
       if (!confirm("确认清空全部价格？")) return;
       document.querySelectorAll(".price-input-js").forEach((input) => (input.value = ""));
+      priceDirty = true;
       syncViewValues();
       try {
         await savePrices();
@@ -986,6 +1063,7 @@
     adjustmentMode = { type: "preset", value: 0 };
     renderEditMode();
     updateAdjustUI();
+    applyColorTextVisibility();
     setClock();
     setInterval(setClock, 1000);
   </script>

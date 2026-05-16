@@ -214,6 +214,7 @@
       { key: "white", label: "白", name: "白色" },
     ],
   };
+  const initialPriceDelta = Math.max(0, Number(priceDelta) || 0);
   function formatClock(ts) {
     const date = new Date(Number(ts) || Date.now());
     const formatter = new Intl.DateTimeFormat("zh-CN", {
@@ -247,6 +248,12 @@
     const prices = state && state.prices ? state.prices : {};
     return (((prices[modelKey] || {})[capacity] || {})[colorKey]) || "";
   }
+  function formatPriceCell(rawValue) {
+    if (!rawValue) return "未填";
+    const raw = Number(rawValue);
+    if (!Number.isFinite(raw)) return "未填";
+    return String(Math.max(0, raw - initialPriceDelta));
+  }
   function buildShort(model) {
     if (model.short) return model.short;
     if (model.title.includes("Pro Max")) return "17PM";
@@ -261,7 +268,7 @@
       const colors = colorMap[model.key] || colorMap.promax;
       capacities.forEach((capacity) => {
         lines.push(`${buildShort(model)} ${capacity}`);
-        const colorLine = colors.map((color) => `${color.name}：${getCell(state, model.key, capacity, color.key) || "未填"}`);
+        const colorLine = colors.map((color) => `${color.name}：${formatPriceCell(getCell(state, model.key, capacity, color.key))}`);
         for (let i = 0; i < colorLine.length; i += 3) {
           lines.push(colorLine.slice(i, i + 3).join("　"));
         }
@@ -273,7 +280,7 @@
         const colors = colorMap[model.key] || colorMap.promax;
         capacities.forEach((capacity) => {
           lines.push(`${buildShort(model)} ${capacity}`);
-          const colorLine = colors.map((color) => `${color.name}：${getCell(state, model.key, capacity, color.key) || "未填"}`);
+          const colorLine = colors.map((color) => `${color.name}：${formatPriceCell(getCell(state, model.key, capacity, color.key))}`);
           for (let i = 0; i < colorLine.length; i += 3) {
             lines.push(colorLine.slice(i, i + 3).join("　"));
           }
@@ -287,7 +294,7 @@
     const html = [`<span class="headline">【iPhone17系列新机价格】</span>`, `<span class="time">北京时间：${formatClock(pageUpdatedAt)}</span>`];
     const active = models.filter((item) => item.section === "active");
     const normal = models.filter((item) => item.section === "normal");
-    const priceText = (value) => `<span class="price">${value || "未填"}</span>`;
+    const priceText = (value) => `<span class="price">${formatPriceCell(value)}</span>`;
     normal.forEach((model) => {
       const colors = colorMap[model.key] || colorMap.promax;
       capacities.forEach((capacity) => {
@@ -318,7 +325,6 @@
   <div class="page">
     <div class="top">
       <div>
-        <div class="kicker">IPHONE 17 SERIES</div>
         <h1>iPhone17系列新机价格</h1>
         <div class="badge" id="clock">北京时间：<%= formatClock(pageUpdatedAt) %></div>
       </div>
@@ -347,6 +353,7 @@
     const capacities = <%- JSON.stringify(capacities) %>;
     const colorMap = <%- JSON.stringify(colorMap).replace(/</g, "\\u003c") %>;
     const initialState = <%- JSON.stringify(initialState).replace(/</g, "\\u003c") %>;
+    const priceDelta = Math.max(0, Number(<%- JSON.stringify(priceDelta || 0) %>) || 0);
     let currentState = initialState;
     const clockEl = document.getElementById("clock");
     const copyTextEl = document.getElementById("copyText");
@@ -415,7 +422,7 @@
       if (!rawValue) return "未填";
       const raw = Number(rawValue);
       if (!Number.isFinite(raw)) return "未填";
-      return String(raw);
+      return String(Math.max(0, raw - priceDelta));
     }
 
     function buildCopyText() {

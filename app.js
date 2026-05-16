@@ -2088,9 +2088,11 @@ app.get("/iphone-price", requirePageSession, requireAuth, async (req, res) => {
 app.get("/iphone-price/text", requirePageSession, requireAuth, async (req, res) => {
   try {
     const state = await readIphonePriceState();
+    const priceDelta = Math.max(0, Math.min(20000, Math.floor(Number(req.query.delta) || 0)));
     res.render("iphone-price-text", {
       initialState: state,
       pageUpdatedAt: state.updatedAt || Date.now(),
+      priceDelta,
     });
   } catch (err) {
     writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_read_failed", err: String(err) });

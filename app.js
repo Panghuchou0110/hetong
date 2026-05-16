@@ -67,7 +67,7 @@ const defaultState = {
   orders: [],
   trash: [],
   sources: ["皖顺", "成都"],
-  defaultSource: "",
+  defaultSource: "皖顺",
   models: [...defaultModels],
   modelColors: { ...defaultModelColors },
   authRememberHours: {},
@@ -503,12 +503,38 @@ app.use((req, res, next) => {
 });
 
 // ====== parse helpers ======
-function normalizeText(s) {
-  return (s || "")
+function cleanInputText(text) {
+  const normalized = String(text || "")
     .replace(/\r/g, "")
+    .replace(/[\u3000\u00A0\t]/g, " ")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
     .replace(/[\uFF0C\uFF1B]/g, ":")
-    .replace(/[\uFF1A]/g, ":")
-    .replace(/\u00A0/g, " "); // replace NBSP
+    .replace(/[\uFF1A]/g, ":");
+
+  return normalized
+    .split("\n")
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .filter((line, index, list) => line || (index > 0 && list[index - 1] !== ""))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function normalizeText(s) {
+  return cleanInputText(s);
+}
+
+function extractMainText(text) {
+  const source = String(text || "");
+  const stopKeywords = ["联系人", "名字", "亲友", "父母", "配偶", "哥哥", "母亲", "朋友", "核实号码"];
+  let cutIndex = source.length;
+  stopKeywords.forEach((keyword) => {
+    const idx = source.indexOf(keyword);
+    if (idx !== -1 && idx < cutIndex) {
+      cutIndex = idx;
+    }
+  });
+  return source.slice(0, cutIndex).trim();
 }
 
 function pick(text, regex) {
@@ -560,13 +586,537 @@ function isValidChineseId(value) {
 
 function normalizeSellerName(raw) {
   const cleaned = String(raw || "").replace(/[^\u4e00-\u9fa5]/g, "");
-  if (cleaned.length > 4) {
-    return { value: cleaned.slice(0, 3), warning: `识别到姓名“${cleaned}”超过4个中文，已保留前三位` };
+  if (!cleaned) return { value: "", warning: "" };
+  if (/^[\u4e00-\u9fa5]{2,4}$/.test(cleaned)) {
+    return { value: cleaned, warning: "" };
   }
-  if (cleaned && !/^[\u4e00-\u9fa5]{2,4}$/.test(cleaned)) {
-    return { value: cleaned, warning: "客户姓名应为2-4个中文字符，请核对" };
+  return { value: cleaned.slice(0, 4), warning: "客户姓名应为2-4个中文字符，请核对" };
+}
+
+const commonChineseSurnames = new Set(
+  [
+    "赵",
+    "钱",
+    "孙",
+    "李",
+    "周",
+    "吴",
+    "郑",
+    "王",
+    "冯",
+    "陈",
+    "褚",
+    "卫",
+    "蒋",
+    "沈",
+    "韩",
+    "杨",
+    "朱",
+    "秦",
+    "尤",
+    "许",
+    "何",
+    "吕",
+    "施",
+    "张",
+    "孔",
+    "曹",
+    "严",
+    "华",
+    "金",
+    "魏",
+    "陶",
+    "姜",
+    "戚",
+    "谢",
+    "邹",
+    "喻",
+    "柏",
+    "水",
+    "窦",
+    "章",
+    "云",
+    "苏",
+    "潘",
+    "葛",
+    "奚",
+    "范",
+    "彭",
+    "郎",
+    "鲁",
+    "韦",
+    "昌",
+    "马",
+    "苗",
+    "凤",
+    "花",
+    "方",
+    "俞",
+    "任",
+    "袁",
+    "柳",
+    "唐",
+    "罗",
+    "薛",
+    "伍",
+    "余",
+    "米",
+    "贝",
+    "姚",
+    "孟",
+    "顾",
+    "尹",
+    "江",
+    "钟",
+    "徐",
+    "邱",
+    "骆",
+    "高",
+    "夏",
+    "蔡",
+    "田",
+    "樊",
+    "胡",
+    "凌",
+    "霍",
+    "虞",
+    "万",
+    "支",
+    "柯",
+    "昝",
+    "管",
+    "卢",
+    "莫",
+    "经",
+    "房",
+    "裘",
+    "缪",
+    "干",
+    "解",
+    "应",
+    "宗",
+    "丁",
+    "宣",
+    "贾",
+    "邓",
+    "郁",
+    "单",
+    "杭",
+    "洪",
+    "包",
+    "诸",
+    "左",
+    "石",
+    "崔",
+    "吉",
+    "钮",
+    "龚",
+    "程",
+    "嵇",
+    "邢",
+    "滑",
+    "裴",
+    "陆",
+    "荣",
+    "翁",
+    "荀",
+    "羊",
+    "於",
+    "惠",
+    "甄",
+    "曲",
+    "家",
+    "封",
+    "芮",
+    "羿",
+    "储",
+    "靳",
+    "汲",
+    "邴",
+    "糜",
+    "松",
+    "井",
+    "段",
+    "富",
+    "巫",
+    "乌",
+    "焦",
+    "巴",
+    "弓",
+    "牧",
+    "隗",
+    "山",
+    "谷",
+    "车",
+    "侯",
+    "宓",
+    "蓬",
+    "全",
+    "郗",
+    "班",
+    "仰",
+    "秋",
+    "仲",
+    "伊",
+    "宫",
+    "宁",
+    "仇",
+    "栾",
+    "暴",
+    "甘",
+    "钭",
+    "厉",
+    "戎",
+    "祖",
+    "武",
+    "符",
+    "刘",
+    "景",
+    "詹",
+    "束",
+    "龙",
+    "叶",
+    "幸",
+    "司",
+    "韶",
+    "郜",
+    "黎",
+    "蓟",
+    "薄",
+    "印",
+    "宿",
+    "白",
+    "怀",
+    "蒲",
+    "邰",
+    "从",
+    "鄂",
+    "索",
+    "咸",
+    "籍",
+    "赖",
+    "卓",
+    "蔺",
+    "屠",
+    "蒙",
+    "池",
+    "乔",
+    "阳",
+    "胥",
+    "能",
+    "苍",
+    "双",
+    "闻",
+    "莘",
+    "党",
+    "翟",
+    "谭",
+    "贡",
+    "劳",
+    "逄",
+    "姬",
+    "申",
+    "扶",
+    "堵",
+    "冉",
+    "宰",
+    "郦",
+    "雍",
+    "郤",
+    "璩",
+    "桑",
+    "桂",
+    "濮",
+    "牛",
+    "寿",
+    "通",
+    "边",
+    "扈",
+    "燕",
+    "冀",
+    "郏",
+    "浦",
+    "尚",
+    "农",
+    "温",
+    "别",
+    "庄",
+    "晏",
+    "柴",
+    "瞿",
+    "阎",
+    "充",
+    "慕",
+    "连",
+    "茹",
+    "习",
+    "宦",
+    "艾",
+    "鱼",
+    "容",
+    "向",
+    "古",
+    "易",
+    "慎",
+    "戈",
+    "廖",
+    "庾",
+    "终",
+    "暨",
+    "居",
+    "衡",
+    "步",
+    "都",
+    "耿",
+    "满",
+    "弘",
+    "匡",
+    "国",
+    "文",
+    "寇",
+    "广",
+    "禄",
+    "阙",
+    "东",
+    "欧",
+    "殴",
+    "殷",
+    "利",
+    "蔚",
+    "越",
+    "夔",
+    "隆",
+    "师",
+    "巩",
+    "厍",
+    "聂",
+    "晁",
+    "勾",
+    "敖",
+    "融",
+    "冷",
+    "訾",
+    "辛",
+    "阚",
+    "那",
+    "简",
+    "饶",
+    "空",
+    "曾",
+    "毋",
+    "沙",
+    "乜",
+    "养",
+    "鞠",
+    "须",
+    "丰",
+    "巢",
+    "关",
+    "蒯",
+    "相",
+    "查",
+    "后",
+    "荆",
+    "红",
+    "游",
+    "竺",
+    "权",
+    "逯",
+    "盖",
+    "益",
+    "桓",
+    "公",
+    "万",
+    "俟",
+    "司马",
+    "欧阳",
+    "上官",
+    "诸葛",
+    "东方",
+    "皇甫",
+    "尉迟",
+    "公羊",
+    "赫连",
+    "澹台",
+    "皇甫",
+    "宗政",
+    "濮阳",
+    "淳于",
+    "单于",
+    "太叔",
+    "申屠",
+    "公孙",
+    "仲孙",
+    "轩辕",
+    "令狐",
+    "钟离",
+    "宇文",
+    "长孙",
+    "慕容",
+    "鲜于",
+    "闾丘",
+    "司徒",
+    "司空",
+    "亓官",
+    "司寇",
+    "仉督",
+    "子车",
+    "颛孙",
+    "端木",
+    "巫马",
+    "公西",
+    "漆雕",
+    "乐正",
+    "壤驷",
+    "公良",
+    "拓跋",
+    "夹谷",
+    "宰父",
+    "谷梁",
+    "晋",
+    "楚",
+    "阎",
+    "法",
+  ].filter(Boolean)
+);
+
+const compoundChineseSurnames = [
+  "欧阳",
+  "司马",
+  "上官",
+  "诸葛",
+  "东方",
+  "皇甫",
+  "尉迟",
+  "公羊",
+  "赫连",
+  "澹台",
+  "宗政",
+  "濮阳",
+  "淳于",
+  "单于",
+  "太叔",
+  "申屠",
+  "公孙",
+  "仲孙",
+  "轩辕",
+  "令狐",
+  "钟离",
+  "宇文",
+  "长孙",
+  "慕容",
+  "鲜于",
+  "闾丘",
+  "司徒",
+  "司空",
+  "亓官",
+  "司寇",
+  "仉督",
+  "子车",
+  "颛孙",
+  "端木",
+  "巫马",
+  "公西",
+  "漆雕",
+  "乐正",
+  "壤驷",
+  "公良",
+  "拓跋",
+  "夹谷",
+  "宰父",
+  "谷梁",
+];
+
+const nameTailBlacklist = new Set(["手", "机", "电", "话", "号", "证", "型", "容", "量", "价", "格", "回", "收", "源", "激", "色", "备", "注", "联", "系", "名"]);
+const nameRejectWords = ["配偶", "朋友", "母亲", "哥哥", "姐姐", "弟弟", "妹妹", "父亲", "父母", "亲友", "联系人", "核实号码", "核实号"];
+
+function compactChineseOnly(value) {
+  return String(value || "").replace(/[^\u4e00-\u9fa5]/g, "");
+}
+
+function isLikelyChineseName(value) {
+  const compact = compactChineseOnly(value);
+  if (!/^[\u4e00-\u9fa5]{2,4}$/.test(compact)) return false;
+  if (compoundChineseSurnames.some((surname) => compact.startsWith(surname))) {
+    return compact.length >= 3;
   }
-  return { value: cleaned, warning: "" };
+  return commonChineseSurnames.has(compact[0]) && compact.length <= 3;
+}
+
+function extractLikelyChineseName(value) {
+  const compact = compactChineseOnly(value);
+  if (!compact) return "";
+  for (let start = 0; start <= compact.length - 2; start += 1) {
+    for (const size of [4, 3, 2]) {
+      const candidate = compact.slice(start, start + size);
+      if (!candidate || candidate.length !== size || !isLikelyChineseName(candidate)) continue;
+      if (
+        candidate.length === 4 &&
+        commonChineseSurnames.has(candidate[0]) &&
+        !compoundChineseSurnames.some((surname) => candidate.startsWith(surname))
+      ) {
+        continue;
+      }
+      if (candidate.length === 3 && commonChineseSurnames.has(candidate[0]) && nameTailBlacklist.has(candidate[2])) {
+        continue;
+      }
+      if (candidate.length === 2 && nameTailBlacklist.has(candidate[1])) {
+        continue;
+      }
+      if (candidate.length >= 2) {
+        return candidate;
+      }
+    }
+  }
+  return "";
+}
+
+function extractNameFromText(text, labels = []) {
+  const source = extractMainText(cleanInputText(text || ""));
+  const explicitPattern = /(?:客户姓名|姓名|出卖人|名字)\s*[:：]?\s*([\u4e00-\u9fa5]{2,4})/g;
+  let explicitMatch;
+  while ((explicitMatch = explicitPattern.exec(source)) !== null) {
+    const candidate = explicitMatch[1];
+    if (candidate && !nameRejectWords.some((word) => candidate.includes(word))) {
+      return candidate;
+    }
+  }
+
+  const genericPattern = new RegExp(
+    `(?:^|[^\\u4e00-\\u9fa5])((?:${compoundChineseSurnames.map(escapeRegex).join("|")}|[\\u4e00-\\u9fa5])[\\u4e00-\\u9fa5]{1,3})(?=[^\\u4e00-\\u9fa5]|$)`,
+    "g"
+  );
+  let result;
+  while ((result = genericPattern.exec(source)) !== null) {
+    const candidate = result[1];
+    if (!candidate) continue;
+    if (!isLikelyChineseName(candidate)) continue;
+    if (nameRejectWords.some((word) => candidate.includes(word))) continue;
+    return candidate;
+  }
+  return extractLikelyChineseName(source);
+}
+
+function extractActivationFromText(text) {
+  const compact = String(text || "").replace(/\s+/g, "");
+  if (!compact) return "";
+
+  const activePatterns = [/仅激活/, /已激活/, /国行激活/, /激活1-5天/, /激活3天内/];
+  if (activePatterns.some((pattern) => pattern.test(compact))) return "仅激活（直结）";
+
+  const explicitLabelPattern =
+    /(?:激活状态|是否激活|激活情况)\s*[:：]?\s*(未激活|全新未拆封|未拆封|全新原封|原封|未使用|0充|仅激活(?:（直结）)?|已激活|国行激活|激活1-5天|激活3天内|预激活)/;
+  const labelMatch = compact.match(explicitLabelPattern);
+  if (labelMatch) {
+    const value = labelMatch[1];
+    if (/^(?:未激活|全新未拆封|未拆封|全新原封|原封|未使用|0充)$/.test(value)) return "未激活";
+    return "仅激活（直结）";
+  }
+
+  const inactivePatterns = [/未激活/, /全新未拆封/, /未拆封/, /全新原封/, /原封/, /未使用/, /0充/];
+  if (inactivePatterns.some((pattern) => pattern.test(compact))) return "未激活";
+
+  return "";
 }
 
 function parsePriceValue(raw) {
@@ -696,6 +1246,7 @@ function extractFromRaw(raw, options = {}) {
   const models = Array.isArray(options.models) ? options.models : [];
   const modelColors = options.modelColors && typeof options.modelColors === "object" ? options.modelColors : {};
   const t = normalizeText(raw);
+  const mainText = extractMainText(t);
   const warnings = [];
 
   const nameLabels = [
@@ -737,7 +1288,7 @@ function extractFromRaw(raw, options = {}) {
   ];
 
   const idLabels = ["\u8eab\u4efd\u8bc1\u53f7\u7801", "\u8eab\u4efd\u8bc1\u53f7", "\u8eab\u4efd\u8bc1", "\u8eab\u4efd\u8bc1\u7f16\u53f7"];
-  const nameResult = normalizeSellerName(pickByLabels(t, nameLabels));
+  const nameResult = normalizeSellerName(extractNameFromText(mainText, nameLabels));
   const seller_name = nameResult.value;
   if (nameResult.warning) warnings.push(nameResult.warning);
   const seller_id_raw = pickByLabels(t, idLabels) || pick(t, /\u8eab\u4efd\u8bc1(?:\u53f7\u7801|\u53f7)?\s*:\s*([0-9Xx]{18})/);
@@ -752,6 +1303,7 @@ function extractFromRaw(raw, options = {}) {
   if ((phoneRaw && phoneDigits.length !== 11) || (seller_phone && !isValidPhone(seller_phone))) {
     warnings.push("手机号可能错误：手机号必须是11位");
   }
+  const activation = extractActivationFromText(t);
 
   // \u578b\u53f7\u5185\u5b58\uff1a17promax 256G / \u4e5f\u517c\u5bb9?\u578b\u53f7\u5185\u5b58\uff1a?
   const model_mem =
@@ -812,6 +1364,7 @@ function extractFromRaw(raw, options = {}) {
     model,
     memory,
     color,
+    activation,
     total_price,
     unit_price: total_price || "", // default: unit price equals total price
     warnings,
@@ -1094,6 +1647,7 @@ app.post("/generate", requireSession, requireAuth, rateLimit, async (req, res) =
     model: payload.model || "",
     memory: selectionCheck.memory || "",
     color: payload.color || "",
+    activation: payload.activation || "未激活",
     unit_price: payload.unit_price || "",
     total_price: payload.total_price || "",
   };

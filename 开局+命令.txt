@@ -19,13 +19,17 @@
 ==========
 备份 命令
 git status
+
 git add .
 git commit -m "备份名字"
+
 git push origin master
 ==========
 服务器里
 cd /root/hetong
 git pull origin master
+
 npm install
+
 pm2 restart hetong
 pm2 status

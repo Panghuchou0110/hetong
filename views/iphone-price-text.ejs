@@ -329,7 +329,7 @@
 
     <div class="card">
       <div class="card-head">
-        <div class="label">微信发送内容</div>
+        <div class="label">文字版报价</div>
         <button class="btn primary" id="copyBtn" type="button">复制文字版</button>
       </div>
       <div class="card-body">
@@ -419,15 +419,17 @@
     }
 
     function buildCopyText() {
-      const lines = [`【iPhone17系列 报价表｜${formatTitleDate(new Date())}】`, ""];
+      const lines = [`【iPhone17系列新机价格】`, `北京时间：${formatDate(new Date())}`];
       const active = models.filter((item) => item.section === "active");
       const normal = models.filter((item) => item.section === "normal");
       normal.forEach((model) => {
         const colors = getColors(model.key);
         capacities.forEach((capacity) => {
           lines.push(`${buildShort(model)} ${capacity}`);
-          lines.push(colors.map((color) => `${color.name}：${formatCell(getValue(model.key, capacity, color.key))}`).join("　"));
-          lines.push("");
+          const colorLine = colors.map((color) => `${color.name}：${formatCell(getValue(model.key, capacity, color.key))}`);
+          for (let i = 0; i < colorLine.length; i += 3) {
+            lines.push(colorLine.slice(i, i + 3).join("　"));
+          }
         });
       });
       if (active.length) {
@@ -436,13 +438,47 @@
           const colors = getColors(model.key);
           capacities.forEach((capacity) => {
             lines.push(`${buildShort(model)} ${capacity}`);
-            lines.push(colors.map((color) => `${color.name}：${formatCell(getValue(model.key, capacity, color.key))}`).join("　"));
-            lines.push("");
+            const colorLine = colors.map((color) => `${color.name}：${formatCell(getValue(model.key, capacity, color.key))}`);
+            for (let i = 0; i < colorLine.length; i += 3) {
+              lines.push(colorLine.slice(i, i + 3).join("　"));
+            }
           });
         });
       }
       lines.push("价格实时浮动，下单前请以确认价为准。");
       return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+    }
+
+    function buildCopyHtml(state) {
+      const html = [`<span class="headline">【iPhone17系列新机价格】</span>`, `<span class="time">北京时间：${formatDate(new Date())}</span>`];
+      const active = models.filter((item) => item.section === "active");
+      const normal = models.filter((item) => item.section === "normal");
+      const priceText = (value) => `<span class="price">${formatCell(value)}</span>`;
+      normal.forEach((model) => {
+        const colors = getColors(model.key);
+        capacities.forEach((capacity) => {
+          html.push(`<span class="section">${buildShort(model)} ${capacity}</span>`);
+          const colorLine = colors.map((color) => `${color.name}：${priceText(getValue(model.key, capacity, color.key))}`);
+          for (let i = 0; i < colorLine.length; i += 3) {
+            html.push(`<span class="row">${colorLine.slice(i, i + 3).join("　")}</span>`);
+          }
+        });
+      });
+      if (active.length) {
+        html.push(`<span class="section">【仅激活】</span>`);
+        active.forEach((model) => {
+          const colors = getColors(model.key);
+          capacities.forEach((capacity) => {
+            html.push(`<span class="section">${buildShort(model)} ${capacity}</span>`);
+            const colorLine = colors.map((color) => `${color.name}：${priceText(getValue(model.key, capacity, color.key))}`);
+            for (let i = 0; i < colorLine.length; i += 3) {
+              html.push(`<span class="row">${colorLine.slice(i, i + 3).join("　")}</span>`);
+            }
+          });
+        });
+      }
+      html.push(`<span class="footer">价格实时浮动，下单前请以确认价为准。</span>`);
+      return html.join("");
     }
 
     function copyToClipboard(text) {
@@ -495,8 +531,6 @@
 
     refresh();
     reloadState();
-    const title = document.querySelector("h1");
-    if (title) title.textContent = `iPhone17系列·文字报价·${formatTitleLabel(new Date())}`;
     setInterval(() => {
       refresh();
       reloadState();

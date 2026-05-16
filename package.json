@@ -14,7 +14,9 @@
     "docxtemplater": "^3.67.6",
     "ejs": "^3.1.10",
     "express": "^5.2.1",
+    "jszip": "^3.10.1",
     "pizzip": "^3.2.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "xlsx-js-style": "^1.2.0"
   }
 }

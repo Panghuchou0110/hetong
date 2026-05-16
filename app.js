@@ -22,6 +22,8 @@ if (!fs.existsSync(logDir)) {
 }
 const accessLogPath = path.join(logDir, "access.log");
 const errorLogPath = path.join(logDir, "error.log");
+app.use("/vendor/xlsx-js-style", express.static(path.join(__dirname, "node_modules", "xlsx-js-style", "dist")));
+app.use("/vendor/jszip", express.static(path.join(__dirname, "node_modules", "jszip", "dist")));
 
 if (process.env.TRUST_PROXY === "1") {
   app.set("trust proxy", true);
@@ -192,6 +194,36 @@ function saveConfigState(state) {
   });
 }
 
+function getStateVersion() {
+  return new Promise((resolve, reject) => {
+    db.get("SELECT value FROM state WHERE key = ?", ["app_state_version"], (err, row) => {
+      if (err) return reject(err);
+      const version = Number(row && row.value);
+      resolve(Number.isFinite(version) && version >= 0 ? version : 0);
+    });
+  });
+}
+
+function saveStateVersion(version) {
+  return new Promise((resolve, reject) => {
+    db.run(
+      "REPLACE INTO state (key, value) VALUES (?, ?)",
+      ["app_state_version", String(Number(version) || 0)],
+      (err) => {
+        if (err) return reject(err);
+        resolve();
+      }
+    );
+  });
+}
+
+let stateWriteLock = Promise.resolve();
+function enqueueStateWrite(task) {
+  const next = stateWriteLock.then(task, task);
+  stateWriteLock = next.catch(() => {});
+  return next;
+}
+
 function computePayloadHash(payload) {
   return crypto.createHash("sha1").update(payload).digest("hex");
 }
@@ -255,6 +287,7 @@ async function syncList(table, items) {
 
 async function getState() {
   const rawState = await readRawState();
+  const stateVersion = await getStateVersion();
   const config = {
     sources: Array.isArray(rawState.sources) ? rawState.sources : [...defaultState.sources],
     defaultSource: typeof rawState.defaultSource === "string" ? rawState.defaultSource : "",
@@ -280,6 +313,7 @@ async function getState() {
   return {
     orders,
     trash,
+    stateVersion,
     ...config,
   };
 }
@@ -347,14 +381,18 @@ async function readIphonePriceState() {
     const raw = await fs.promises.readFile(iphonePriceFile, "utf8");
     return normalizeIphonePriceState(JSON.parse(raw));
   } catch (err) {
-    return createDefaultIphonePriceState();
+    if (err && err.code === "ENOENT") return createDefaultIphonePriceState();
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_read_failed", err: String(err) });
+    throw err;
   }
 }
 
 async function saveIphonePriceState(state) {
   const normalized = normalizeIphonePriceState(state);
   normalized.updatedAt = Date.now();
-  await fs.promises.writeFile(iphonePriceFile, JSON.stringify(normalized, null, 2), "utf8");
+  const tmpPath = `${iphonePriceFile}.${process.pid}.${Date.now()}.tmp`;
+  await fs.promises.writeFile(tmpPath, JSON.stringify(normalized, null, 2), "utf8");
+  await fs.promises.rename(tmpPath, iphonePriceFile);
   return normalized;
 }
 
@@ -1684,7 +1722,7 @@ app.post("/api/auth/logout", requireSession, rateLimit, (req, res) => {
 app.get("/api/state", requireSession, requireAuth, rateLimit, async (req, res) => {
   try {
     const state = await getState();
-    res.json({ ok: true, state });
+    res.json({ ok: true, state, stateVersion: state.stateVersion });
   } catch (err) {
     writeLog(errorLogPath, { ts: new Date().toISOString(), type: "state_read_failed", err: String(err) });
     res.status(500).json({ ok: false, error: "state_read_failed" });
@@ -1694,6 +1732,11 @@ app.get("/api/state", requireSession, requireAuth, rateLimit, async (req, res) =
 app.post("/api/state", requireSession, requireAuth, rateLimit, async (req, res) => {
   try {
     const payload = req.body || {};
+    const expectedVersion = Number(payload.stateVersion);
+    if (!Number.isFinite(expectedVersion) || expectedVersion < 0) {
+      res.status(409).json({ ok: false, error: "invalid_state_version", stateVersion: await getStateVersion() });
+      return;
+    }
     const state = {
       orders: Array.isArray(payload.orders) ? payload.orders : [],
       trash: Array.isArray(payload.trash) ? payload.trash : [],
@@ -1709,8 +1752,17 @@ app.post("/api/state", requireSession, requireAuth, rateLimit, async (req, res) 
           ? payload.authRememberHours
           : {},
     };
-    await saveState(state);
-    res.json({ ok: true });
+    await enqueueStateWrite(async () => {
+      const currentVersion = await getStateVersion();
+      if (expectedVersion !== currentVersion) {
+        res.status(409).json({ ok: false, error: "state_conflict", stateVersion: currentVersion });
+        return;
+      }
+      await saveState(state);
+      const nextVersion = currentVersion + 1;
+      await saveStateVersion(nextVersion);
+      res.json({ ok: true, stateVersion: nextVersion });
+    });
   } catch (err) {
     writeLog(errorLogPath, { ts: new Date().toISOString(), type: "state_write_failed", err: String(err) });
     res.status(500).json({ ok: false, error: "state_write_failed" });
@@ -1860,5 +1912,5 @@ ensureSchema()
   })
   .catch((err) => {
     console.error("schema init failed", err);
-    app.listen(PORT, "0.0.0.0", () => console.log(`http://localhost:${PORT}`));
+    process.exit(1);
   });

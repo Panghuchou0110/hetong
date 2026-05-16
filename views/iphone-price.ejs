@@ -537,8 +537,8 @@
   const models = [
     { key: "promax", title: "iPhone 17 Pro Max", section: "normal" },
     { key: "pro", title: "iPhone 17 Pro", section: "normal" },
-    { key: "iphone17", title: "iPhone 17", section: "normal" },
-    { key: "promaxActive", title: "iPhone 17 Pro Max 仅激活", section: "active" },
+    { key: "iphone17", title: "iPhone 17 标准版", short: "iPhone 17 标准版", section: "normal" },
+    { key: "promaxActive", title: "iPhone 17 Pro Max 国行0充 仅激活0-5天", section: "active" },
   ];
   const capacities = ["256G", "512G"];
   const colorMap = {
@@ -621,7 +621,7 @@
             <div class="model-title">
               <% if (model.key === "promaxActive") { %>
                 <span class="model-title-main">iPhone 17 Pro Max</span>
-                <span class="model-title-active">（仅激活）</span>
+                <span class="model-title-active">（国行0充 仅激活0-5天）</span>
               <% } else { %>
                 <span class="model-title-main"><%= model.title %></span>
               <% } %>
@@ -869,7 +869,7 @@
       });
 
       if (activeModels.length) {
-        lines.push("【仅激活】");
+        lines.push("【国行0充 仅激活0-5天】");
         activeModels.forEach((model) => {
           const colors = getColors(model.key);
           capacities.forEach((capacity) => {

@@ -186,8 +186,8 @@
   const models = [
     { key: "promax", title: "iPhone 17 Pro Max", short: "17PM", section: "normal" },
     { key: "pro", title: "iPhone 17 Pro", short: "17Pro", section: "normal" },
-    { key: "iphone17", title: "iPhone 17", short: "17", section: "normal" },
-    { key: "promaxActive", title: "iPhone 17 Pro Max 仅激活", short: "17PM", section: "active" },
+    { key: "iphone17", title: "iPhone 17 标准版", short: "iPhone 17 标准版", section: "normal" },
+    { key: "promaxActive", title: "iPhone 17 Pro Max 国行0充 仅激活0-5天", short: "17PM", section: "active" },
   ];
   const capacities = ["256G", "512G"];
   const colorMap = {
@@ -275,7 +275,7 @@
       });
     });
     if (active.length) {
-      lines.push("【仅激活】");
+      lines.push("【国行0充 仅激活0-5天】");
       active.forEach((model) => {
         const colors = colorMap[model.key] || colorMap.promax;
         capacities.forEach((capacity) => {
@@ -306,7 +306,7 @@
       });
     });
     if (active.length) {
-      html.push(`<span class="section">【仅激活】</span>`);
+      html.push(`<span class="section">【国行0充 仅激活0-5天】</span>`);
       active.forEach((model) => {
         const colors = colorMap[model.key] || colorMap.promax;
         capacities.forEach((capacity) => {
@@ -440,7 +440,7 @@
         });
       });
       if (active.length) {
-        lines.push("【仅激活】");
+        lines.push("【国行0充 仅激活0-5天】");
         active.forEach((model) => {
           const colors = getColors(model.key);
           capacities.forEach((capacity) => {
@@ -472,7 +472,7 @@
         });
       });
       if (active.length) {
-        html.push(`<span class="section">【仅激活】</span>`);
+        html.push(`<span class="section">【国行0充 仅激活0-5天】</span>`);
         active.forEach((model) => {
           const colors = getColors(model.key);
           capacities.forEach((capacity) => {

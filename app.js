@@ -78,8 +78,8 @@ const iphonePriceFile = path.join(dataDir, "iphone-prices.json");
 const iphonePriceCatalog = [
   { key: "promax", title: "iPhone 17 Pro Max", short: "17PM", section: "normal" },
   { key: "pro", title: "iPhone 17 Pro", short: "17Pro", section: "normal" },
-  { key: "iphone17", title: "iPhone 17", short: "17", section: "normal" },
-  { key: "promaxActive", title: "iPhone 17 Pro Max 仅激活", short: "17PM", section: "active" },
+  { key: "iphone17", title: "iPhone 17 标准版", short: "iPhone 17 标准版", section: "normal" },
+  { key: "promaxActive", title: "iPhone 17 Pro Max 国行0充 仅激活0-5天", short: "17PM", section: "active" },
 ];
 const iphonePriceCapacities = ["256G", "512G"];
 const iphonePriceColorMap = {

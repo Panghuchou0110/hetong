@@ -7448,6 +7448,7 @@
       const groupStoredMissingActual = [];
       const dayMs = 24 * 60 * 60 * 1000;
       orders.forEach((order) => {
+        if (order.status === "unsigned") return;
         const createdAt = Number(order.createdAt) || 0;
         if (!createdAt) return;
         const ageDays = Math.floor((nowTs - createdAt) / dayMs);

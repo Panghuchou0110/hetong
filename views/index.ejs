@@ -3296,16 +3296,6 @@
           </span>
           <span class="nav-label">安全功能</span>
         </button>
-        <button data-target="section-config" data-label="机型配置">
-          <span class="nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false">
-              <path d="M12 3.5l1.3 2.6 2.9.4-2.1 2.1.5 3-2.6-1.4-2.6 1.4.5-3L7.8 6.5l2.9-.4L12 3.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
-              <circle cx="12" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/>
-            </svg>
-          </span>
-          <span class="nav-label">机型配置</span>
-        </button>
-
         <div class="nav-group">
           <button class="group-toggle" id="runawayGroupToggle" type="button">
             <span class="nav-icon" aria-hidden="true">
@@ -4129,6 +4119,51 @@
         <details class="card safety-panel">
           <summary>
             <div>
+              <div class="card-title">机型配置</div>
+              <div class="card-subtitle">管理机型和颜色，会同步到合同生成、订单管理和识别。</div>
+            </div>
+            <span class="safety-panel-arrow">▸</span>
+          </summary>
+          <div class="safety-panel-body">
+            <div class="card-title">机型管理</div>
+            <div class="card-subtitle">自定义机型会同步到合同生成与订单管理，并用于识别。</div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="config_model_name">新增机型</label>
+                <input id="config_model_name" placeholder="例如：iPhone 15 Pro" />
+              </div>
+              <div class="field" style="justify-content:flex-end;">
+                <span class="field-label" aria-hidden="true">&nbsp;</span>
+                <button class="primary" id="addModelBtn" type="button">添加机型</button>
+              </div>
+            </div>
+            <div class="source-list" id="modelList"></div>
+
+            <div class="card-title" style="margin-top:18px;">颜色管理</div>
+            <div class="card-subtitle">颜色按机型维护，用于下拉与识别。</div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="config_color_model">所属机型</label>
+                <select id="config_color_model">
+                  <option value="">（请选择机型）</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="config_color_name">新增颜色</label>
+                <input id="config_color_name" placeholder="例如：午夜色" />
+              </div>
+              <div class="field" style="justify-content:flex-end;">
+                <span class="field-label" aria-hidden="true">&nbsp;</span>
+                <button class="primary" id="addColorBtn" type="button">添加颜色</button>
+              </div>
+            </div>
+            <div class="source-list" id="colorList"></div>
+          </div>
+        </details>
+
+        <details class="card safety-panel">
+          <summary>
+            <div>
               <div class="card-title">修改密码</div>
               <div class="card-subtitle">修改当前登录账号密码，需要二次确认。</div>
             </div>
@@ -4159,44 +4194,6 @@
             </div>
           </div>
         </details>
-      </section>
-      <section id="section-config" class="section">
-        <div class="card">
-          <div class="card-title">机型管理</div>
-          <div class="card-subtitle">自定义机型会同步到合同生成与订单管理，并用于识别。</div>
-          <div class="form-grid">
-            <div class="field">
-              <label for="config_model_name">新增机型</label>
-              <input id="config_model_name" placeholder="例如：iPhone 15 Pro" />
-            </div>
-            <div class="field" style="justify-content:flex-end;">
-              <span class="field-label" aria-hidden="true">&nbsp;</span>
-              <button class="primary" id="addModelBtn" type="button">添加机型</button>
-            </div>
-          </div>
-          <div class="source-list" id="modelList"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">颜色管理</div>
-          <div class="card-subtitle">颜色按机型维护，用于下拉与识别。</div>
-          <div class="form-grid">
-            <div class="field">
-              <label for="config_color_model">所属机型</label>
-              <select id="config_color_model">
-                <option value="">（请选择机型）</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="config_color_name">新增颜色</label>
-              <input id="config_color_name" placeholder="例如：午夜色" />
-            </div>
-            <div class="field" style="justify-content:flex-end;">
-              <span class="field-label" aria-hidden="true">&nbsp;</span>
-              <button class="primary" id="addColorBtn" type="button">添加颜色</button>
-            </div>
-          </div>
-          <div class="source-list" id="colorList"></div>
-        </div>
       </section>
 
 

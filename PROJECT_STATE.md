@@ -64,6 +64,7 @@
 - 操作记录支持对当前最新一次可撤回变更执行撤回，撤回前需要管理员密码；若该记录之后已有新修改，系统会拒绝撤回，避免覆盖后续数据；撤回行为本身也会写入操作记录，并保存撤回前快照，方便误撤回时在无新修改的前提下再撤回这次撤回。
 - Excel/ZIP 导出依赖已改成本地 `/vendor/xlsx-js-style` 和 `/vendor/jszip` 加载，不再依赖外部 CDN；`package.json` 已加入 `xlsx-js-style` 与 `jszip` 依赖。
 - 主导航和快捷操作已新增 `iPhone价格表` 入口，可直接跳转到报价表页面，不影响合同、订单、结算流程。
+- 添加订单页已移除实际入库型号、到货顺丰单号、回收价格、订单状态、订单来源、结算状态、补差/备注字段；编辑订单及订单管理中的对应功能保留，数据库结构未改。
 
 ## 数据库
 - `state(key,value)`：配置 JSON，只存 `sources/defaultSource/models/modelColors/authRememberHours`。

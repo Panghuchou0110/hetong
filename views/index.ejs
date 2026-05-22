@@ -3912,16 +3912,6 @@
                 <div class="field-error" id="order_color_error"></div>
               </div>
               <div class="field">
-                <label for="order_actual_model_color">实际入库型号</label>
-                <select id="order_actual_model_color">
-                  <option value="">（可选）</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="order_sf_no">到货顺丰单号</label>
-                <input id="order_sf_no" placeholder="顺丰单号" />
-              </div>
-              <div class="field">
                 <label for="order_activation">是否激活</label>
                 <select id="order_activation">
                   <option value="未激活" selected>未激活</option>
@@ -3932,48 +3922,9 @@
                 </select>
               </div>
               <div class="field">
-                <label for="order_buy_price">回收价格（元）</label>
-                <input id="order_buy_price" type="number" min="2000" max="20000" placeholder="例如 8200" />
-                <div class="field-error" id="order_buy_price_error"></div>
-              </div>
-              <div class="field">
-                <label for="order_source">订单来源</label>
-                <select id="order_source">
-                  <option value="">（可选）</option>
-                  <option value="皖顺">皖顺</option>
-                  <option value="成都">成都</option>
-                </select>
-                <div class="field-error" id="order_source_error"></div>
-              </div>
-              <div class="field">
-                <label for="order_status">订单状态</label>
-                <select id="order_status">
-                  <option value="signed">已签合同</option>
-                  <option value="group">已拉群待入库</option>
-                  <option value="stored">已入库</option>
-                <option value="stored_mismatch">已入库-型号不对</option>
-                  <option value="runaway">已跑路</option>
-                  <option value="refunded">已退款</option>
-                  <option value="unsigned">未签合同</option>
-                </select>
-                <div class="field-error" id="order_status_error"></div>
-              </div>
-              <div class="field">
-                <label for="order_settlement">结算状态</label>
-                <select id="order_settlement">
-                  <option value="unsettled">未结算</option>
-                  <option value="settled">已结算</option>
-                </select>
-                <div class="field-error" id="order_settlement_error"></div>
-              </div>
-              <div class="field">
                 <label for="order_date">订单日期</label>
                 <input id="order_date" type="date" />
                 <div class="field-error" id="order_date_error"></div>
-              </div>
-              <div class="field full">
-                <label for="order_remark">补差/备注</label>
-                <input id="order_remark" placeholder="可以不填" />
               </div>
               <div class="field full">
                 <div class="button-row align-right">
@@ -4923,7 +4874,6 @@
         }
       };
       applySelect($("contractSource"), true);
-      applySelect($("order_source"), true);
       applySelect($("edit_source"), false);
       applySelect($("filter_source"), false);
       applySelect($("table_filter_source"), false);
@@ -5024,7 +4974,6 @@
         selectEl.innerHTML = html;
         if (current) selectEl.value = current;
       };
-      applySelect($("order_actual_model_color"));
       applySelect($("edit_actual_model_color"));
     }
 
@@ -5651,10 +5600,10 @@
         setFieldError(prefix, "color", "请选择颜色");
         valid = false;
       }
-      if (!data.buy_price) {
+      if (prefix !== "order" && !data.buy_price) {
         setFieldError(prefix, "buy_price", "请输入回收价格");
         valid = false;
-      } else {
+      } else if (data.buy_price) {
         const buyValue = Number(data.buy_price);
         if (!Number.isFinite(buyValue) || buyValue < 2000 || buyValue > 20000) {
           setFieldError(prefix, "buy_price", "回收价格需在 2000-20000 之间");
@@ -5668,7 +5617,7 @@
           valid = false;
         }
       }
-      if (!data.status) {
+      if (prefix !== "order" && !data.status) {
         setFieldError(prefix, "status", "请选择状态");
         valid = false;
       }
@@ -9727,14 +9676,6 @@ function confirmDeleteAfterConfirm() {
         }
       }
 
-      if (d.total_price || d.unit_price) {
-        $("order_buy_price").value = d.total_price || d.unit_price;
-      }
-
-      if (defaultSource) {
-        $("order_source").value = defaultSource;
-      }
-
       updateColorOptions($("order_color"), parsedModel, d.color || "");
     });
 
@@ -9798,14 +9739,10 @@ function confirmDeleteAfterConfirm() {
       const summary = [
         `姓名：${data.seller_name}`,
         `机型：${data.model} ${data.memory} ${data.color}`,
-        `回收价：${data.buy_price} 元`,
-        data.remark ? `补差/备注：${data.remark}` : "",
-        `来源：${data.source || "未填写"}`,
       ].filter(Boolean).join("\n");
       if (!confirm(`确认添加该订单？\n\n${summary}`)) return;
       addOrder(data);
       event.target.reset();
-      if (defaultSource) $("order_source").value = defaultSource;
       updateColorOptions($("order_color"), "", "");
       $("order_date").value = formatDateInput(getBeijingNow().getTime());
       updateSection("section-orders", "卡片订单");

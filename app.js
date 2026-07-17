@@ -1472,13 +1472,18 @@ function extractActivationFromText(text) {
   if (activePatterns.some((pattern) => pattern.test(compact))) return "仅激活（直结）";
 
   const explicitLabelPattern =
-    /(?:激活状态|是否激活|激活情况)\s*[:：]?\s*(未激活|全新未拆封|未拆封|全新原封|原封|未使用|0充|仅激活(?:（直结）)?|已激活|国行激活|激活1-5天|激活3天内|预激活)/;
+    /(?:激活状态|是否激活|激活情况)\s*[:：]?\s*(未激活|全新未拆封|未拆封|全新原封|原封|未使用|0充|预激活（直结）|预激活（待补差）|预激活（已补差）|预激活|仅激活(?:（直结）)?|已激活|国行激活|激活1-5天|激活3天内)/;
   const labelMatch = compact.match(explicitLabelPattern);
   if (labelMatch) {
     const value = labelMatch[1];
     if (/^(?:未激活|全新未拆封|未拆封|全新原封|原封|未使用|0充)$/.test(value)) return "未激活";
+    if (/^预激活(?:（直结|待补差|已补差）)?$/.test(value)) return value;
+    if (value === "仅激活（直结）") return value;
     return "仅激活（直结）";
   }
+
+  const preActivationMatch = compact.match(/预激活（直结|待补差|已补差）|预激活/);
+  if (preActivationMatch) return preActivationMatch[0];
 
   const inactivePatterns = [/未激活/, /全新未拆封/, /未拆封/, /全新原封/, /原封/, /未使用/, /0充/];
   if (inactivePatterns.some((pattern) => pattern.test(compact))) return "未激活";

@@ -3522,6 +3522,9 @@
               <label for="contractActivation">是否激活</label>
               <select id="contractActivation">
                 <option value="未激活">未激活</option>
+                <option value="预激活（直结）">预激活（直结）</option>
+                <option value="预激活（待补差）">预激活（待补差）</option>
+                <option value="预激活（已补差）">预激活（已补差）</option>
                 <option value="仅激活（直结）">仅激活（直结）</option>
               </select>
             </div>
@@ -3619,6 +3622,9 @@
                 <option value="">全部</option>
                 <option value="未激活">未激活</option>
                 <option value="预激活">预激活</option>
+                  <option value="预激活（直结）">预激活（直结）</option>
+                  <option value="预激活（待补差）">预激活（待补差）</option>
+                  <option value="预激活（已补差）">预激活（已补差）</option>
                 <option value="仅激活（直结）">仅激活（直结）</option>
                 <option value="仅激活（待补差）">仅激活（待补差）</option>
                 <option value="仅激活（已补差）">仅激活（已补差）</option>
@@ -3792,6 +3798,9 @@
                 <option value="">全部</option>
                 <option value="未激活">未激活</option>
                 <option value="预激活">预激活</option>
+                <option value="预激活（直结）">预激活（直结）</option>
+                <option value="预激活（待补差）">预激活（待补差）</option>
+                <option value="预激活（已补差）">预激活（已补差）</option>
                 <option value="仅激活（直结）">仅激活（直结）</option>
                 <option value="仅激活（待补差）">仅激活（待补差）</option>
                 <option value="仅激活（已补差）">仅激活（已补差）</option>
@@ -3916,6 +3925,9 @@
                 <select id="order_activation">
                   <option value="未激活" selected>未激活</option>
                   <option value="预激活">预激活</option>
+                  <option value="预激活（直结）">预激活（直结）</option>
+                  <option value="预激活（待补差）">预激活（待补差）</option>
+                  <option value="预激活（已补差）">预激活（已补差）</option>
                   <option value="仅激活（直结）">仅激活（直结）</option>
                   <option value="仅激活（待补差）">仅激活（待补差）</option>
                   <option value="仅激活（已补差）">仅激活（已补差）</option>
@@ -4292,6 +4304,9 @@
                 <select id="edit_activation">
                 <option value="未激活">未激活</option>
                 <option value="预激活">预激活</option>
+                <option value="预激活（直结）">预激活（直结）</option>
+                <option value="预激活（待补差）">预激活（待补差）</option>
+                <option value="预激活（已补差）">预激活（已补差）</option>
                 <option value="仅激活（直结）">仅激活（直结）</option>
                   <option value="仅激活（待补差）">仅激活（待补差）</option>
                   <option value="仅激活（已补差）">仅激活（已补差）</option>
@@ -5751,7 +5766,7 @@
     function applyActivationPendingRemark(order) {
       if (!order) return order;
       const activation = resolveActivation(order).label;
-      if (activation !== "\u4ec5\u6fc0\u6d3b\uff08\u5f85\u8865\u5dee\uff09") return order;
+      if (activation !== "\u4ec5\u6fc0\u6d3b\uff08\u5f85\u8865\u5dee\uff09" && activation !== "\u9884\u6fc0\u6d3b\uff08\u5f85\u8865\u5dee\uff09") return order;
       const remark = String(order.remark || "").trim();
       if (
         remark.includes("\u3010\u5df2\u8865\u5dee\u3011") ||
@@ -6168,15 +6183,24 @@
       const lower = text.toLowerCase();
       const activeValues = new Set(["1", "true", "yes", "y", "active", "activated"]);
       const inactiveValues = new Set(["0", "false", "no", "n", "inactive"]);
-      if (text.includes("待补差")) {
-        return { label: "仅激活（待补差）", className: "active-pending" };
-      }
+       if (text.includes("预激活") && text.includes("待补差")) {
+         return { label: "预激活（待补差）", className: "active-pending" };
+       }
+       if (text.includes("预激活") && text.includes("已补差")) {
+         return { label: "预激活（已补差）", className: "active-fixed" };
+       }
+       if (text.includes("待补差")) {
+         return { label: "仅激活（待补差）", className: "active-pending" };
+       }
       if (text.includes("已补差")) {
         return { label: "仅激活（已补差）", className: "active-fixed" };
       }
-      if (text === "预激活" || lower === "preactive" || lower === "pre-active") {
-        return { label: "预激活", className: "pre-active" };
-      }
+       if (text === "预激活" || lower === "preactive" || lower === "pre-active") {
+         return { label: "预激活", className: "pre-active" };
+       }
+       if (text === "预激活（直结）") {
+         return { label: "预激活（直结）", className: "active-direct" };
+       }
       if (text === "仅激活（直结）" || text === "已激活" || text === "仅激活" || text === "激活" || activeValues.has(lower)) {
         return { label: "仅激活（直结）", className: "active-direct" };
       }
@@ -6188,7 +6212,7 @@
 
     function isGapFixed(order) {
       const activation = resolveActivation(order).label;
-      if (activation === "仅激活（已补差）") return true;
+       if (activation === "仅激活（已补差）" || activation === "预激活（已补差）") return true;
       const remark = String(order?.remark || "");
       return remark.includes("【已补差】");
     }
@@ -6196,7 +6220,7 @@
     function isGapPending(order) {
       if (isGapFixed(order)) return false;
       const activation = resolveActivation(order).label;
-      if (activation === "仅激活（待补差）") return true;
+       if (activation === "仅激活（待补差）" || activation === "预激活（待补差）") return true;
       const remark = String(order?.remark || "");
       if (remark.includes("【待补差！】")) return true;
       return order?.status === "stored_mismatch";
@@ -6218,11 +6242,14 @@
 
     function getActivationSortValue(order) {
       const activation = resolveActivation(order).label;
-      if (activation === "未激活") return 0;
-      if (activation === "预激活") return 1;
-      if (activation === "仅激活（待补差）") return 2;
-      if (activation === "仅激活（已补差）") return 3;
-      if (activation === "仅激活（直结）") return 4;
+       if (activation === "未激活") return 0;
+       if (activation === "预激活") return 1;
+       if (activation === "预激活（待补差）") return 2;
+       if (activation === "仅激活（待补差）") return 3;
+       if (activation === "预激活（已补差）") return 4;
+       if (activation === "仅激活（已补差）") return 5;
+       if (activation === "预激活（直结）") return 6;
+       if (activation === "仅激活（直结）") return 7;
       return 9;
     }
 
@@ -6846,6 +6873,9 @@
         const options = [
           "未激活",
           "预激活",
+          "预激活（直结）",
+          "预激活（待补差）",
+          "预激活（已补差）",
           "仅激活（直结）",
           "仅激活（待补差）",
           "仅激活（已补差）",
@@ -7097,7 +7127,7 @@
         };
         pushGroup("下单后超3天未拉群", groupSigned, "alert-type-green", "signed");
         pushGroup("下单后超7天未入库", groupUnstored, "alert-type-yellow", "unstored");
-        pushGroup("仅激活待补差", groupActivationPending, "alert-type-blue", "activation_pending");
+        pushGroup("激活待补差", groupActivationPending, "alert-type-blue", "activation_pending");
         pushGroup("型号不对待补差", groupMismatch, "alert-type-blue", "mismatch");
         pushGroup("已入库未填实际型号", groupStoredMissingActual, "alert-type-yellow", "stored_missing");
         alertList.innerHTML = blocks.join("");
@@ -7769,11 +7799,11 @@
           });
         }
         const activation = resolveActivation(order);
-        if (activation.label === "仅激活（待补差）") {
+        if (activation.label === "仅激活（待补差）" || activation.label === "预激活（待补差）") {
           const settled = formatPrice(parsePrice(order.settle_price));
           groupActivationPending.push({
             id: order.id,
-            type: "仅激活待补差",
+            type: "激活待补差",
             text: `${label}（下单${formatOrderDate(createdAt)}），当前已结${settled || "0"}元`,
           });
         }
@@ -8441,6 +8471,10 @@
       const rightKeys = new Set(["settle_price"]);
       const activationColors = {
         未激活: "6B7280",
+        "预激活": "2563EB",
+        "预激活（直结）": "2563EB",
+        "预激活（待补差）": "F97316",
+        "预激活（已补差）": "16A34A",
         "仅激活（直结）": "2563EB",
         "仅激活（待补差）": "F97316",
         "仅激活（已补差）": "16A34A",

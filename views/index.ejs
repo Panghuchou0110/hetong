@@ -9242,20 +9242,53 @@ function confirmDeleteAfterConfirm() {
         alert(`以下订单未填写结算价：${names}`);
         return;
       }
-      const lines = selected.map((order) => {
+      const sortedSelected = [...selected].sort((a, b) => (Number(a.createdAt) || 0) - (Number(b.createdAt) || 0));
+      const compactModel = (model) => {
+        const text = String(model || "未填写").trim();
+        return text
+          .replace(/^iPhone\s*/i, "")
+          .replace(/\s*Pro\s*Max\s*/i, "pm")
+          .replace(/\s*Pro\s*/i, "pro")
+          .replace(/\s+/g, "");
+      };
+      const compactColor = (color) => {
+        const text = String(color || "未填写").trim();
+        const colorMap = {
+          蓝色: "蓝",
+          橙色: "橙",
+          白色: "白",
+          黑色: "黑",
+          青色: "青",
+          青雾蓝: "青",
+          绿色: "绿",
+          鼠尾草绿: "绿",
+          紫色: "紫",
+          薰衣草紫: "紫",
+          原色: "原",
+        };
+        return colorMap[text] || text.replace(/色$/, "");
+      };
+      const firstDate = formatBillDate(sortedSelected[0]?.createdAt);
+      const lastDate = formatBillDate(sortedSelected[sortedSelected.length - 1]?.createdAt);
+      const separator = "=========================";
+      const title = `【结算单｜${firstDate}-${lastDate}】`;
+      const titleWidth = [...title].length;
+      const titleIndent = " ".repeat(Math.max(0, Math.floor((separator.length - titleWidth) / 2)));
+      const lines = [separator, `${titleIndent}${title}`, separator];
+      sortedSelected.forEach((order) => {
         const date = formatBillDate(order.createdAt);
         const name = order.seller_name || "未填写";
-        const model = order.model || "未填写";
+        const model = compactModel(order.model);
         const memory = order.memory || "未填写";
-        const color = order.color || "未填写";
+        const color = compactColor(order.color);
         const activation = resolveActivation(order).label;
-        const activationText = activation === "未激活" ? "" : ` ${activation}`;
+        const activationText = activation === "未激活" ? "" : `-${activation}`;
         const settlePrice = order.status === "unsigned" ? "未签合同" : formatPlainPrice(parsePrice(order.settle_price));
-        return `${date}-${name}-${model}${activationText} ${memory} ${color}-全款-${settlePrice}`;
+        lines.push(`${date}-${name}-${model}${memory}${color}${activationText}-${settlePrice}`);
       });
-      const settlePrices = selected.map((order) => order.status === "unsigned" ? "0" : formatPlainPrice(parsePrice(order.settle_price)));
-      const total = selected.reduce((sum, order) => sum + parsePrice(order.settle_price), 0);
-      lines.push(`总价：${settlePrices.join("+")}=${formatPlainPrice(total)}元`);
+      const settlePrices = sortedSelected.map((order) => order.status === "unsigned" ? "0" : formatPlainPrice(parsePrice(order.settle_price)));
+      const total = sortedSelected.reduce((sum, order) => sum + parsePrice(order.settle_price), 0);
+      lines.push(separator, `总计：${settlePrices.join("+")}=${formatPlainPrice(total)}元`, separator);
       pendingExportText = lines.join("\n");
       $("exportContent").textContent = pendingExportText;
       openModal("exportModal");

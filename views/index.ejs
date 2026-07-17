@@ -3934,6 +3934,15 @@
                 </select>
               </div>
               <div class="field">
+                <label for="order_source">订单来源</label>
+                <select id="order_source">
+                  <option value="">（可选）</option>
+                  <option value="皖顺" selected>皖顺</option>
+                  <option value="成都">成都</option>
+                </select>
+                <div class="field-error" id="order_source_error"></div>
+              </div>
+              <div class="field">
                 <label for="order_date">订单日期</label>
                 <input id="order_date" type="date" />
                 <div class="field-error" id="order_date_error"></div>
@@ -4889,6 +4898,7 @@
         }
       };
       applySelect($("contractSource"), true);
+      applySelect($("order_source"), true);
       applySelect($("edit_source"), false);
       applySelect($("filter_source"), false);
       applySelect($("table_filter_source"), false);
@@ -9810,6 +9820,7 @@ function confirmDeleteAfterConfirm() {
       if (!confirm(`确认添加该订单？\n\n${summary}`)) return;
       addOrder(data);
       event.target.reset();
+      if ($("order_source")) $("order_source").value = defaultSource || "皖顺";
       updateColorOptions($("order_color"), "", "");
       $("order_date").value = formatDateInput(getBeijingNow().getTime());
       updateSection("section-orders", "卡片订单");

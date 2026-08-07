@@ -79,6 +79,7 @@
 - 客户：`seller_name/seller_id/seller_phone`。
 - 设备：`model/memory/color/actual_model_color/sf_no`。
 - 金额：`buy_price`、`settle_price`。
+- 订单信息/编辑订单中的 `buy_price` 回收价格允许填写 `0`，前端校验范围为 0-20000。
 - 分类：`source`、`status`、`settlement`、`remark`、`activation`。
 - `status`：`signed`、`group`、`stored`、`stored_mismatch`、`runaway`、`refunded`、`unsigned`。
 - `settlement`：`unsettled`、`settled`。
@@ -89,9 +90,9 @@
 - `unsigned` 自动 `settle_price=0`。
 - `refunded` 自动 `settle_price=0`、`settlement=settled`，备注追加“已结算xxx，已退款”。
 - `actual_model_color` 与下单型号不一致时转 `stored_mismatch` 并补 `【待补差！】`；清空实际型号可回 `group`。
-- 仅激活（待补差）和预激活（待补差）自动补 `【待补差！】`，已有 `【已补差】`/`【待补差！】` 不重复；两种“已补差”状态都会进入已补差属性和筛选。
+- 仅激活（待补差）和预激活（待补差）自动补 `【待补差！】`，已有 `【已补差】`/`【待补差！】` 不重复；两种“已补差”状态都会进入已补差属性和筛选；备注“无差价”按钮会先清除 `【待补差！】`/`【待补差!】` 再加入 `【已补差】无需补差`。
 - 批量生成结算文本改为手机适配格式：分割线、日期范围标题、按日期升序的订单行和“总计”金额；型号使用 `17pm256`/`17pro256` 等简写并追加颜色简写，预激活和仅激活状态单独显示。
-- 预警：已签超 3 天未拉群、超 7 天未入库、激活待补差（包含仅激活和预激活）、型号不对待补差、已入库未填实际型号；未签合同订单不参与订单预警。
+- 首页订单预警只显示超 7 天仍未入库的订单，并在条目中显示已超过多少天；已删除“未拉群”预警展示，未签合同订单不参与订单预警。
 
 ## 跑路哥
 - 数据源：`orders` 中 `status==="runaway"`，按当前子入口固定 `source`。

@@ -4281,7 +4281,7 @@
               </div>
               <div class="field">
                 <label for="edit_buy_price">回收价格（元）</label>
-                <input id="edit_buy_price" type="number" min="2000" max="20000" />
+                <input id="edit_buy_price" type="number" min="0" max="20000" />
                 <div class="field-error" id="edit_buy_price_error"></div>
               </div>
               <div class="field">
@@ -5630,8 +5630,8 @@
         valid = false;
       } else if (data.buy_price) {
         const buyValue = Number(data.buy_price);
-        if (!Number.isFinite(buyValue) || buyValue < 2000 || buyValue > 20000) {
-          setFieldError(prefix, "buy_price", "回收价格需在 2000-20000 之间");
+        if (!Number.isFinite(buyValue) || buyValue < 0 || buyValue > 20000) {
+          setFieldError(prefix, "buy_price", "回收价格需在 0-20000 之间");
           valid = false;
         }
       }
@@ -6232,8 +6232,15 @@
       const activation = resolveActivation(order).label;
        if (activation === "仅激活（待补差）" || activation === "预激活（待补差）") return true;
       const remark = String(order?.remark || "");
-      if (remark.includes("【待补差！】")) return true;
+      if (remark.includes("【待补差！】") || remark.includes("【待补差!】")) return true;
       return order?.status === "stored_mismatch";
+    }
+
+    function removePendingGapRemark(text) {
+      return String(text || "")
+        .replace(/【待补差[！!]】/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
     }
 
     function buildGapFilterIds(list, type) {
@@ -6966,7 +6973,7 @@
         $("fieldEditNoDiff").style.display = "inline-flex";
         $("fieldEditNoDiff").onclick = () => {
           const prefix = "【已补差】无需补差";
-          const current = control.value.trim();
+          const current = removePendingGapRemark(control.value);
           control.value = current.startsWith(prefix) ? current : `${prefix}${current ? " " + current : ""}`;
         };
       } else {
@@ -7101,8 +7108,7 @@
       if (alertTime) {
         alertTime.textContent = `系统时间（北京时间）：${formatBeijingDateTime(nowTs)}`;
       }
-      const { groupSigned, groupUnstored, groupActivationPending, groupMismatch, groupStoredMissingActual } =
-        buildAlertGroups(nowTs);
+      const { groupUnstored } = buildAlertGroups(nowTs);
       if (alertList) {
         const blocks = [];
         const pushGroup = (title, list, typeClass, groupKey) => {
@@ -7135,30 +7141,16 @@
               .join("")
           );
         };
-        pushGroup("下单后超3天未拉群", groupSigned, "alert-type-green", "signed");
         pushGroup("下单后超7天未入库", groupUnstored, "alert-type-yellow", "unstored");
-        pushGroup("激活待补差", groupActivationPending, "alert-type-blue", "activation_pending");
-        pushGroup("型号不对待补差", groupMismatch, "alert-type-blue", "mismatch");
-        pushGroup("已入库未填实际型号", groupStoredMissingActual, "alert-type-yellow", "stored_missing");
         alertList.innerHTML = blocks.join("");
       }
       if (alertEmpty) {
-      const hasAlerts =
-        groupSigned.length ||
-        groupUnstored.length ||
-        groupActivationPending.length ||
-        groupMismatch.length ||
-        groupStoredMissingActual.length;
+      const hasAlerts = groupUnstored.length;
         alertEmpty.style.display = hasAlerts ? "none" : "block";
       }
       const alertActions = $("alertActions");
       if (alertActions) {
-        const hasAlerts =
-          groupSigned.length ||
-          groupUnstored.length ||
-          groupActivationPending.length ||
-          groupMismatch.length ||
-          groupStoredMissingActual.length;
+        const hasAlerts = groupUnstored.length;
         alertActions.style.display = hasAlerts ? "flex" : "none";
       }
       updateAlertSelectedCount();
@@ -7773,11 +7765,7 @@
     }
 
     function buildAlertGroups(nowTs) {
-      const groupSigned = [];
       const groupUnstored = [];
-      const groupActivationPending = [];
-      const groupMismatch = [];
-      const groupStoredMissingActual = [];
       const dayMs = 24 * 60 * 60 * 1000;
       orders.forEach((order) => {
         if (order.status === "unsigned") return;
@@ -7787,14 +7775,6 @@
         const label = `${order.seller_name || "未填写"} / ${order.model || "未填写"} ${order.memory || ""} ${
           order.color || ""
         }`;
-        if (order.status === "signed" && ageDays >= 3) {
-          groupSigned.push({
-            id: order.id,
-            type: `超${ageDays}天还未拉群`,
-            text: `${label}（下单${formatOrderDate(createdAt)}）`,
-          });
-          return;
-        }
         if (
           order.status !== "stored" &&
           order.status !== "stored_mismatch" &&
@@ -7808,31 +7788,8 @@
             text: `${label}（下单${formatOrderDate(createdAt)}）`,
           });
         }
-        const activation = resolveActivation(order);
-        if (activation.label === "仅激活（待补差）" || activation.label === "预激活（待补差）") {
-          const settled = formatPrice(parsePrice(order.settle_price));
-          groupActivationPending.push({
-            id: order.id,
-            type: "激活待补差",
-            text: `${label}（下单${formatOrderDate(createdAt)}），当前已结${settled || "0"}元`,
-          });
-        }
-        if (order.status === "stored_mismatch" && !String(order.remark || "").includes("【已补差】")) {
-          groupMismatch.push({
-            id: order.id,
-            type: "型号不对待补差",
-            text: `${label}（下单${formatOrderDate(createdAt)}）`,
-          });
-        }
-        if (order.status === "stored" && !String(order.actual_model_color || "").trim()) {
-          groupStoredMissingActual.push({
-            id: order.id,
-            type: "已入库未填实际型号",
-            text: `${label}（下单${formatOrderDate(createdAt)}）`,
-          });
-        }
       });
-      return { groupSigned, groupUnstored, groupActivationPending, groupMismatch, groupStoredMissingActual };
+      return { groupUnstored };
     }
 
 
@@ -9488,7 +9445,7 @@ function confirmDeleteAfterConfirm() {
       ensureColor($("edit_color"), order.model);
       if ($("edit_actual_model_color")) $("edit_actual_model_color").value = order.actual_model_color || "";
       if ($("edit_sf_no")) $("edit_sf_no").value = order.sf_no || "";
-      $("edit_buy_price").value = order.buy_price || "";
+      $("edit_buy_price").value = order.buy_price ?? "";
       $("edit_settle_price").value = order.settle_price || "";
       $("edit_source").value = order.source;
       $("edit_activation").value = resolveActivation(order).label;
@@ -9507,7 +9464,7 @@ function confirmDeleteAfterConfirm() {
         `机型：${order.model} ${order.memory}`,
         `颜色：${order.color || "未填写"}`,
         `激活：${activation.label}`,
-        `回收价：${order.buy_price || "—"} 元`,
+        `回收价：${order.buy_price ?? "—"} 元`,
         `结算价：${order.settle_price || "—"} 元`,
         order.remark ? `补差/备注：${order.remark}` : "",
         `来源：${order.source || "未填写"}`,
@@ -10247,15 +10204,8 @@ function confirmDeleteAfterConfirm() {
 
     $("filter_alerts").addEventListener("click", () => {
       const nowTs = getBeijingNow().getTime();
-      const { groupSigned, groupUnstored, groupActivationPending, groupMismatch, groupStoredMissingActual } =
-        buildAlertGroups(nowTs);
-      const ids = [
-        ...groupSigned.map((item) => item.id),
-        ...groupUnstored.map((item) => item.id),
-        ...groupActivationPending.map((item) => item.id),
-        ...groupMismatch.map((item) => item.id),
-        ...groupStoredMissingActual.map((item) => item.id),
-      ];
+      const { groupUnstored } = buildAlertGroups(nowTs);
+      const ids = groupUnstored.map((item) => item.id);
       alertFilterIds = new Set(ids);
       renderOrders();
     });

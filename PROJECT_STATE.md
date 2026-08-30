@@ -82,7 +82,7 @@
 - 客户：`seller_name/seller_id/seller_phone`。
 - 设备：`model/memory/color/actual_model_color/sf_no`。
 - 金额：`buy_price`、`settle_price`。
-- 订单信息/编辑订单中的 `buy_price` 回收价格允许填写 `0`，前端校验范围为 0-20000。
+- 订单信息/编辑订单中的 `buy_price` 回收价格允许留空或填写 `0`；填写时前端校验范围为 0-20000，留空时卡片显示“未填写”、结算文字显示“—”、导出保持空值。编辑订单保存时，弹窗未展示的身份证和手机号继续保留原值，不会被空值覆盖。
 - 分类：`source`、`status`、`settlement`、`remark`、`activation`。
 - `status`：`signed`、`group`、`stored`、`stored_mismatch`、`runaway`、`refunded`、`unsigned`。
 - `settlement`：`unsettled`、`settled`。

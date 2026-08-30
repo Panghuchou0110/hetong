@@ -5834,10 +5834,7 @@
         setFieldError(prefix, "color", "请选择颜色");
         valid = false;
       }
-      if (prefix !== "order" && !data.buy_price) {
-        setFieldError(prefix, "buy_price", "请输入回收价格");
-        valid = false;
-      } else if (data.buy_price) {
+      if (data.buy_price) {
         const buyValue = Number(data.buy_price);
         if (!Number.isFinite(buyValue) || buyValue < 0 || buyValue > 20000) {
           setFieldError(prefix, "buy_price", "回收价格需在 0-20000 之间");
@@ -6568,7 +6565,7 @@
           </div>
           <div class="order-grid">
             ${remarkHtml}
-            <div><span>回收价：</span>${escapeHtml(formatPrice(order.buy_price))} 元</div>
+            <div><span>回收价：</span>${String(order.buy_price ?? "").trim() === "" ? "未填写" : `${escapeHtml(formatPrice(order.buy_price))} 元`}</div>
             <div><span>日期：</span>${escapeHtml(formatOrderDate(order.createdAt))}</div>
             <div class="order-grid-row">
               <div><span>来源：</span>${escapeHtml(order.source || "未填写")}</div>
@@ -8402,7 +8399,7 @@
         color: order.color || "",
         actual_model_color: String(order.actual_model_color || "").trim(),
         sf_no: String(order.sf_no || "").trim(),
-        buy_price: parsePrice(order.buy_price),
+        buy_price: String(order.buy_price ?? "").trim() === "" ? "" : parsePrice(order.buy_price),
         settle_price: parsePrice(order.settle_price),
         status: orderStatusMap[order.status] || order.status || "",
         settlement: orderSettlementMap[order.settlement] || order.settlement || "",
@@ -9706,7 +9703,7 @@ function confirmDeleteAfterConfirm() {
         `机型：${order.model} ${order.memory}`,
         `颜色：${order.color || "未填写"}`,
         `激活：${activation.label}`,
-        `回收价：${order.buy_price ?? "—"} 元`,
+        `回收价：${String(order.buy_price ?? "").trim() === "" ? "—" : order.buy_price + " 元"}`,
         `结算价：${order.settle_price || "—"} 元`,
         order.remark ? `补差/备注：${order.remark}` : "",
         `来源：${order.source || "未填写"}`,
@@ -10222,7 +10219,14 @@ function confirmDeleteAfterConfirm() {
           ? `确认保存订单${orderNo ? orderNo : ""}（${nameText}）的修改吗？${confirmLines}`
           : `未检测到修改，仍要保存订单${orderNo ? orderNo : ""}（${nameText}）吗？`;
         if (!confirm(confirmText)) return;
-        const merged = { ...orders[idx], ...data, settlement: nextSettlement, createdAt: nextDate };
+        const merged = {
+          ...orders[idx],
+          ...data,
+          seller_id: $("edit_id") ? data.seller_id : original.seller_id,
+          seller_phone: $("edit_phone") ? data.seller_phone : original.seller_phone,
+          settlement: nextSettlement,
+          createdAt: nextDate,
+        };
         orders[idx] = applyOrderRules(merged);
         saveOrders();
         renderOrders();

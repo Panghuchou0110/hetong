@@ -878,6 +878,13 @@
       width: 100%;
     }
 
+    .order-parse-actions {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 10px;
+      width: 100%;
+    }
+
     .contract-parse-actions button {
       width: 100%;
       min-height: 38px;
@@ -3886,7 +3893,10 @@
                 <label for="order_raw">粘贴客户信息</label>
                 <textarea id="order_raw" placeholder="例如：姓名、机型、容量、价格等"></textarea>
                 <div class="hint">点击“识别”后自动填充字段。</div>
-                <button class="secondary" id="btnOrderParse" type="button">识别</button>
+                <div class="order-parse-actions">
+                  <button class="secondary" id="btnOrderParse" type="button">识别</button>
+                  <button class="ghost" id="btnOrderClear" type="button">清除</button>
+                </div>
               </div>
               <div class="field">
                 <label for="order_name">客户姓名</label>
@@ -3949,8 +3959,9 @@
               </div>
               <div class="field full">
                 <div class="button-row align-right">
-                  <button class="primary" type="submit">添加订单</button>
-                  <button class="ghost" type="reset">清空表单</button>
+                  <button class="primary" type="submit" value="open-orders">添加订单</button>
+                  <button class="secondary" type="submit" value="continue">添加并继续</button>
+                  <button class="ghost" id="btnOrderReset" type="button">清空表单</button>
                 </div>
               </div>
             </div>
@@ -4665,10 +4676,12 @@
     const pageSize = 25;
     const usePagination = false;
     let saveTimer = null;
-    let saveInFlight = false;
-    let savePending = false;
+    let savePromise = null;
+    let stateRevision = 0;
+    let savedRevision = 0;
     let stateVersion = 0;
     let stateConflictShown = false;
+    let lastSyncedState = null;
     let operationLogs = [];
     let operationLogsLoaded = false;
 
@@ -4684,6 +4697,108 @@
       };
     }
 
+    function cloneState(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function captureStateSnapshot() {
+      return cloneState({
+        orders,
+        trash: trashedOrders,
+        sources,
+        defaultSource,
+        models,
+        modelColors,
+        authRememberHours,
+      });
+    }
+
+    function valuesEqual(left, right) {
+      return JSON.stringify(left) === JSON.stringify(right);
+    }
+
+    function mergeRecord(base, local, remote) {
+      if (!base) return local || remote || null;
+      if (!local) return null;
+      if (!remote) return local;
+      const merged = { ...remote };
+      new Set([...Object.keys(base), ...Object.keys(local), ...Object.keys(remote)]).forEach((key) => {
+        if (!valuesEqual(local[key], base[key])) merged[key] = local[key];
+      });
+      return merged;
+    }
+
+    function allocateMergedOrderId(usedIds) {
+      let next = Math.max(10000, ...Array.from(usedIds).map((id) => Number(id) || 0)) + 1;
+      if (next > 99999) {
+        next = 10001;
+        while (next <= 99999 && usedIds.has(String(next))) next += 1;
+      }
+      return next <= 99999 ? String(next) : "";
+    }
+
+    function mergeStateList(baseList, localList, remoteList, usedIds) {
+      const toMap = (list) => new Map((Array.isArray(list) ? list : []).filter((item) => item && item.id).map((item) => [String(item.id), item]));
+      const baseMap = toMap(baseList);
+      const localMap = toMap(localList);
+      const remoteMap = toMap(remoteList);
+      const result = [];
+      const ids = new Set([...remoteMap.keys(), ...baseMap.keys(), ...localMap.keys()]);
+      ids.forEach((id) => {
+        const base = baseMap.get(id);
+        const local = localMap.get(id);
+        const remote = remoteMap.get(id);
+        let merged;
+        if (!base && local && remote && !valuesEqual(local, remote)) {
+          result.push(remote);
+          const nextId = allocateMergedOrderId(usedIds);
+          if (nextId) {
+            usedIds.add(nextId);
+            result.push({ ...local, id: nextId });
+          }
+          return;
+        }
+        if (!base) {
+          merged = local || remote;
+        } else if (!local) {
+          merged = null;
+        } else if (valuesEqual(local, base)) {
+          merged = remote || null;
+        } else {
+          merged = mergeRecord(base, local, remote);
+        }
+        if (merged) result.push(merged);
+      });
+      return result.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+    }
+
+    function mergeStateChanges(baseState, localState, remoteState) {
+      const base = baseState || buildDefaultState();
+      const local = localState || buildDefaultState();
+      const remote = remoteState || buildDefaultState();
+      const choose = (key) => valuesEqual(local[key], base[key]) ? remote[key] : local[key];
+      const usedIds = new Set([...(remote.orders || []), ...(remote.trash || [])].map((item) => String(item && item.id || "")).filter(Boolean));
+      return {
+        orders: mergeStateList(base.orders, local.orders, remote.orders, usedIds),
+        trash: mergeStateList(base.trash, local.trash, remote.trash, usedIds),
+        sources: choose("sources"),
+        defaultSource: choose("defaultSource"),
+        models: choose("models"),
+        modelColors: choose("modelColors"),
+        authRememberHours: choose("authRememberHours"),
+      };
+    }
+
+    function applyStateSnapshot(state) {
+      orders = (state.orders || []).map(applyOrderRules);
+      trashedOrders = (state.trash || []).map(applyOrderRules);
+      sources = Array.isArray(state.sources) ? state.sources : [...defaultSources];
+      defaultSource = typeof state.defaultSource === "string" && state.defaultSource ? state.defaultSource : "皖顺";
+      models = normalizeList(state.models || []);
+      modelColors = state.modelColors && typeof state.modelColors === "object" ? state.modelColors : { ...defaultModelColors };
+      authRememberHours = state.authRememberHours && typeof state.authRememberHours === "object" ? state.authRememberHours : {};
+    }
+
     async function fetchState() {
       try {
         const response = await fetch("/api/state");
@@ -4692,6 +4807,7 @@
         const payload = await response.json();
         if (!payload || !payload.ok) throw new Error("state_fetch_failed");
         stateVersion = Number(payload.stateVersion ?? payload.state?.stateVersion ?? 0) || 0;
+        lastSyncedState = cloneState(payload.state || buildDefaultState());
         return payload.state || buildDefaultState();
       } catch (err) {
         if (err && err.message === "unauthorized") {
@@ -4704,68 +4820,119 @@
       }
     }
 
-    async function persistState() {
-      const payload = {
-        orders,
-        trash: trashedOrders,
-        sources,
-        defaultSource,
-        models,
-        modelColors,
-        authRememberHours,
-        stateVersion,
-      };
+    async function postStateSnapshot(snapshot, expectedVersion) {
       const response = await fetch("/api/state", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...snapshot, stateVersion: expectedVersion }),
       });
       if (response.status === 401) throw new Error("unauthorized");
       if (response.status === 409) {
         const result = await response.json().catch(() => ({}));
         const conflict = new Error(result && result.error ? result.error : "state_conflict");
-        conflict.stateVersion = Number(result && result.stateVersion) || stateVersion;
+        conflict.stateVersion = Number(result && result.stateVersion) || expectedVersion;
         throw conflict;
       }
       if (!response.ok) throw new Error("state_save_failed");
       const result = await response.json();
       if (!result || !result.ok) throw new Error("state_save_failed");
-      stateVersion = Number(result.stateVersion) || stateVersion;
-      operationLogsLoaded = false;
+      return Number(result.stateVersion) || expectedVersion;
+    }
+
+    async function fetchLatestState() {
+      const response = await fetch("/api/state");
+      if (response.status === 401) throw new Error("unauthorized");
+      if (!response.ok) throw new Error("state_fetch_failed");
+      const payload = await response.json();
+      if (!payload || !payload.ok || !payload.state) throw new Error("state_fetch_failed");
+      return {
+        state: cloneState(payload.state),
+        version: Number(payload.stateVersion ?? payload.state.stateVersion ?? 0) || 0,
+      };
+    }
+
+    async function persistState() {
+      let snapshot = captureStateSnapshot();
+      let base = lastSyncedState || cloneState(snapshot);
+      let expectedVersion = stateVersion;
+      let mergedRemoteChanges = false;
+      let clientStateBeforeRetry = null;
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          const nextVersion = await postStateSnapshot(snapshot, expectedVersion);
+          stateVersion = nextVersion;
+          lastSyncedState = cloneState(snapshot);
+          operationLogsLoaded = false;
+          if (mergedRemoteChanges) {
+            const currentClientState = captureStateSnapshot();
+            const stateForClient = mergeStateChanges(clientStateBeforeRetry, currentClientState, snapshot);
+            applyStateSnapshot(stateForClient);
+            renderSourceSelects();
+            renderSourceList();
+            renderModelSelects();
+            renderColorFilterSelect();
+            renderModelList();
+            renderColorList();
+            refreshColorSelects();
+            renderOrders();
+            renderTrash();
+            renderHome();
+          }
+          return;
+        } catch (err) {
+          if (!err || (err.message !== "state_conflict" && err.message !== "invalid_state_version")) throw err;
+          const latest = await fetchLatestState();
+          const merged = mergeStateChanges(base, snapshot, latest.state);
+          clientStateBeforeRetry = captureStateSnapshot();
+          snapshot = mergeStateChanges(snapshot, clientStateBeforeRetry, merged);
+          base = latest.state;
+          expectedVersion = latest.version;
+          mergedRemoteChanges = true;
+        }
+      }
+      throw new Error("state_conflict");
     }
 
     function handleStateConflict() {
       if (stateConflictShown) return;
       stateConflictShown = true;
-      alert("数据已被其他窗口或设备更新。为避免覆盖新数据，页面将刷新后重新加载最新订单。");
-      window.location.reload();
+      alert("服务器数据刚被其他设备连续更新，本次内容暂未保存。请保留当前页面并稍后重试。");
+    }
+
+    function handleStateSaveError(err) {
+      if (err && err.message === "unauthorized") {
+        handleUnauthorized();
+      } else if (err && (err.message === "state_conflict" || err.message === "invalid_state_version")) {
+        handleStateConflict();
+      } else {
+        console.error("state save failed", err);
+        alert("保存到服务器失败，请检查网络或服务器状态。当前页面内容仍保留，请不要刷新后再重试。");
+      }
+    }
+
+    async function flushStateSave() {
+      if (saveTimer) clearTimeout(saveTimer);
+      saveTimer = null;
+      while (savedRevision < stateRevision) {
+        if (!savePromise) {
+          const targetRevision = stateRevision;
+          savePromise = persistState().then(() => {
+            savedRevision = Math.max(savedRevision, targetRevision);
+          }).finally(() => {
+            savePromise = null;
+          });
+        }
+        await savePromise;
+      }
     }
 
     function scheduleSaveState() {
+      stateRevision += 1;
       if (saveTimer) clearTimeout(saveTimer);
-      saveTimer = setTimeout(async () => {
-        if (saveInFlight) {
-          savePending = true;
-          return;
-        }
-        saveInFlight = true;
-        try {
-          await persistState();
-        } catch (err) {
-          if (err && err.message === "unauthorized") {
-            handleUnauthorized();
-          } else if (err && (err.message === "state_conflict" || err.message === "invalid_state_version")) {
-            handleStateConflict();
-          } else {
-            console.error("state save failed", err);
-          }
-        } finally {
-          saveInFlight = false;
-          if (savePending) {
-            savePending = false;
-            scheduleSaveState();
-          }
-        }
+      saveTimer = setTimeout(() => {
+        flushStateSave().catch((err) => {
+          handleStateSaveError(err);
+        });
       }, 350);
     }
 
@@ -8714,11 +8881,12 @@
       const order = createOrderFromData(data);
       if (!isValidOrderId(order.id)) {
         alert("订单编号已到上限，无法继续添加。");
-        return;
+        return null;
       }
       orders.unshift(order);
       saveOrders();
       renderOrders();
+      return order;
     }
 
     function moveToTrash(orderId) {
@@ -9713,6 +9881,19 @@ function confirmDeleteAfterConfirm() {
       updateColorOptions($("order_color"), parsedModel, d.color || "");
     });
 
+    function resetOrderForm() {
+      $("orderForm").reset();
+      clearErrors("order");
+      $("order_raw").value = "";
+      $("order_activation").value = "未激活";
+      $("order_source").value = defaultSource || "皖顺";
+      updateColorOptions($("order_color"), "", "");
+      $("order_date").value = formatDateInput(getBeijingNow().getTime());
+    }
+
+    $("btnOrderClear").addEventListener("click", resetOrderForm);
+    $("btnOrderReset").addEventListener("click", resetOrderForm);
+
     $("btnPreview").addEventListener("click", () => {
       const data = collectContractData();
       if (!validateContract(data)) return;
@@ -9766,22 +9947,42 @@ function confirmDeleteAfterConfirm() {
     $("btnAddOrderYes").addEventListener("click", () => closeAddOrderPrompt(true));
     $("btnAddOrderNo").addEventListener("click", () => closeAddOrderPrompt(false));
 
-    $("orderForm").addEventListener("submit", (event) => {
+    let pendingOrderSubmitId = "";
+    $("orderForm").addEventListener("submit", async (event) => {
       event.preventDefault();
       const data = collectOrderForm("order");
       if (!validateOrder(data, "order")) return;
-      const summary = [
-        `姓名：${data.seller_name}`,
-        `机型：${data.model} ${data.memory} ${data.color}`,
-      ].filter(Boolean).join("\n");
-      if (!confirm(`确认添加该订单？\n\n${summary}`)) return;
-      addOrder(data);
-      event.target.reset();
-      if ($("order_source")) $("order_source").value = defaultSource || "皖顺";
-      updateColorOptions($("order_color"), "", "");
-      $("order_date").value = formatDateInput(getBeijingNow().getTime());
-      updateSection("section-orders", "卡片订单");
+      const submitter = event.submitter;
+      const continueAdding = submitter && submitter.value === "continue";
+      let order = pendingOrderSubmitId ? orders.find((item) => item.id === pendingOrderSubmitId) : null;
+      if (!order) {
+        const summary = [
+          `姓名：${data.seller_name}`,
+          `机型：${data.model} ${data.memory} ${data.color}`,
+        ].filter(Boolean).join("\n");
+        if (!confirm(`确认添加该订单？\n\n${summary}`)) return;
+        order = addOrder(data);
+        if (!order) return;
+        pendingOrderSubmitId = order.id;
+      }
+      const submitButtons = Array.from(event.currentTarget.querySelectorAll('button[type="submit"]'));
+      submitButtons.forEach((button) => { button.disabled = true; });
+      try {
+        await flushStateSave();
+      } catch (err) {
+        handleStateSaveError(err);
+        return;
+      } finally {
+        submitButtons.forEach((button) => { button.disabled = false; });
+      }
+      pendingOrderSubmitId = "";
+      resetOrderForm();
       renderHome();
+      if (continueAdding) {
+        $("order_raw").focus();
+      } else {
+        updateSection("section-orders", "卡片订单");
+      }
     });
 
     $("orderList").addEventListener("click", (event) => {

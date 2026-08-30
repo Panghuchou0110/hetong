@@ -613,6 +613,13 @@
       transform: translateX(18px);
     }
 
+    .order-continuous-toggle {
+      min-height: 38px;
+      padding: 0 4px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
     body.dark .theme-slider {
       background: #30363d;
     }
@@ -3959,8 +3966,12 @@
               </div>
               <div class="field full">
                 <div class="button-row align-right">
-                  <button class="primary" type="submit" value="open-orders">添加订单</button>
-                  <button class="secondary" type="submit" value="continue">添加并继续</button>
+                  <label class="theme-toggle order-continuous-toggle">
+                    <span>连续添加</span>
+                    <input id="orderContinuousToggle" type="checkbox" checked />
+                    <span class="theme-slider" aria-hidden="true"></span>
+                  </label>
+                  <button class="primary" type="submit">添加订单</button>
                   <button class="ghost" id="btnOrderReset" type="button">清空表单</button>
                 </div>
               </div>
@@ -9882,6 +9893,7 @@ function confirmDeleteAfterConfirm() {
     });
 
     function resetOrderForm() {
+      const continuousAdding = $("orderContinuousToggle").checked;
       $("orderForm").reset();
       clearErrors("order");
       $("order_raw").value = "";
@@ -9889,6 +9901,7 @@ function confirmDeleteAfterConfirm() {
       $("order_source").value = defaultSource || "皖顺";
       updateColorOptions($("order_color"), "", "");
       $("order_date").value = formatDateInput(getBeijingNow().getTime());
+      $("orderContinuousToggle").checked = continuousAdding;
     }
 
     $("btnOrderClear").addEventListener("click", resetOrderForm);
@@ -9952,8 +9965,7 @@ function confirmDeleteAfterConfirm() {
       event.preventDefault();
       const data = collectOrderForm("order");
       if (!validateOrder(data, "order")) return;
-      const submitter = event.submitter;
-      const continueAdding = submitter && submitter.value === "continue";
+      const continueAdding = $("orderContinuousToggle").checked;
       let order = pendingOrderSubmitId ? orders.find((item) => item.id === pendingOrderSubmitId) : null;
       if (!order) {
         const summary = [

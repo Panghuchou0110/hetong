@@ -1601,6 +1601,35 @@
       gap: 10px;
     }
 
+    .week-summary-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .week-summary-header .card-title {
+      margin-bottom: 0;
+    }
+
+    .week-summary-range {
+      display: grid;
+      grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
+      align-items: center;
+      gap: 6px;
+      width: min(100%, 310px);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .week-summary-range input {
+      width: 100%;
+      min-width: 0;
+      padding: 6px 8px;
+    }
+
     .week-line {
       display: flex;
       flex-wrap: wrap;
@@ -4693,6 +4722,8 @@
     let stateVersion = 0;
     let stateConflictShown = false;
     let lastSyncedState = null;
+    let homeSummaryStart = "";
+    let homeSummaryEnd = "";
     let operationLogs = [];
     let operationLogsLoaded = false;
 
@@ -7236,36 +7267,52 @@
         summary.appendChild(item);
       });
 
-      const weekStart = new Date(now);
-      weekStart.setHours(0, 0, 0, 0);
-      weekStart.setDate(weekStart.getDate() - 6);
-      const weekEnd = new Date(now);
-      weekEnd.setHours(23, 59, 59, 999);
-      const weekOrders = orders.filter((order) => {
+      const defaultSummaryStart = new Date(now);
+      defaultSummaryStart.setHours(0, 0, 0, 0);
+      defaultSummaryStart.setDate(defaultSummaryStart.getDate() - 14);
+      const defaultSummaryEnd = new Date(now);
+      defaultSummaryEnd.setHours(23, 59, 59, 999);
+      if (!homeSummaryStart) homeSummaryStart = formatDateValue(defaultSummaryStart.getTime());
+      if (!homeSummaryEnd) homeSummaryEnd = formatDateValue(defaultSummaryEnd.getTime());
+      const summaryStart = new Date(parseDateInput(homeSummaryStart) || defaultSummaryStart.getTime());
+      summaryStart.setHours(0, 0, 0, 0);
+      const summaryEnd = new Date(parseDateInput(homeSummaryEnd) || defaultSummaryEnd.getTime());
+      summaryEnd.setHours(23, 59, 59, 999);
+      const summaryOrders = orders.filter((order) => {
         const time = Number(order.createdAt) || 0;
-        return time >= weekStart.getTime() && time <= weekEnd.getTime();
+        return time >= summaryStart.getTime() && time <= summaryEnd.getTime();
       });
-      const weekStored = weekOrders.filter(
+      const summaryStored = summaryOrders.filter(
         (order) => order.status === "stored" || order.status === "stored_mismatch"
       ).length;
-      const weekUnstored = weekOrders.filter(
+      const summaryUnstored = summaryOrders.filter(
         (order) => order.status !== "stored" && order.status !== "stored_mismatch" && order.status !== "refunded"
       ).length;
-      const settledTotal = weekOrders.reduce((sum, order) => {
+      const settledTotal = summaryOrders.reduce((sum, order) => {
         if (order.settlement !== "settled") return sum;
         if (order.status === "stored" || order.status === "stored_mismatch" || order.status === "refunded") return sum;
         return sum + parsePrice(order.settle_price);
       }, 0);
       const weekCard = $("weekSummary");
-      const weekStartLabel = formatOrderDate(weekStart.getTime());
-      const weekEndLabel = formatOrderDate(weekEnd.getTime());
+      const summaryStartLabel = formatOrderDate(summaryStart.getTime());
+      const summaryEndLabel = formatOrderDate(summaryEnd.getTime());
+      const isDefaultSummaryRange =
+        homeSummaryStart === formatDateValue(defaultSummaryStart.getTime()) &&
+        homeSummaryEnd === formatDateValue(defaultSummaryEnd.getTime());
       weekCard.innerHTML = `
-        <div class="card-title">近一周（${weekStartLabel}-${weekEndLabel}）订单</div>
+        <div class="week-summary-header">
+          <div class="card-title">${isDefaultSummaryRange ? "近15天" : "自定义"}（${summaryStartLabel}-${summaryEndLabel}）订单</div>
+          <div class="week-summary-range">
+            <input id="home_summary_start" type="date" value="${homeSummaryStart}" aria-label="统计开始日期" />
+            <span>至</span>
+            <input id="home_summary_end" type="date" value="${homeSummaryEnd}" aria-label="统计结束日期" />
+          </div>
+        </div>
         <div class="week-summary">
           <div class="week-line">
-            一共<span class="week-number total">${weekOrders.length}</span>单
-            已入库<span class="week-number stored">${weekStored}</span>台
-            未入库<span class="week-number unstored">${weekUnstored}</span>台
+            一共<span class="week-number total">${summaryOrders.length}</span>单
+            已入库<span class="week-number stored">${summaryStored}</span>台
+            未入库<span class="week-number unstored">${summaryUnstored}</span>台
           </div>
           <div class="week-line">
             已结算总价格<span class="week-number settled">${formatPrice(settledTotal)}</span>元
@@ -7273,6 +7320,22 @@
           </div>
         </div>
       `;
+      const summaryStartInput = $("home_summary_start");
+      const summaryEndInput = $("home_summary_end");
+      summaryStartInput.addEventListener("change", () => {
+        homeSummaryStart = summaryStartInput.value || formatDateValue(defaultSummaryStart.getTime());
+        if (parseDateInput(homeSummaryStart) > parseDateInput(homeSummaryEnd)) {
+          homeSummaryEnd = homeSummaryStart;
+        }
+        renderHome();
+      });
+      summaryEndInput.addEventListener("change", () => {
+        homeSummaryEnd = summaryEndInput.value || formatDateValue(defaultSummaryEnd.getTime());
+        if (parseDateInput(homeSummaryEnd) < parseDateInput(homeSummaryStart)) {
+          homeSummaryStart = homeSummaryEnd;
+        }
+        renderHome();
+      });
 
       const alertList = $("alertList");
       const alertEmpty = $("alertEmpty");

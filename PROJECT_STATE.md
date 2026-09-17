@@ -6,6 +6,7 @@
 - 代码/数据：`/root/hetong`、`/root/hetong_data`、`/root/hetong_data/orders.sqlite`。
 - 本地目录 `D:\hetong`，当前工作区可能是 `D:\HUISHOU\hetong`。
 - 中文文件统一 UTF-8。
+- 服务器已建立 `/usr/local/bin/hetong-update` 一键更新脚本；本地提交并推送 `master` 后，在服务器执行 `hetong-update`，脚本会对 `/root/hetong` 执行 `git pull --ff-only origin master`，仅在依赖文件变化时运行 `npm ci --omit=dev`，随后执行 `pm2 restart hetong --update-env` 和 `pm2 status`。
 
 ## 模块与页面
 - 模块：登录、合同生成、订单管理、对账表、跑路哥、安全功能。

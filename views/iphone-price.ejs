@@ -588,6 +588,9 @@
     { key: "duo", title: "iPhone Duo", short: "Duo", section: "normal" },
   ];
   const capacities = ["256G", "512G", "1T", "2T"];
+  const serverVisibleModelKeys = new Set(
+    Array.isArray(initialState.visibleModelKeys) ? initialState.visibleModelKeys : ["promax", "pro"]
+  );
   const retailPrices = {
     promax: { "256G": "¥10,999", "512G": "¥12,999", "1T": "¥16,499", "2T": "¥21,499" },
     pro: { "256G": "¥9,999", "512G": "¥11,999", "1T": "¥15,499", "2T": "¥20,499" },
@@ -676,14 +679,14 @@
         <article
           class="model-card"
           data-model-card="<%= model.key %>"
-          <%= model.key === "promax" || model.key === "pro" ? "" : "hidden" %>
+          <%= serverVisibleModelKeys.has(model.key) ? "" : "hidden" %>
         >
           <div class="model-head">
             <div class="model-title">
               <span class="model-title-main"><%= model.title %></span>
             </div>
-            <% if (getColors(model.key).length > 1) { %>
-              <button class="model-sync" type="button" data-sync-model="<%= model.key %>">全色联动：开</button>
+            <% if (canManagePrices) { %>
+              <button class="model-sync" type="button" data-sync-model="<%= model.key %>">颜色同步：开</button>
             <% } %>
           </div>
 
@@ -737,7 +740,7 @@
               class="model-visibility-input"
               type="checkbox"
               value="<%= model.key %>"
-              <%= model.key === "promax" || model.key === "pro" ? "checked" : "" %>
+              <%= serverVisibleModelKeys.has(model.key) ? "checked" : "" %>
             />
             <span><%= model.title %></span>
           </label>
@@ -792,11 +795,12 @@
     const priceFields = Array.from(document.querySelectorAll(".price-field"));
     const priceGrid = document.querySelector(".price-grid");
     const apiPath = "/api/iphone-price";
-    const visibleModelsStorageKey = "iphonePriceVisibleModelsV1";
-    const defaultVisibleModelKeys = ["promax", "pro"];
     let adjustmentMode = { type: "preset", value: 0 };
     let editingMode = false;
     let priceDirty = false;
+    let savedVisibleModelKeys = Array.isArray(initialState.visibleModelKeys)
+      ? [...initialState.visibleModelKeys]
+      : ["promax", "pro"];
     const syncModes = {};
     models.forEach((model) => {
       syncModes[model.key] = getColors(model.key).length > 1;
@@ -878,7 +882,7 @@
         const visible = editable && editingMode && isSyncableModel(modelKey);
         btn.classList.toggle("show", visible);
         btn.classList.toggle("active", !!syncModes[modelKey]);
-        btn.textContent = syncModes[modelKey] ? "全色联动：开" : "全色联动：关";
+        btn.textContent = syncModes[modelKey] ? "颜色同步：开" : "颜色同步：关";
       });
       toggleEditBtn.disabled = !editable;
       toggleEditBtn.textContent = editable ? (editingMode ? "查看价格" : "编辑价格") : "原价可编辑";
@@ -913,18 +917,6 @@
       return colorMap[modelKey] || colorMap.promax;
     }
 
-    function loadVisibleModelKeys() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(visibleModelsStorageKey) || "null");
-        if (Array.isArray(saved)) {
-          return saved.filter((key) => models.some((model) => model.key === key));
-        }
-      } catch (err) {
-        // 本地设置异常时使用默认显示机型
-      }
-      return [...defaultVisibleModelKeys];
-    }
-
     function getVisibleModelKeys() {
       return modelVisibilityInputs.filter((input) => input.checked).map((input) => input.value);
     }
@@ -940,11 +932,19 @@
         card.hidden = !visibleKeys.has(card.dataset.modelCard);
       });
       if (priceGrid) priceGrid.classList.toggle("single-model", visibleKeys.size === 1);
-      try {
-        localStorage.setItem(visibleModelsStorageKey, JSON.stringify([...visibleKeys]));
-      } catch (err) {
-        // 无法写入本地设置时仍保留当前页面选择
-      }
+    }
+
+    async function saveVisibleModels(visibleModelKeys) {
+      const response = await fetch(`${apiPath}/visibility`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ visibleModelKeys }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.ok) throw new Error(data.error || "机型设置保存失败");
+      savedVisibleModelKeys = Array.isArray(data.state && data.state.visibleModelKeys)
+        ? [...data.state.visibleModelKeys]
+        : [...visibleModelKeys];
     }
 
     function isSyncableModel(modelKey) {
@@ -1037,7 +1037,7 @@
       const response = await fetch(apiPath, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ state: { prices } }),
+        body: JSON.stringify({ state: { prices, visibleModelKeys: getVisibleModelKeys() } }),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data.ok) throw new Error(data.error || "保存失败");
@@ -1096,17 +1096,28 @@
 
     showColorTextToggle.addEventListener("change", applyColorTextVisibility);
 
-    const initialVisibleModelKeys = new Set(loadVisibleModelKeys());
+    const initialVisibleModelKeys = new Set(savedVisibleModelKeys);
     modelVisibilityInputs.forEach((input) => {
       input.checked = initialVisibleModelKeys.has(input.value);
-      input.addEventListener("change", () => {
+      input.addEventListener("change", async () => {
         if (!getVisibleModelKeys().length) {
           input.checked = true;
           showToast("至少保留一个机型");
           return;
         }
         applyModelVisibility();
-        showToast("机型显示已更新");
+        modelVisibilityInputs.forEach((item) => (item.disabled = true));
+        try {
+          await saveVisibleModels(getVisibleModelKeys());
+          showToast("机型显示已同步到客户页");
+        } catch (err) {
+          const savedKeys = new Set(savedVisibleModelKeys);
+          modelVisibilityInputs.forEach((item) => (item.checked = savedKeys.has(item.value)));
+          applyModelVisibility();
+          showToast(err && err.message ? err.message : "机型设置保存失败");
+        } finally {
+          modelVisibilityInputs.forEach((item) => (item.disabled = false));
+        }
       });
     });
     applyModelVisibility();

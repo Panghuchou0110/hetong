@@ -360,9 +360,7 @@
     const copyTextEl = document.getElementById("copyText");
     const toastEl = document.getElementById("toast");
     const apiPath = "/api/iphone-price";
-    const visibleModelsStorageKey = "iphonePriceVisibleModelsV1";
-    const initialVisibleModelKeys = <%- JSON.stringify(initialVisibleModelKeys).replace(/</g, "\\u003c") %>;
-    const hasVisibleModelsParam = new URLSearchParams(window.location.search).has("models");
+    let currentVisibleModelKeys = <%- JSON.stringify(initialVisibleModelKeys).replace(/</g, "\\u003c") %>;
 
     function showToast(text) {
       toastEl.textContent = text;
@@ -423,16 +421,7 @@
     }
 
     function getVisibleModels() {
-      let visibleKeys = initialVisibleModelKeys;
-      if (!hasVisibleModelsParam) {
-        try {
-          const saved = JSON.parse(localStorage.getItem(visibleModelsStorageKey) || "null");
-          if (Array.isArray(saved)) visibleKeys = saved;
-        } catch (err) {
-          // 本地设置异常时使用服务端默认显示机型
-        }
-      }
-      const visibleSet = new Set(visibleKeys);
+      const visibleSet = new Set(currentVisibleModelKeys);
       return models.filter((model) => visibleSet.has(model.key));
     }
 
@@ -538,6 +527,9 @@
         const data = await response.json();
         if (data && data.ok && data.state) {
           currentState = data.state;
+          if (Array.isArray(data.state.visibleModelKeys)) {
+            currentVisibleModelKeys = [...data.state.visibleModelKeys];
+          }
           refresh();
         }
       } catch (err) {

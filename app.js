@@ -82,6 +82,7 @@ const iphonePriceCatalog = [
   { key: "iphone18", title: "iPhone 18 标准版", short: "iPhone 18 标准版", section: "normal" },
   { key: "duo", title: "iPhone Duo", short: "Duo", section: "normal" },
 ];
+const defaultIphonePriceVisibleModelKeys = ["promax", "pro"];
 const iphonePriceCapacities = ["256G", "512G", "1T", "2T"];
 const iphonePriceColorMap = {
   promax: [
@@ -564,8 +565,17 @@ function createIphonePriceGrid() {
 function createDefaultIphonePriceState() {
   return {
     updatedAt: 0,
+    visibleModelKeys: [...defaultIphonePriceVisibleModelKeys],
     prices: createIphonePriceGrid(),
   };
+}
+
+function normalizeIphonePriceVisibleModelKeys(value) {
+  const requestedKeys = new Set(Array.isArray(value) ? value.map((key) => String(key || "")) : []);
+  const visibleModelKeys = iphonePriceCatalog
+    .map((model) => model.key)
+    .filter((key) => requestedKeys.has(key));
+  return visibleModelKeys.length ? visibleModelKeys : [...defaultIphonePriceVisibleModelKeys];
 }
 
 function normalizeIphonePriceCell(value) {
@@ -594,6 +604,7 @@ function normalizeIphonePriceState(raw) {
   });
   return {
     updatedAt: Number(source.updatedAt) || base.updatedAt,
+    visibleModelKeys: normalizeIphonePriceVisibleModelKeys(source.visibleModelKeys),
     prices,
   };
 }
@@ -2134,7 +2145,9 @@ app.get("/iphone-price/text", requireIphonePricePageAccess, async (req, res) => 
       .split(",")
       .map((key) => key.trim())
       .filter((key) => allowedModelKeys.has(key));
-    const visibleModelKeys = requestedModelKeys.length ? [...new Set(requestedModelKeys)] : ["promax", "pro"];
+    const serverVisibleModelKeys = new Set(state.visibleModelKeys);
+    const requestedVisibleModelKeys = [...new Set(requestedModelKeys)].filter((key) => serverVisibleModelKeys.has(key));
+    const visibleModelKeys = requestedVisibleModelKeys.length ? requestedVisibleModelKeys : state.visibleModelKeys;
     res.render("iphone-price-text", {
       initialState: state,
       pageUpdatedAt: state.updatedAt || Date.now(),
@@ -2169,6 +2182,22 @@ app.post("/api/iphone-price", requireSession, requireAuth, rateLimit, async (req
   } catch (err) {
     writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_write_failed", err: String(err) });
     res.status(500).json({ ok: false, error: "iphone_price_write_failed" });
+  }
+});
+
+app.post("/api/iphone-price/visibility", requireSession, requireAuth, rateLimit, async (req, res) => {
+  try {
+    const visibleModelKeys = req.body && req.body.visibleModelKeys;
+    if (!Array.isArray(visibleModelKeys)) {
+      res.status(400).json({ ok: false, error: "invalid_visible_models" });
+      return;
+    }
+    const state = await readIphonePriceState();
+    const nextState = await saveIphonePriceState({ ...state, visibleModelKeys });
+    res.json({ ok: true, state: nextState });
+  } catch (err) {
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_visibility_write_failed", err: String(err) });
+    res.status(500).json({ ok: false, error: "iphone_price_visibility_write_failed" });
   }
 });
 

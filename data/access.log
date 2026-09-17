@@ -2842,3 +2842,12 @@
 {"ts":"2026-09-17T11:17:56.622Z","ip":"127.0.0.1","method":"GET","path":"/iphone-price","status":200,"ms":4,"ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"}
 {"ts":"2026-09-17T11:17:56.700Z","ip":"127.0.0.1","method":"GET","path":"/iphone-price","status":304,"ms":3,"ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"}
 {"ts":"2026-09-17T11:18:38.959Z","ip":"127.0.0.1","method":"GET","path":"/iphone-price","status":200,"ms":3,"ua":"Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.19045; zh-CN) PowerShell/7.6.4"}
+{"ts":"2026-09-17T11:20:12.563Z","ip":"127.0.0.1","method":"GET","path":"/iphone-price","status":200,"ms":3,"ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0"}
+{"ts":"2026-09-17T11:20:12.630Z","ip":"127.0.0.1","method":"GET","path":"/favicon.ico","status":404,"ms":2,"ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0"}
+{"ts":"2026-09-17T11:33:32.112Z","ip":"127.0.0.1","method":"GET","path":"/api/iphone-price","status":200,"ms":7,"ua":"Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.19045; zh-CN) PowerShell/7.6.4"}
+{"ts":"2026-09-17T11:33:32.151Z","ip":"127.0.0.1","method":"GET","path":"/iphone-price","status":200,"ms":17,"ua":"Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.19045; zh-CN) PowerShell/7.6.4"}
+{"ts":"2026-09-17T11:33:32.165Z","ip":"127.0.0.1","method":"GET","path":"/iphone-price/text","status":200,"ms":3,"ua":"Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.19045; zh-CN) PowerShell/7.6.4"}
+{"ts":"2026-09-17T11:33:49.508Z","ip":"127.0.0.1","method":"GET","path":"/iphone-price","status":200,"ms":3,"ua":"node"}
+{"ts":"2026-09-17T11:33:49.511Z","ip":"127.0.0.1","method":"GET","path":"/iphone-price/text","status":200,"ms":6,"ua":"node"}
+{"ts":"2026-09-17T11:33:49.573Z","ip":"127.0.0.1","method":"POST","path":"/api/iphone-price/visibility","status":401,"ms":0,"ua":"curl/8.13.0"}
+{"ts":"2026-09-17T11:35:35.246Z","ip":"127.0.0.1","method":"GET","path":"/iphone-price","status":200,"ms":3,"ua":"Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.19045; zh-CN) PowerShell/7.6.4"}

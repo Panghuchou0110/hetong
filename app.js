@@ -73,37 +73,39 @@ const defaultState = {
   models: [...defaultModels],
   modelColors: { ...defaultModelColors },
   authRememberHours: {},
+  iphonePriceRequireAuth: false,
 };
 const iphonePriceFile = path.join(dataDir, "iphone-prices.json");
 const iphonePriceCatalog = [
-  { key: "promax", title: "iPhone 17 Pro Max", short: "17PM", section: "normal" },
-  { key: "pro", title: "iPhone 17 Pro", short: "17Pro", section: "normal" },
-  { key: "iphone17", title: "iPhone 17 标准版", short: "iPhone 17 标准版", section: "normal" },
-  { key: "promaxActive", title: "iPhone 17 Pro Max 国行0充 仅激活0-5天", short: "17PM", section: "active" },
+  { key: "promax", title: "iPhone 18 Pro Max", short: "18PM", section: "normal" },
+  { key: "pro", title: "iPhone 18 Pro", short: "18Pro", section: "normal" },
+  { key: "iphone18", title: "iPhone 18 标准版", short: "iPhone 18 标准版", section: "normal" },
+  { key: "duo", title: "iPhone Duo", short: "Duo", section: "normal" },
 ];
-const iphonePriceCapacities = ["256G", "512G"];
+const iphonePriceCapacities = ["256G", "512G", "1T", "2T"];
 const iphonePriceColorMap = {
   promax: [
-    { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
-    { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
-    { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+    { key: "black", label: "黑", name: "黑色", dot: "#111111" },
+    { key: "silver", label: "银", name: "银色", dot: "#d8dde5" },
+    { key: "glacier", label: "蓝", name: "冰川蓝色", dot: "#c9e7f2" },
+    { key: "burgundy", label: "红", name: "勃艮第酒红色", dot: "#6f1d32" },
   ],
   pro: [
-    { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
-    { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
-    { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+    { key: "black", label: "黑", name: "黑色", dot: "#111111" },
+    { key: "silver", label: "银", name: "银色", dot: "#d8dde5" },
+    { key: "glacier", label: "蓝", name: "冰川蓝色", dot: "#c9e7f2" },
+    { key: "burgundy", label: "红", name: "勃艮第酒红色", dot: "#6f1d32" },
   ],
-  iphone17: [
+  iphone18: [
     { key: "black", label: "黑", name: "黑色", dot: "#111111" },
     { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
     { key: "mistBlue", label: "青", name: "青雾蓝", dot: "#5aaed8" },
     { key: "sageGreen", label: "绿", name: "鼠尾草绿", dot: "#98b58c" },
     { key: "lavenderPurple", label: "紫", name: "薰衣草紫", dot: "#b58cff" },
   ],
-  promaxActive: [
-    { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
-    { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
-    { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+  duo: [
+    { key: "starWhite", label: "白", name: "星光白色", dot: "#f5f1e8" },
+    { key: "nightSky", label: "蓝", name: "夜空色", dot: "#17284f" },
   ],
 };
 
@@ -186,6 +188,7 @@ function saveConfigState(state) {
         state.authRememberHours && typeof state.authRememberHours === "object"
           ? state.authRememberHours
           : {},
+      iphonePriceRequireAuth: state.iphonePriceRequireAuth === true,
     });
     db.run(
       "REPLACE INTO state (key, value) VALUES (?, ?)",
@@ -302,6 +305,7 @@ async function getState() {
         : { ...defaultState.modelColors },
     authRememberHours:
       rawState.authRememberHours && typeof rawState.authRememberHours === "object" ? rawState.authRememberHours : {},
+    iphonePriceRequireAuth: rawState.iphonePriceRequireAuth === true,
   };
   let orders = await loadList("orders");
   let trash = await loadList("trash");
@@ -339,6 +343,7 @@ function snapshotStateForUndo(state) {
     modelColors: state?.modelColors && typeof state.modelColors === "object" ? state.modelColors : { ...defaultState.modelColors },
     authRememberHours:
       state?.authRememberHours && typeof state.authRememberHours === "object" ? state.authRememberHours : {},
+    iphonePriceRequireAuth: state?.iphonePriceRequireAuth === true,
   };
 }
 
@@ -481,6 +486,7 @@ function buildStateOperationLog(beforeState, afterState) {
     ["models", "机型列表"],
     ["modelColors", "机型颜色"],
     ["authRememberHours", "账号登录时长"],
+    ["iphonePriceRequireAuth", "iPhone价格页登录验证"],
   ].forEach(([key, label]) => {
     if (JSON.stringify(beforeState[key] ?? "") !== JSON.stringify(afterState[key] ?? "")) {
       configChanges.push(label);
@@ -1971,6 +1977,7 @@ app.post("/api/state", requireSession, requireAuth, rateLimit, async (req, res) 
         payload.authRememberHours && typeof payload.authRememberHours === "object"
           ? payload.authRememberHours
           : {},
+      iphonePriceRequireAuth: payload.iphonePriceRequireAuth === true,
     };
     await enqueueStateWrite(async () => {
       const currentVersion = await getStateVersion();
@@ -2076,12 +2083,41 @@ app.post("/api/operation-logs/:id/undo", requireSession, requireAuth, requireAdm
 
 app.get("/", (req, res) => res.render("index"));
 
-app.get("/iphone-price", requirePageSession, requireAuth, async (req, res) => {
+async function requireIphonePricePageAccess(req, res, next) {
+  try {
+    const rawState = await readRawState();
+    if (rawState.iphonePriceRequireAuth !== true) return next();
+    const session = getSession(req);
+    if (!session) return res.redirect("/");
+    req.session = session;
+    return requireAuth(req, res, next);
+  } catch (err) {
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_access_check_failed", err: String(err) });
+    return res.status(500).send("iphone_price_access_check_failed");
+  }
+}
+
+async function requireIphonePriceReadAccess(req, res, next) {
+  try {
+    const rawState = await readRawState();
+    if (rawState.iphonePriceRequireAuth !== true) return next();
+    const session = getSession(req);
+    if (!session) return res.status(401).json({ ok: false, error: "unauthorized" });
+    req.session = session;
+    return requireAuth(req, res, next);
+  } catch (err) {
+    writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_access_check_failed", err: String(err) });
+    return res.status(500).json({ ok: false, error: "iphone_price_access_check_failed" });
+  }
+}
+
+app.get("/iphone-price", requireIphonePricePageAccess, async (req, res) => {
   try {
     const state = await readIphonePriceState();
     res.render("iphone-price", {
       initialState: state,
       pageUpdatedAt: state.updatedAt || Date.now(),
+      canManagePrices: !!getSession(req),
     });
   } catch (err) {
     writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_read_failed", err: String(err) });
@@ -2089,14 +2125,21 @@ app.get("/iphone-price", requirePageSession, requireAuth, async (req, res) => {
   }
 });
 
-app.get("/iphone-price/text", requirePageSession, requireAuth, async (req, res) => {
+app.get("/iphone-price/text", requireIphonePricePageAccess, async (req, res) => {
   try {
     const state = await readIphonePriceState();
     const priceDelta = Math.max(0, Math.min(20000, Math.floor(Number(req.query.delta) || 0)));
+    const allowedModelKeys = new Set(iphonePriceCatalog.map((model) => model.key));
+    const requestedModelKeys = String(req.query.models || "")
+      .split(",")
+      .map((key) => key.trim())
+      .filter((key) => allowedModelKeys.has(key));
+    const visibleModelKeys = requestedModelKeys.length ? [...new Set(requestedModelKeys)] : ["promax", "pro"];
     res.render("iphone-price-text", {
       initialState: state,
       pageUpdatedAt: state.updatedAt || Date.now(),
       priceDelta,
+      visibleModelKeys,
     });
   } catch (err) {
     writeLog(errorLogPath, { ts: new Date().toISOString(), type: "iphone_price_read_failed", err: String(err) });
@@ -2104,7 +2147,7 @@ app.get("/iphone-price/text", requirePageSession, requireAuth, async (req, res) 
   }
 });
 
-app.get("/api/iphone-price", requireSession, requireAuth, rateLimit, async (req, res) => {
+app.get("/api/iphone-price", requireIphonePriceReadAccess, rateLimit, async (req, res) => {
   try {
     const state = await readIphonePriceState();
     res.json({ ok: true, state });

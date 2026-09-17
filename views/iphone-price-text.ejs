@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="dark" />
-  <title>iPhone17系列新机价格</title>
+  <title>iPhone18系列新机价格</title>
   <style>
     :root {
       --bg0: #030816;
@@ -184,36 +184,39 @@
 <body>
 <%
   const models = [
-    { key: "promax", title: "iPhone 17 Pro Max", short: "17PM", section: "normal" },
-    { key: "pro", title: "iPhone 17 Pro", short: "17Pro", section: "normal" },
-    { key: "iphone17", title: "iPhone 17 标准版", short: "iPhone 17 标准版", section: "normal" },
-    { key: "promaxActive", title: "iPhone 17 Pro Max 国行0充 仅激活0-5天", short: "17PM", section: "active" },
+    { key: "promax", title: "iPhone 18 Pro Max", short: "18PM", section: "normal" },
+    { key: "pro", title: "iPhone 18 Pro", short: "18Pro", section: "normal" },
+    { key: "iphone18", title: "iPhone 18 标准版", short: "iPhone 18 标准版", section: "normal" },
+    { key: "duo", title: "iPhone Duo", short: "Duo", section: "normal" },
   ];
-  const capacities = ["256G", "512G"];
+  const capacities = ["256G", "512G", "1T", "2T"];
   const colorMap = {
     promax: [
-      { key: "blue", label: "蓝", name: "蓝色" },
-      { key: "orange", label: "橙", name: "橙色" },
-      { key: "white", label: "白", name: "白色" },
+      { key: "black", label: "黑", name: "黑色" },
+      { key: "silver", label: "银", name: "银色" },
+      { key: "glacier", label: "蓝", name: "冰川蓝色" },
+      { key: "burgundy", label: "红", name: "勃艮第酒红色" },
     ],
     pro: [
-      { key: "blue", label: "蓝", name: "蓝色" },
-      { key: "orange", label: "橙", name: "橙色" },
-      { key: "white", label: "白", name: "白色" },
+      { key: "black", label: "黑", name: "黑色" },
+      { key: "silver", label: "银", name: "银色" },
+      { key: "glacier", label: "蓝", name: "冰川蓝色" },
+      { key: "burgundy", label: "红", name: "勃艮第酒红色" },
     ],
-    iphone17: [
+    iphone18: [
       { key: "black", label: "黑", name: "黑色" },
       { key: "white", label: "白", name: "白色" },
       { key: "mistBlue", label: "青", name: "青雾蓝" },
       { key: "sageGreen", label: "绿", name: "鼠尾草绿" },
       { key: "lavenderPurple", label: "紫", name: "薰衣草紫" },
     ],
-    promaxActive: [
-      { key: "blue", label: "蓝", name: "蓝色" },
-      { key: "orange", label: "橙", name: "橙色" },
-      { key: "white", label: "白", name: "白色" },
+    duo: [
+      { key: "starWhite", label: "白", name: "星光白色" },
+      { key: "nightSky", label: "蓝", name: "夜空色" },
     ],
   };
+  const initialVisibleModelKeys = Array.isArray(visibleModelKeys) ? visibleModelKeys : ["promax", "pro"];
+  const serverVisibleModelKeys = new Set(initialVisibleModelKeys);
   const initialPriceDelta = Math.max(0, Number(priceDelta) || 0);
   function formatClock(ts) {
     const date = new Date(Number(ts) || Date.now());
@@ -256,14 +259,14 @@
   }
   function buildShort(model) {
     if (model.short) return model.short;
-    if (model.title.includes("Pro Max")) return "17PM";
-    if (model.title.includes("Pro")) return "17Pro";
-    return "17";
+    if (model.title.includes("Pro Max")) return "18PM";
+    if (model.title.includes("Pro")) return "18Pro";
+    return "18";
   }
   function buildCopyText(state) {
-    const lines = [`【iPhone17系列新机价格】`, `北京时间：${formatClock(pageUpdatedAt)}`];
-    const active = models.filter((item) => item.section === "active");
-    const normal = models.filter((item) => item.section === "normal");
+    const lines = [`【iPhone18系列新机价格】`, `北京时间：${formatClock(pageUpdatedAt)}`];
+    const active = models.filter((item) => serverVisibleModelKeys.has(item.key) && item.section === "active");
+    const normal = models.filter((item) => serverVisibleModelKeys.has(item.key) && item.section === "normal");
     normal.forEach((model) => {
       const colors = colorMap[model.key] || colorMap.promax;
       capacities.forEach((capacity) => {
@@ -275,7 +278,6 @@
       });
     });
     if (active.length) {
-      lines.push("【国行0充 仅激活0-5天】");
       active.forEach((model) => {
         const colors = colorMap[model.key] || colorMap.promax;
         capacities.forEach((capacity) => {
@@ -291,9 +293,9 @@
     return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
   }
   function buildCopyHtml(state) {
-    const html = [`<span class="headline">【iPhone17系列新机价格】</span>`, `<span class="time">北京时间：${formatClock(pageUpdatedAt)}</span>`];
-    const active = models.filter((item) => item.section === "active");
-    const normal = models.filter((item) => item.section === "normal");
+    const html = [`<span class="headline">【iPhone18系列新机价格】</span>`, `<span class="time">北京时间：${formatClock(pageUpdatedAt)}</span>`];
+    const active = models.filter((item) => serverVisibleModelKeys.has(item.key) && item.section === "active");
+    const normal = models.filter((item) => serverVisibleModelKeys.has(item.key) && item.section === "normal");
     const priceText = (value) => `<span class="price">${formatPriceCell(value)}</span>`;
     normal.forEach((model) => {
       const colors = colorMap[model.key] || colorMap.promax;
@@ -306,7 +308,6 @@
       });
     });
     if (active.length) {
-      html.push(`<span class="section">【国行0充 仅激活0-5天】</span>`);
       active.forEach((model) => {
         const colors = colorMap[model.key] || colorMap.promax;
         capacities.forEach((capacity) => {
@@ -325,7 +326,7 @@
   <div class="page">
     <div class="top">
       <div>
-        <h1>iPhone17系列新机价格</h1>
+        <h1>iPhone18系列新机价格</h1>
         <div class="badge" id="clock">北京时间：<%= formatClock(pageUpdatedAt) %></div>
       </div>
       <div class="actions">
@@ -359,6 +360,9 @@
     const copyTextEl = document.getElementById("copyText");
     const toastEl = document.getElementById("toast");
     const apiPath = "/api/iphone-price";
+    const visibleModelsStorageKey = "iphonePriceVisibleModelsV1";
+    const initialVisibleModelKeys = <%- JSON.stringify(initialVisibleModelKeys).replace(/</g, "\\u003c") %>;
+    const hasVisibleModelsParam = new URLSearchParams(window.location.search).has("models");
 
     function showToast(text) {
       toastEl.textContent = text;
@@ -418,6 +422,20 @@
       return colorMap[modelKey] || colorMap.promax;
     }
 
+    function getVisibleModels() {
+      let visibleKeys = initialVisibleModelKeys;
+      if (!hasVisibleModelsParam) {
+        try {
+          const saved = JSON.parse(localStorage.getItem(visibleModelsStorageKey) || "null");
+          if (Array.isArray(saved)) visibleKeys = saved;
+        } catch (err) {
+          // 本地设置异常时使用服务端默认显示机型
+        }
+      }
+      const visibleSet = new Set(visibleKeys);
+      return models.filter((model) => visibleSet.has(model.key));
+    }
+
     function formatCell(rawValue) {
       if (!rawValue) return "未填";
       const raw = Number(rawValue);
@@ -426,9 +444,10 @@
     }
 
     function buildCopyText() {
-      const lines = [`【iPhone17系列新机价格】`, `北京时间：${formatDate(new Date())}`];
-      const active = models.filter((item) => item.section === "active");
-      const normal = models.filter((item) => item.section === "normal");
+      const lines = [`【iPhone18系列新机价格】`, `北京时间：${formatDate(new Date())}`];
+      const visibleModels = getVisibleModels();
+      const active = visibleModels.filter((item) => item.section === "active");
+      const normal = visibleModels.filter((item) => item.section === "normal");
       normal.forEach((model) => {
         const colors = getColors(model.key);
         capacities.forEach((capacity) => {
@@ -440,7 +459,6 @@
         });
       });
       if (active.length) {
-        lines.push("【国行0充 仅激活0-5天】");
         active.forEach((model) => {
           const colors = getColors(model.key);
           capacities.forEach((capacity) => {
@@ -457,9 +475,10 @@
     }
 
     function buildCopyHtml(state) {
-      const html = [`<span class="headline">【iPhone17系列新机价格】</span>`, `<span class="time">北京时间：${formatDate(new Date())}</span>`];
-      const active = models.filter((item) => item.section === "active");
-      const normal = models.filter((item) => item.section === "normal");
+      const html = [`<span class="headline">【iPhone18系列新机价格】</span>`, `<span class="time">北京时间：${formatDate(new Date())}</span>`];
+      const visibleModels = getVisibleModels();
+      const active = visibleModels.filter((item) => item.section === "active");
+      const normal = visibleModels.filter((item) => item.section === "normal");
       const priceText = (value) => `<span class="price">${formatCell(value)}</span>`;
       normal.forEach((model) => {
         const colors = getColors(model.key);
@@ -472,7 +491,6 @@
         });
       });
       if (active.length) {
-        html.push(`<span class="section">【国行0充 仅激活0-5天】</span>`);
         active.forEach((model) => {
           const colors = getColors(model.key);
           capacities.forEach((capacity) => {

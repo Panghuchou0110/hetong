@@ -4112,6 +4112,26 @@
           </div>
         </details>
 
+        <details class="card safety-panel">
+          <summary>
+            <div>
+              <div class="card-title">iPhone 价格页访问</div>
+              <div class="card-subtitle">控制报价 UI 页和文字页是否必须登录后才能查看。</div>
+            </div>
+            <span class="safety-panel-arrow">▸</span>
+          </summary>
+          <div class="safety-panel-body">
+            <div class="button-row">
+              <label class="theme-toggle order-continuous-toggle">
+                <span>需要登录验证</span>
+                <input id="iphonePriceRequireAuth" type="checkbox" />
+                <span class="theme-slider" aria-hidden="true"></span>
+              </label>
+            </div>
+            <div class="hint">未勾选时可直接查看报价页；编辑价格和保存接口始终需要登录。</div>
+          </div>
+        </details>
+
         <details class="card safety-panel" id="accountManagementCard">
           <summary>
             <div>
@@ -4664,6 +4684,7 @@
     let defaultSource = "皖顺";
     let authUsers = [];
     let authRememberHours = {};
+    let iphonePriceRequireAuth = false;
 
     let models = [];
     let modelColors = {};
@@ -4736,6 +4757,7 @@
         models: [...defaultModels],
         modelColors: { ...defaultModelColors },
         authRememberHours: {},
+        iphonePriceRequireAuth: false,
       };
     }
 
@@ -4752,6 +4774,7 @@
         models,
         modelColors,
         authRememberHours,
+        iphonePriceRequireAuth,
       });
     }
 
@@ -4828,6 +4851,7 @@
         models: choose("models"),
         modelColors: choose("modelColors"),
         authRememberHours: choose("authRememberHours"),
+        iphonePriceRequireAuth: choose("iphonePriceRequireAuth") === true,
       };
     }
 
@@ -4839,6 +4863,8 @@
       models = normalizeList(state.models || []);
       modelColors = state.modelColors && typeof state.modelColors === "object" ? state.modelColors : { ...defaultModelColors };
       authRememberHours = state.authRememberHours && typeof state.authRememberHours === "object" ? state.authRememberHours : {};
+      iphonePriceRequireAuth = state.iphonePriceRequireAuth === true;
+      if ($("iphonePriceRequireAuth")) $("iphonePriceRequireAuth").checked = iphonePriceRequireAuth;
     }
 
     async function fetchState() {
@@ -10670,6 +10696,10 @@ function confirmDeleteAfterConfirm() {
       renderSourceSelects();
       saveSources();
     });
+    $("iphonePriceRequireAuth").addEventListener("change", (event) => {
+      iphonePriceRequireAuth = !!event.target.checked;
+      scheduleSaveState();
+    });
     $("addAuthUserBtn").addEventListener("click", () =>
       openSafetyPassword(() => addAuthUser(readValue("auth_user_name"), readValue("auth_user_pass")))
     );
@@ -10848,6 +10878,8 @@ function confirmDeleteAfterConfirm() {
         sources = state.sources;
         defaultSource = typeof state.defaultSource === "string" && state.defaultSource ? state.defaultSource : "皖顺";
         authRememberHours = state.authRememberHours && typeof state.authRememberHours === "object" ? state.authRememberHours : {};
+        iphonePriceRequireAuth = state.iphonePriceRequireAuth === true;
+        $("iphonePriceRequireAuth").checked = iphonePriceRequireAuth;
         models = normalizeList(state.models || []);
         modelColors = state.modelColors && typeof state.modelColors === "object" ? state.modelColors : { ...defaultModelColors };
         if (models.length === 0) models = [...defaultModels];

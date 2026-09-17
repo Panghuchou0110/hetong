@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="dark" />
-  <title>iPhone17系列 · 报价表</title>
+  <title>iPhone18系列 · 报价表</title>
   <style>
     :root {
       --bg0: #030816;
@@ -207,6 +207,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 7px;
       min-width: 50px;
       padding: 3px 8px;
       border-radius: 999px;
@@ -221,9 +222,16 @@
         0 6px 14px rgba(2, 8, 20, 0.18);
     }
 
+    .memory-retail-price {
+      color: #f3d79b;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
     .color-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 9px;
     }
 
@@ -240,7 +248,7 @@
       position: relative;
     }
 
-    .price-field:not(:nth-child(3n)):not(:last-child)::after {
+    .price-field:not(:nth-child(2n)):not(:last-child)::after {
       content: "";
       position: absolute;
       top: 2px;
@@ -257,24 +265,24 @@
       justify-content: center;
       align-items: center;
       gap: 4px;
-      min-height: 15px;
+      min-height: 19px;
       padding-bottom: 3px;
       border-bottom: 1px solid rgba(141, 188, 255, 0.24);
     }
 
     .dot {
-      width: 12px;
-      height: 12px;
+      width: 16px;
+      height: 16px;
       border-radius: 999px;
       flex: 0 0 auto;
       box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
     }
     .color-label {
       display: none;
-      max-width: 28px;
+      max-width: 64px;
       overflow: hidden;
       color: rgba(224, 238, 255, 0.88);
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 900;
       line-height: 1;
       letter-spacing: 0.02em;
@@ -394,7 +402,8 @@
       font-weight: 700;
     }
 
-    .color-text-toggle {
+    .color-text-toggle,
+    .model-visibility-toggle {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -410,7 +419,8 @@
       user-select: none;
     }
 
-    .color-text-toggle input {
+    .color-text-toggle input,
+    .model-visibility-toggle input {
       width: 13px;
       height: 13px;
       accent-color: #4fb5ff;
@@ -527,6 +537,43 @@
       .price-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
+    @media (min-width: 541px) {
+      .price-grid.single-model .model-card:not([hidden]) {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px 10px;
+      }
+
+      .price-grid.single-model .model-head {
+        grid-column: 1 / -1;
+      }
+
+      .price-grid.single-model .memory-block + .memory-block {
+        margin-top: 0;
+      }
+
+      .price-grid.single-model .memory-block[data-capacity="256G"] {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .price-grid.single-model .memory-block[data-capacity="512G"] {
+        grid-column: 1;
+        grid-row: 3;
+      }
+
+      .price-grid.single-model .memory-block[data-capacity="1T"] {
+        grid-column: 2;
+        grid-row: 2;
+      }
+
+      .price-grid.single-model .memory-block[data-capacity="2T"] {
+        grid-column: 2;
+        grid-row: 3;
+      }
+    }
+
     @media (max-width: 540px) {
       .topbar { flex-direction: column; }
     }
@@ -535,34 +582,41 @@
 <body>
 <%
   const models = [
-    { key: "promax", title: "iPhone 17 Pro Max", section: "normal" },
-    { key: "pro", title: "iPhone 17 Pro", section: "normal" },
-    { key: "iphone17", title: "iPhone 17 标准版", short: "iPhone 17 标准版", section: "normal" },
-    { key: "promaxActive", title: "iPhone 17 Pro Max 国行0充 仅激活0-5天", section: "active" },
+    { key: "promax", title: "iPhone 18 Pro Max", short: "18PM", section: "normal" },
+    { key: "pro", title: "iPhone 18 Pro", short: "18Pro", section: "normal" },
+    { key: "iphone18", title: "iPhone 18 标准版", short: "iPhone 18 标准版", section: "normal" },
+    { key: "duo", title: "iPhone Duo", short: "Duo", section: "normal" },
   ];
-  const capacities = ["256G", "512G"];
+  const capacities = ["256G", "512G", "1T", "2T"];
+  const retailPrices = {
+    promax: { "256G": "¥10,999", "512G": "¥12,999", "1T": "¥16,499", "2T": "¥21,499" },
+    pro: { "256G": "¥9,999", "512G": "¥11,999", "1T": "¥15,499", "2T": "¥20,499" },
+    iphone18: { "256G": "待公布", "512G": "待公布", "1T": "待公布", "2T": "待公布" },
+    duo: { "256G": "¥15,999", "512G": "¥17,999", "1T": "¥21,499", "2T": "¥26,499" },
+  };
   const colorMap = {
     promax: [
-      { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
-      { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
-      { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+      { key: "black", label: "黑", name: "黑色", dot: "#111111" },
+      { key: "silver", label: "银", name: "银色", dot: "#d8dde5" },
+      { key: "glacier", label: "蓝", name: "冰川蓝色", dot: "#c9e7f2" },
+      { key: "burgundy", label: "红", name: "勃艮第酒红色", dot: "#6f1d32" },
     ],
     pro: [
-      { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
-      { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
-      { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+      { key: "black", label: "黑", name: "黑色", dot: "#111111" },
+      { key: "silver", label: "银", name: "银色", dot: "#d8dde5" },
+      { key: "glacier", label: "蓝", name: "冰川蓝色", dot: "#c9e7f2" },
+      { key: "burgundy", label: "红", name: "勃艮第酒红色", dot: "#6f1d32" },
     ],
-    iphone17: [
+    iphone18: [
       { key: "black", label: "黑", name: "黑色", dot: "#111111" },
       { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
       { key: "mistBlue", label: "青", name: "青雾蓝", dot: "#5aaed8" },
       { key: "sageGreen", label: "绿", name: "鼠尾草绿", dot: "#98b58c" },
       { key: "lavenderPurple", label: "紫", name: "薰衣草紫", dot: "#b58cff" },
     ],
-    promaxActive: [
-      { key: "blue", label: "蓝", name: "蓝色", dot: "#49a9ff" },
-      { key: "orange", label: "橙", name: "橙色", dot: "#ff9a43" },
-      { key: "white", label: "白", name: "白色", dot: "#f2f6ff" },
+    duo: [
+      { key: "starWhite", label: "白", name: "星光白色", dot: "#f5f1e8" },
+      { key: "nightSky", label: "蓝", name: "夜空色", dot: "#17284f" },
     ],
   };
   function getColors(modelKey) {
@@ -601,6 +655,9 @@
     const prices = state && state.prices ? state.prices : {};
     return (((prices[modelKey] || {})[capacity] || {})[colorKey]) || "";
   }
+  function getRetailPrice(modelKey, capacity) {
+    return ((retailPrices[modelKey] || {})[capacity]) || "待公布";
+  }
 %>
   <div class="page">
     <header class="topbar">
@@ -616,15 +673,14 @@
 
     <section class="price-grid" aria-label="价格表">
       <% models.forEach(function(model) { %>
-        <article class="model-card">
+        <article
+          class="model-card"
+          data-model-card="<%= model.key %>"
+          <%= model.key === "promax" || model.key === "pro" ? "" : "hidden" %>
+        >
           <div class="model-head">
             <div class="model-title">
-              <% if (model.key === "promaxActive") { %>
-                <span class="model-title-main">iPhone 17 Pro Max</span>
-                <span class="model-title-active">（国行0充 仅激活0-5天）</span>
-              <% } else { %>
-                <span class="model-title-main"><%= model.title %></span>
-              <% } %>
+              <span class="model-title-main"><%= model.title %></span>
             </div>
             <% if (getColors(model.key).length > 1) { %>
               <button class="model-sync" type="button" data-sync-model="<%= model.key %>">全色联动：开</button>
@@ -632,9 +688,12 @@
           </div>
 
           <% capacities.forEach(function(capacity) { %>
-            <div class="memory-block">
+            <div class="memory-block" data-capacity="<%= capacity %>">
               <div class="memory-head">
-                <div class="memory-label"><%= capacity %></div>
+                <div class="memory-label">
+                  <span><%= capacity %></span>
+                  <span class="memory-retail-price">原价 <%= getRetailPrice(model.key, capacity) %></span>
+                </div>
               </div>
               <div class="color-grid">
                 <% getColors(model.key).forEach(function(color) { %>
@@ -663,12 +722,27 @@
       <% }); %>
     </section>
 
-    <details class="bottom-dock" aria-label="底部控制">
+    <details class="bottom-dock" aria-label="底部控制" <%= canManagePrices ? "" : "hidden" %>>
       <summary class="dock-head">
         <div class="dock-label">内部使用 请勿外传</div>
         <div class="dock-label">点击展开</div>
       </summary>
       <div class="dock-body">
+      <div class="dock-row">
+        <span class="dock-label">机型管理</span>
+        <% models.forEach(function(model) { %>
+          <label class="model-visibility-toggle" for="modelVisible_<%= model.key %>">
+            <input
+              id="modelVisible_<%= model.key %>"
+              class="model-visibility-input"
+              type="checkbox"
+              value="<%= model.key %>"
+              <%= model.key === "promax" || model.key === "pro" ? "checked" : "" %>
+            />
+            <span><%= model.title %></span>
+          </label>
+        <% }); %>
+      </div>
       <div class="dock-row">
         <span class="dock-label">复制版本</span>
         <button class="preset active" type="button" data-delta="0">原价版</button>
@@ -714,8 +788,12 @@
     const showColorTextToggle = document.getElementById("showColorTextToggle");
     const applyCustomBtn = document.getElementById("applyCustomBtn");
     const modelSyncButtons = Array.from(document.querySelectorAll(".model-sync"));
+    const modelVisibilityInputs = Array.from(document.querySelectorAll(".model-visibility-input"));
     const priceFields = Array.from(document.querySelectorAll(".price-field"));
+    const priceGrid = document.querySelector(".price-grid");
     const apiPath = "/api/iphone-price";
+    const visibleModelsStorageKey = "iphonePriceVisibleModelsV1";
+    const defaultVisibleModelKeys = ["promax", "pro"];
     let adjustmentMode = { type: "preset", value: 0 };
     let editingMode = false;
     let priceDirty = false;
@@ -826,13 +904,47 @@
 
     function buildShort(model) {
       if (model.short) return model.short;
-      if (model.title.includes("Pro Max")) return "17PM";
-      if (model.title.includes("Pro")) return "17Pro";
-      return "17";
+      if (model.title.includes("Pro Max")) return "18PM";
+      if (model.title.includes("Pro")) return "18Pro";
+      return "18";
     }
 
     function getColors(modelKey) {
       return colorMap[modelKey] || colorMap.promax;
+    }
+
+    function loadVisibleModelKeys() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(visibleModelsStorageKey) || "null");
+        if (Array.isArray(saved)) {
+          return saved.filter((key) => models.some((model) => model.key === key));
+        }
+      } catch (err) {
+        // 本地设置异常时使用默认显示机型
+      }
+      return [...defaultVisibleModelKeys];
+    }
+
+    function getVisibleModelKeys() {
+      return modelVisibilityInputs.filter((input) => input.checked).map((input) => input.value);
+    }
+
+    function getVisibleModels() {
+      const visibleKeys = new Set(getVisibleModelKeys());
+      return models.filter((model) => visibleKeys.has(model.key));
+    }
+
+    function applyModelVisibility() {
+      const visibleKeys = new Set(getVisibleModelKeys());
+      document.querySelectorAll("[data-model-card]").forEach((card) => {
+        card.hidden = !visibleKeys.has(card.dataset.modelCard);
+      });
+      if (priceGrid) priceGrid.classList.toggle("single-model", visibleKeys.size === 1);
+      try {
+        localStorage.setItem(visibleModelsStorageKey, JSON.stringify([...visibleKeys]));
+      } catch (err) {
+        // 无法写入本地设置时仍保留当前页面选择
+      }
     }
 
     function isSyncableModel(modelKey) {
@@ -851,9 +963,10 @@
     }
 
     function buildCopyText() {
-      const lines = [`【iPhone17系列 报价表｜${formatTitleDate(new Date())}】`, ""];
-      const normalModels = models.filter((item) => item.section === "normal");
-      const activeModels = models.filter((item) => item.section === "active");
+      const lines = [`【iPhone18系列 报价表｜${formatTitleDate(new Date())}】`, ""];
+      const visibleModels = getVisibleModels();
+      const normalModels = visibleModels.filter((item) => item.section === "normal");
+      const activeModels = visibleModels.filter((item) => item.section === "active");
 
       normalModels.forEach((model) => {
         const colors = getColors(model.key);
@@ -869,7 +982,6 @@
       });
 
       if (activeModels.length) {
-        lines.push("【国行0充 仅激活0-5天】");
         activeModels.forEach((model) => {
           const colors = getColors(model.key);
           capacities.forEach((capacity) => {
@@ -984,6 +1096,21 @@
 
     showColorTextToggle.addEventListener("change", applyColorTextVisibility);
 
+    const initialVisibleModelKeys = new Set(loadVisibleModelKeys());
+    modelVisibilityInputs.forEach((input) => {
+      input.checked = initialVisibleModelKeys.has(input.value);
+      input.addEventListener("change", () => {
+        if (!getVisibleModelKeys().length) {
+          input.checked = true;
+          showToast("至少保留一个机型");
+          return;
+        }
+        applyModelVisibility();
+        showToast("机型显示已更新");
+      });
+    });
+    applyModelVisibility();
+
     modelSyncButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const modelKey = btn.dataset.syncModel;
@@ -998,6 +1125,7 @@
       event.preventDefault();
       const targetUrl = new URL(textPageLink.href, window.location.origin);
       const delta = getAdjustedDelta();
+      targetUrl.searchParams.set("models", getVisibleModelKeys().join(","));
       if (delta > 0) {
         targetUrl.searchParams.set("delta", String(delta));
       } else {
